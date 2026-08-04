@@ -1,0 +1,48 @@
+{
+    "name": "@eliware/cf-admin",
+    "version": "1.0.5",
+    "description": "Cloudflare administration CLI with optional IP-ban/MySQL helpers.",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent",
+        "lint": "oxlint ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cloudflare": "^6.5.0",
+        "mysql2": "^3.22.5"
+    },
+    "bin": {
+        "cf_admin": "bin/cf_admin.mjs",
+        "cf_ban": "bin/cf_ban.mjs",
+        "cf_unban": "bin/cf_unban.mjs",
+        "cf_list": "bin/cf_list.mjs"
+    },
+    "devDependencies": {
+        "jest": "^30.0.4",
+        "oxlint": "^1.73.0"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "testMatch": [
+            "**/?(*.)+(spec|test).[jt]s?(x)",
+            "**/?(*.)+(spec|test).mjs",
+            "**/?(*.)+(spec|test).cjs"
+        ],
+        "coveragePathIgnorePatterns": []
+    },
+    "allowScripts": {
+        "unrs-resolver@1.12.2": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/eliware/cf-admin.git"
+    },
+    "homepage": "https://github.com/eliware/cf-admin",
+    "bugs": {
+        "url": "https://github.com/eliware/cf-admin/issues"
+    }
+}
