@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.0.6
+## Initial Version (1.1.0)
 
 ### Highlights
 
