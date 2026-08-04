@@ -1,25 +1,37 @@
 {
     "name": "@eliware/cf-admin",
-    "version": "1.0.5",
-    "description": "Cloudflare administration CLI with optional IP-ban/MySQL helpers.",
+    "version": "1.0.6",
+    "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, GitOps workflows, and infrastructure automation.",
     "type": "module",
     "main": "index.js",
     "scripts": {
-        "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent",
+        "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --coverage --detectOpenHandles --silent",
         "lint": "oxlint ."
     },
-    "keywords": [],
+    "keywords": [
+        "cloudflare",
+        "cli",
+        "cloudflare-api",
+        "dns",
+        "waf",
+        "rulesets",
+        "zero-trust",
+        "security",
+        "devops",
+        "gitops",
+        "infrastructure-as-code",
+        "automation",
+        "typescript",
+        "javascript",
+        "nodejs"
+    ],
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "cloudflare": "^6.5.0",
-        "mysql2": "^3.22.5"
+        "cloudflare": "^6.5.0"
     },
     "bin": {
-        "cf_admin": "bin/cf_admin.mjs",
-        "cf_ban": "bin/cf_ban.mjs",
-        "cf_unban": "bin/cf_unban.mjs",
-        "cf_list": "bin/cf_list.mjs"
+        "cf-admin": "bin/cf-admin.mjs"
     },
     "devDependencies": {
         "jest": "^30.0.4",
@@ -32,7 +44,9 @@
             "**/?(*.)+(spec|test).mjs",
             "**/?(*.)+(spec|test).cjs"
         ],
-        "coveragePathIgnorePatterns": []
+        "coveragePathIgnorePatterns": [
+            "/bin/"
+        ]
     },
     "allowScripts": {
         "unrs-resolver@1.12.2": true

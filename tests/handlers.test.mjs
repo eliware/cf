@@ -150,3 +150,157 @@ describe('Cloudflare handlers', () => {
     expect(cf.rules.lists.items.delete).toHaveBeenCalledWith('list1', { account_id: 'acct1', items: [{ id: 'a' }, { id: 'b' }] });
   });
 });
+
+test('covers mutating dry-run and real branches', async () => {
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const out = jest.fn();
+  const common = { outputJson: false, printer, toJsonOutput: out, fail };
+  await handleDnsRecords({ ...common, cf: { dns: { records: { create: jest.fn(), update: jest.fn().mockResolvedValue({ ok: 1 }) } } }, action: 'create', opts: { 'zone-id': 'z', 'dry-run': true }, body: { type: 'A' } });
+  await handleDnsRecords({ ...common, cf: { dns: { records: { create: jest.fn().mockResolvedValue({ ok: 1 }), update: jest.fn() } } }, action: 'create', opts: { 'zone-id': 'z' }, body: { type: 'A' } });
+  await handleDnsRecords({ ...common, cf: { dns: { records: { create: jest.fn(), update: jest.fn().mockResolvedValue({ ok: 1 }) } } }, action: 'update', opts: { 'zone-id': 'z', id: 'r', 'dry-run': true }, body: { content: 'x' } });
+  await handleDnsRecords({ ...common, cf: { dns: { records: { create: jest.fn(), update: jest.fn().mockResolvedValue({ ok: 1 }) } } }, action: 'update', opts: { 'zone-id': 'z', id: 'r' }, body: { content: 'x' } });
+
+  async function* items() { yield { id: 'i' }; }
+  await handleListItems({ ...common, cf: { rules: { lists: { items: { list: jest.fn().mockReturnValue(items()), create: jest.fn(), delete: jest.fn() } } } }, action: 'create', opts: { 'account-id': 'a', id: 'l', 'dry-run': true }, body: { ip: '1.1.1.1' } });
+  await handleListItems({ ...common, cf: { rules: { lists: { items: { list: jest.fn(), create: jest.fn().mockResolvedValue({ ok: 1 }), delete: jest.fn() } } } }, action: 'create', opts: { 'account-id': 'a', id: 'l' }, body: [{ ip: '1.1.1.1' }] });
+  await handleListItems({ ...common, cf: { rules: { lists: { items: { list: jest.fn(), create: jest.fn(), delete: jest.fn().mockResolvedValue({ ok: 1 }) } } } }, action: 'delete', opts: { 'account-id': 'a', id: 'l', force: true }, body: { ids: ['i'] } });
+
+  await handleRulesets({ ...common, cf: { rulesets: { create: jest.fn(), update: jest.fn().mockResolvedValue({ ok: 1 }) } }, action: 'create', opts: { 'zone-id': 'z', 'dry-run': true }, body: { name: 'x' } });
+  await handleZoneSettings({ ...common, cf: { zones: { settings: { get: jest.fn(), edit: jest.fn().mockResolvedValue({ ok: 1 }) } } }, action: 'set', opts: { 'zone-id': 'z', setting: 'dev' }, body: { value: 'on' } });
+  await handleZones({ ...common, cf: { zones: { create: jest.fn(), edit: jest.fn().mockResolvedValue({ ok: 1 }) } }, action: 'update', opts: { 'zone-id': 'z' }, body: { name: 'x' } });
+});
+
+test('handleLists covers text get and JSON list output', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  async function* iterator() { yield { id: 'l2', name: 'list2' }; }
+  const cf = { rules: { lists: { list: jest.fn().mockReturnValue(iterator()), get: jest.fn().mockResolvedValue({ id: 'l2' }) } } };
+  await handleLists({ cf, action: 'list', opts: { 'account-id': 'a' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleLists({ cf, action: 'get', opts: { 'account-id': 'a', id: 'l2' }, outputJson: false, printer, toJsonOutput, fail });
+  expect(toJsonOutput).toHaveBeenCalledWith([{ id: 'l2', name: 'list2' }]);
+  expect(printer.log).toHaveBeenCalled();
+});
+
+test('handleListItems covers JSON list/delete and invalid delete body', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  async function* iterator() { yield { id: 'i2' }; }
+  const cf = { rules: { lists: { items: {
+    list: jest.fn().mockReturnValue(iterator()),
+    delete: jest.fn().mockResolvedValue({ deleted: true }),
+  } } } };
+  await handleListItems({ cf, action: 'list', opts: { 'account-id': 'a', id: 'l' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleListItems({ cf, action: 'delete', opts: { 'account-id': 'a', id: 'l', force: true }, body: { ids: ['i2'] }, outputJson: true, printer, toJsonOutput, fail });
+  await expect(handleListItems({ cf, action: 'delete', opts: { 'account-id': 'a', id: 'l' }, body: {}, outputJson: false, printer, toJsonOutput, fail })).rejects.toThrow('Missing --data');
+  expect(toJsonOutput).toHaveBeenCalledTimes(2);
+});
+
+test('handleZoneSettings covers API variants, dry-run, and text output', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const modern = { zones: { settings: { get: jest.fn().mockResolvedValue({ value: 'on' }), edit: jest.fn().mockResolvedValue({ value: 'off' }) } } };
+  await handleZoneSettings({ cf: modern, action: 'get', opts: { 'zone-id': 'z', setting: 'dev' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZoneSettings({ cf: modern, action: 'get', opts: { 'zone-id': 'z', setting: 'dev' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleZoneSettings({ cf: modern, action: 'set', opts: { 'zone-id': 'z', setting: 'dev', 'dry-run': true }, body: { value: 'on' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZoneSettings({ cf: modern, action: 'set', opts: { 'zone-id': 'z', setting: 'dev' }, body: { value: 'off' }, outputJson: false, printer, toJsonOutput, fail });
+  const legacyGet = function legacyGet(setting, options) { return Promise.resolve({ value: setting, zone: options.zone_id }); };
+  const legacy = { zones: { settings: { get: legacyGet, update: jest.fn().mockResolvedValue({ value: 'off' }) } } };
+  await handleZoneSettings({ cf: legacy, action: 'get', opts: { 'zone-id': 'z', setting: 'dev' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZoneSettings({ cf: legacy, action: 'set', opts: { 'zone-id': 'z', setting: 'dev' }, body: { value: 'off' }, outputJson: true, printer, toJsonOutput, fail });
+  expect(toJsonOutput).toHaveBeenCalled();
+});
+
+test('handleZones covers text mutation and dry-run branches', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const cf = { zones: {
+    get: jest.fn().mockResolvedValue({ id: 'z' }),
+    create: jest.fn().mockResolvedValue({ created: true }),
+    edit: jest.fn().mockResolvedValue({ updated: true }),
+    delete: jest.fn().mockResolvedValue({ deleted: true }),
+  } };
+  await handleZones({ cf, action: 'get', opts: { 'zone-id': 'z' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZones({ cf, action: 'create', opts: { 'dry-run': true }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZones({ cf, action: 'create', opts: {}, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZones({ cf, action: 'update', opts: { 'zone-id': 'z', 'dry-run': true }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZones({ cf, action: 'update', opts: { 'zone-id': 'z' }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleZones({ cf, action: 'delete', opts: { 'zone-id': 'z', force: true }, outputJson: false, printer, toJsonOutput, fail });
+  expect(printer.log).toHaveBeenCalled();
+});
+
+test('handleZones update supports JSON output', async () => {
+  const toJsonOutput = jest.fn();
+  const cf = { zones: { edit: jest.fn().mockResolvedValue({ updated: true }) } };
+  await handleZones({ cf, action: 'update', opts: { 'zone-id': 'z' }, body: { name: 'x' }, outputJson: true, printer: { log: jest.fn() }, toJsonOutput, fail: jest.fn() });
+  expect(toJsonOutput).toHaveBeenCalledWith({ updated: true });
+});
+
+test('handleDnsRecords covers raw-list and text mutation branches', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const cf = { dns: { records: {
+    list: jest.fn().mockResolvedValue([{ id: 'r', type: 'A', name: 'x', content: '1.2.3.4' }]),
+    get: jest.fn().mockResolvedValue({ id: 'r' }),
+    create: jest.fn().mockResolvedValue({ created: true }),
+    delete: jest.fn().mockResolvedValue({ deleted: true }),
+  } } };
+  await handleDnsRecords({ cf, action: 'list', opts: { 'zone-id': 'z' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleDnsRecords({ cf, action: 'get', opts: { 'zone-id': 'z', id: 'r' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleDnsRecords({ cf, action: 'create', opts: { 'zone-id': 'z' }, body: { type: 'A' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleDnsRecords({ cf, action: 'delete', opts: { 'zone-id': 'z', id: 'r', force: true }, outputJson: false, printer, toJsonOutput, fail });
+  expect(printer.log).toHaveBeenCalled();
+});
+
+test('handleDnsRecords covers JSON list/create/delete outputs', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const cf = { dns: { records: {
+    list: jest.fn().mockResolvedValue([]),
+    create: jest.fn().mockResolvedValue({ created: true }),
+    delete: jest.fn().mockResolvedValue({ deleted: true }),
+  } } };
+  await handleDnsRecords({ cf, action: 'list', opts: { 'zone-id': 'z' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleDnsRecords({ cf, action: 'create', opts: { 'zone-id': 'z' }, body: { type: 'A' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleDnsRecords({ cf, action: 'delete', opts: { 'zone-id': 'z', id: 'r', force: true }, outputJson: true, printer, toJsonOutput, fail });
+  expect(toJsonOutput).toHaveBeenCalledTimes(3);
+});
+
+test('handleRulesets covers account scope and text/dry-run branches', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const cf = { rulesets: {
+    list: jest.fn().mockResolvedValue({ listed: true }),
+    get: jest.fn().mockResolvedValue({ id: 'r' }),
+    create: jest.fn().mockResolvedValue({ created: true }),
+    update: jest.fn().mockResolvedValue({ updated: true }),
+  } };
+  await handleRulesets({ cf, action: 'list', opts: { 'account-id': 'a' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'get', opts: { 'account-id': 'a', id: 'r' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'create', opts: { 'account-id': 'a' }, body: { name: 'x' }, outputJson: true, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'create', opts: { 'account-id': 'a', 'dry-run': true }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'update', opts: { 'account-id': 'a', id: 'r', 'dry-run': true }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'update', opts: { 'account-id': 'a', id: 'r' }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  expect(printer.log).toHaveBeenCalled();
+  expect(toJsonOutput).toHaveBeenCalledWith({ created: true });
+});
+
+test('handleRulesets covers zone get text and real create', async () => {
+  const printer = { log: jest.fn() };
+  const toJsonOutput = jest.fn();
+  const fail = jest.fn(msg => { throw new Error(msg); });
+  const cf = { rulesets: {
+    get: jest.fn().mockResolvedValue({ id: 'r' }),
+    create: jest.fn().mockResolvedValue({ created: true }),
+  } };
+  await handleRulesets({ cf, action: 'get', opts: { 'zone-id': 'z', id: 'r' }, outputJson: false, printer, toJsonOutput, fail });
+  await handleRulesets({ cf, action: 'create', opts: { 'zone-id': 'z' }, body: { name: 'x' }, outputJson: false, printer, toJsonOutput, fail });
+  expect(printer.log).toHaveBeenCalled();
+});

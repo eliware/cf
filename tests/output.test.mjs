@@ -14,3 +14,11 @@ describe('output helpers', () => {
     expect(printer).toHaveBeenCalledWith('id:1');
   });
 });
+
+test('output helpers support default console printers', () => {
+  const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
+  toJsonOutput({ ok: true });
+  printTextList([{ id: 2 }], x => `id:${x.id}`);
+  expect(spy).toHaveBeenCalledTimes(2);
+  spy.mockRestore();
+});

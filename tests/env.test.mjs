@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -33,4 +34,18 @@ describe('env helpers', () => {
   test('requireEnv throws when missing', () => {
     expect(() => requireEnv('A_TEST_KEY')).toThrow('Missing A_TEST_KEY');
   });
+});
+
+test('env helpers handle missing files and required values', () => {
+  const missingFs = { existsSync: jest.fn(() => false) };
+  expect(loadEnvFile('/missing', {}, missingFs)).toBe(false);
+  expect(requireEnv('TOKEN', { TOKEN: 'ok' })).toBe('ok');
+  expect(() => requireEnv('TOKEN', {})).toThrow('Missing TOKEN');
+});
+
+test('loadEnvFile skips malformed dotenv entries', () => {
+  const env = {};
+  const fsImpl = { existsSync: () => true, readFileSync: () => 'MALFORMED\nGOOD=value\n' };
+  expect(loadEnvFile('/tmp/.env', env, fsImpl)).toBe(true);
+  expect(env).toEqual({ GOOD: 'value' });
 });

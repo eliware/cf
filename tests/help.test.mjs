@@ -21,3 +21,9 @@ describe('help output', () => {
     spy.mockRestore();
   });
 });
+
+test('prints unknown resource help', () => {
+  const printer = { log: jest.fn() };
+  printResourceHelp('unknown', printer);
+  expect(printer.log).toHaveBeenCalledWith('Unknown resource: unknown');
+});

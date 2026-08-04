@@ -6,3 +6,8 @@ node_modules/
 # AgentX
 .agentx_responseid
 
+coverage/
+.nyc_output/
+dist/
+.tmp/
+.DS_Store

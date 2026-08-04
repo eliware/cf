@@ -1,5 +1,5 @@
-export function printHelp() {
-  console.log(`cf_admin - Cloudflare admin utility
+export function printHelp(printer = console) {
+  printer.log(`cf_admin - Cloudflare admin utility
 
 Usage:
   cf_admin --help
@@ -42,7 +42,7 @@ Examples:
 `);
 }
 
-export function printResourceHelp(resource) {
+export function printResourceHelp(resource, printer = console) {
   const map = {
     zones: `zones
   list                 List zones
@@ -72,5 +72,5 @@ export function printResourceHelp(resource) {
   create               Add item to a list
   delete               Delete item from a list`,
   };
-  console.log(map[resource] || `Unknown resource: ${resource}`);
+  printer.log(map[resource] || `Unknown resource: ${resource}`);
 }

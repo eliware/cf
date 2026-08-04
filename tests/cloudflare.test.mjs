@@ -13,3 +13,7 @@ describe('cloudflare helper', () => {
     expect(() => createCloudflareClient({ env: {} })).toThrow('Missing CLOUDFLARE_EMAIL or CLOUDFLARE_API_KEY');
   });
 });
+
+test('createCloudflareClient handles omitted options safely', () => {
+  expect(() => createCloudflareClient()).toThrow('Missing CLOUDFLARE_EMAIL or CLOUDFLARE_API_KEY');
+});
