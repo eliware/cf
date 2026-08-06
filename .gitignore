@@ -11,3 +11,5 @@ coverage/
 dist/
 .tmp/
 .DS_Store
+
+.jest.result
