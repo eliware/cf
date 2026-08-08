@@ -62,5 +62,12 @@
   },
   "engines": {
     "node": ">=26"
-  }
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "LICENSE"
+  ]
 }

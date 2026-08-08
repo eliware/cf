@@ -8,7 +8,7 @@ describe('help output', () => {
     printHelp();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][0]).toContain('cf_admin - Cloudflare admin utility');
+    expect(spy.mock.calls[0][0]).toContain('cf-admin - Cloudflare admin utility');
     spy.mockRestore();
   });
 

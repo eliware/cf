@@ -49,6 +49,7 @@ Set credentials in the environment or a local `.env` file:
 CLOUDFLARE_EMAIL=you@example.com
 CLOUDFLARE_API_KEY=your_api_key
 CLOUDFLARE_ACCOUNT_ID=your_account_id
+CLOUDFLARE_LIST_ID=your_list_id
 ```
 
 Never commit `.env`, credentials, tokens, or generated state.
@@ -96,6 +97,10 @@ cf-admin dns-records delete --zone-id <zone_id> --id <record_id> --force
 - `list-items`
 
 Run `<resource> --help` for action-specific help.
+
+## Security
+
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. Account and list IDs are optional defaults; zone and account scope can also be supplied on commands. Never log or commit credentials.
 
 ## Development
 

@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-describe('cf_admin run()', () => {
+describe('cf-admin run()', () => {
   test('dispatches to injected handlers and loads env', async () => {
     const log = jest.fn();
     const error = jest.fn();

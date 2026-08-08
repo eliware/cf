@@ -1,12 +1,18 @@
 # Release Notes
 
+## 1.1.1 - 2026-08-08
+
+- Standardized CLI documentation and help on `cf-admin`.
+- Removed the legacy underscore executable alias.
+- Aligned configuration examples, package contents, and project documentation with Eliware conventions.
+- Verification: `npm test`, `npm run lint`, and `npm pack --dry-run`.
+
 ## Initial Version (1.1.0)
 
 ### Highlights
 
 - Refactored the CLI runtime for dependency injection and easier testing.
 - Added a standalone `cf-admin` executable.
-- Preserved the legacy `cf_admin` executable name as a compatibility symlink.
 - Added comprehensive Cloudflare administration handlers.
 
 ### Supported Resources
@@ -57,5 +63,4 @@
 
 - The package name is `@eliware/cf-admin`.
 - The primary command is now `cf-admin`.
-- Existing `cf_admin` command compatibility is retained through a symlink.
 - This release does not include the future GitOps, audit, dashboard, replay, or plugin features described in `dream_sprints.md`.
