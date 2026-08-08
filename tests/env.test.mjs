@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { fs } from '@eliware/common';
 import path from 'node:path';
 import os from 'os';
-import { loadEnvFile, loadProjectEnv, requireEnv } from '../src/env.mjs';
+import { loadEnvFile, loadProjectEnv, loadUserEnv, requireEnv } from '../src/env.mjs';
 
 describe('env helpers', () => {
 
@@ -22,6 +22,15 @@ describe('env helpers', () => {
     expect(process.env.B_TEST_KEY).toBe('from-env');
   });
 
+  test('loadUserEnv reads ~/.cf-admin', () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cloudflare-home-'));
+    fs.writeFileSync(path.join(tmp, '.cf-admin'), 'A_TEST_KEY=from-home\n');
+
+    loadUserEnv(tmp);
+
+    expect(process.env.A_TEST_KEY).toBe('from-home');
+  });
+
   test('loadProjectEnv reads .env from project root', () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cloudflare-project-'));
     fs.writeFileSync(path.join(tmp, '.env'), 'PROJECT_ONLY=present\n');
@@ -34,6 +43,10 @@ describe('env helpers', () => {
   test('requireEnv throws when missing', () => {
     expect(() => requireEnv('A_TEST_KEY')).toThrow('Missing A_TEST_KEY');
   });
+});
+
+test('loadUserEnv handles a missing home file', () => {
+  expect(loadUserEnv(undefined, {}, { existsSync: () => false })).toBe(false);
 });
 
 test('env helpers handle missing files and required values', () => {

@@ -1,4 +1,4 @@
-import { fs, resolvePath } from '@eliware/common';
+import { fs } from '@eliware/common';
 import { parseArgs } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
@@ -12,10 +12,6 @@ import { handleRulesets } from './handlers/rulesets.mjs';
 import { handleLists } from './handlers/lists.mjs';
 import { handleListItems } from './handlers/list-items.mjs';
 
-export function resolveProjectRoot(importMetaUrl) {
-  return resolvePath({ url: importMetaUrl }, '..');
-}
-
 export function loadBody(opts, fsImpl = fs) {
   if (opts.data) return JSON.parse(opts.data);
   if (opts.file) return JSON.parse(fsImpl.readFileSync(opts.file, 'utf8'));
@@ -26,7 +22,7 @@ export async function run({
   argv = process.argv.slice(2), env = process.env,
   cfFactory = createCloudflareClient, loadEnv = loadProjectEnv,
   printer = console, fsImpl = fs, handlers = {},
-  projectRoot = resolveProjectRoot(import.meta.url),
+  projectRoot = process.cwd(),
   exit = code => process.exit(code),
 } = {}) {
   const { args, opts } = parseArgs(argv);

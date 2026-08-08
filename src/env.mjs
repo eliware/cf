@@ -1,4 +1,5 @@
 import { fs, fileUrlToPath } from '@eliware/common';
+import os from 'node:os';
 
 export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
   if (!fsImpl.existsSync(filePath)) return false;
@@ -15,7 +16,12 @@ export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
   return true;
 }
 
-export function loadProjectEnv(projectRoot, env = process.env, fsImpl = fs) {
+export function loadUserEnv(homeDir = os.homedir(), env = process.env, fsImpl = fs) {
+  return loadEnvFile(`${homeDir}/.cf-admin`, env, fsImpl);
+}
+
+export function loadProjectEnv(projectRoot, env = process.env, fsImpl = fs, homeDir = os.homedir()) {
+  loadUserEnv(homeDir, env, fsImpl);
   const rootUrl = new URL(`file://${projectRoot.replaceAll('\\', '/')}/`);
   return loadEnvFile(fileUrlToPath(new URL('.env', rootUrl)), env, fsImpl);
 }

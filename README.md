@@ -45,7 +45,7 @@ cf-admin --version
 
 ## Configuration
 
-Set credentials in the environment or a local `.env` file:
+Set credentials in the environment, a `.env` file in the current directory, or `~/.cf-admin`:
 
 ```env
 CLOUDFLARE_EMAIL=you@example.com       # required secret; API email
@@ -53,7 +53,7 @@ CLOUDFLARE_API_KEY=your_api_key        # required secret; API key
 CLOUDFLARE_ACCOUNT_ID=your_account_id  # optional default for account resources
 ```
 
-`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. The account ID is an optional identifier, not a secret; command-line IDs take precedence where supported. Never commit `.env`, credentials, tokens, or generated state.
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. The account ID is an optional identifier, not a secret; command-line IDs take precedence where supported. The CLI loads `~/.cf-admin` first, then `.env` from the current directory; existing environment variables take precedence. Both files use dotenv syntax. Keep credentials private and never commit `.env`, `.cf-admin`, credentials, tokens, or generated state.
 
 ## Usage
 
@@ -101,7 +101,7 @@ Run `<resource> --help` for action-specific help.
 
 ## Security
 
-`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. The account ID is an optional default; zone and account scope can also be supplied on commands. Never log or commit credentials.
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. Credentials may be stored in `~/.cf-admin` or the current directory's `.env` file. The account ID is an optional default; zone and account scope can also be supplied on commands. Never log or commit credentials.
 
 ## Development
 
