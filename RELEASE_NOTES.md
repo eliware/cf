@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.1.2 - 2026-08-08
+
+- Added Eliware common runtime signal/error handling integration.
+- Updated Cloudflare client and package metadata/dependencies.
+- Standardized repository conventions, CI workflow dispatch, release documentation, and validation scripts.
+- Verification: `npm test`, `npm run lint`, `npm run test:gaps`, `npm run pack`, CLI help/version smoke tests, and production dependency audit.
+
 ## 1.1.1 - 2026-08-08
 
 - Standardized CLI documentation and help on `cf-admin`.

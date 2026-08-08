@@ -1,3 +1,4 @@
+import packageJson from '../package.json' with { type: 'json' };
 import { jest } from '@jest/globals';
 import { fs } from '@eliware/common';
 import path from 'node:path';
@@ -54,7 +55,7 @@ test('run prints version without loading configuration', async () => {
   const loadEnv = jest.fn();
   const cfFactory = jest.fn();
   await run({ argv: ['--version'], printer, loadEnv, cfFactory });
-  expect(printer.log).toHaveBeenCalledWith('1.1.1');
+  expect(printer.log).toHaveBeenCalledWith(packageJson.version);
   expect(loadEnv).not.toHaveBeenCalled();
   expect(cfFactory).not.toHaveBeenCalled();
 });

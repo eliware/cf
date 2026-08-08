@@ -1,73 +1,73 @@
 {
-  "name": "@eliware/cf-admin",
-  "version": "1.1.1",
-  "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, and list items.",
-  "type": "module",
-  "scripts": {
-    "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
-    "lint": "npx oxlint .",
-    "test:gaps": "npm test 2>&1 | grep '|' | grep -vF '|     100 |      100 |     100 |     100 |'",
-    "pack": "npm pack --dry-run"
-  },
-  "keywords": [
-    "cloudflare",
-    "cli",
-    "cloudflare-api",
-    "dns",
-    "waf",
-    "rulesets",
-    "zero-trust",
-    "security",
-    "devops",
-    "gitops",
-    "infrastructure-as-code",
-    "automation",
-    "typescript",
-    "javascript",
-    "nodejs"
-  ],
-  "author": "Eli Sterling <eli@eliware.org>",
-  "license": "ISC",
-  "dependencies": {
-    "@eliware/common": "^1.1.7",
-    "cloudflare": "^7.0.0"
-  },
-  "bin": {
-    "cf-admin": "bin/cf-admin.mjs"
-  },
-  "devDependencies": {
-    "jest": "^30.0.4",
-    "oxlint": "^1.73.0"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/?(*.)+(spec|test).mjs"
+    "name": "@eliware/cf-admin",
+    "version": "1.1.2",
+    "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, and list items.",
+    "type": "module",
+    "scripts": {
+        "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
+        "lint": "npx oxlint .",
+        "test:gaps": "npm test 2>&1 | grep '|' | grep -vF '|     100 |      100 |     100 |     100 |'",
+        "pack": "npm pack --dry-run"
+    },
+    "keywords": [
+        "cloudflare",
+        "cli",
+        "cloudflare-api",
+        "dns",
+        "waf",
+        "rulesets",
+        "zero-trust",
+        "security",
+        "devops",
+        "gitops",
+        "infrastructure-as-code",
+        "automation",
+        "typescript",
+        "javascript",
+        "nodejs"
     ],
-    "coveragePathIgnorePatterns": [
-      "/bin/"
+    "author": "Eli Sterling <eli@eliware.org>",
+    "license": "ISC",
+    "dependencies": {
+        "@eliware/common": "^1.1.7",
+        "cloudflare": "^7.0.0"
+    },
+    "bin": {
+        "cf-admin": "bin/cf-admin.mjs"
+    },
+    "devDependencies": {
+        "jest": "^30.0.4",
+        "oxlint": "^1.73.0"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "testMatch": [
+            "**/?(*.)+(spec|test).mjs"
+        ],
+        "coveragePathIgnorePatterns": [
+            "/bin/"
+        ]
+    },
+    "allowScripts": {
+        "unrs-resolver@1.12.2": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/eliware/cf-admin.git"
+    },
+    "homepage": "https://github.com/eliware/cf-admin",
+    "bugs": {
+        "url": "https://github.com/eliware/cf-admin/issues"
+    },
+    "engines": {
+        "node": ">=26"
+    },
+    "files": [
+        "bin",
+        "src",
+        "README.md",
+        "RELEASE_NOTES.md",
+        "LICENSE",
+        "docs"
     ]
-  },
-  "allowScripts": {
-    "unrs-resolver@1.12.2": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/eliware/cf-admin.git"
-  },
-  "homepage": "https://github.com/eliware/cf-admin",
-  "bugs": {
-    "url": "https://github.com/eliware/cf-admin/issues"
-  },
-  "engines": {
-    "node": ">=26"
-  },
-  "files": [
-    "bin",
-    "src",
-    "README.md",
-    "RELEASE_NOTES.md",
-    "LICENSE",
-    "docs"
-  ]
 }
