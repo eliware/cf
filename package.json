@@ -29,6 +29,7 @@
   "author": "Eli Sterling <eli@eliware.org>",
   "license": "ISC",
   "dependencies": {
+    "@eliware/common": "^1.1.7",
     "cloudflare": "^7.0.0"
   },
   "bin": {

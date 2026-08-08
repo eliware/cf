@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import { log } from '@eliware/common';
 import { toJsonOutput, printTextList } from '../src/output.mjs';
 
 describe('output helpers', () => {
@@ -16,7 +17,7 @@ describe('output helpers', () => {
 });
 
 test('output helpers support default console printers', () => {
-  const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
+  const spy = jest.spyOn(log, 'info').mockImplementation(() => {});
   toJsonOutput({ ok: true });
   printTextList([{ id: 2 }], x => `id:${x.id}`);
   expect(spy).toHaveBeenCalledTimes(2);

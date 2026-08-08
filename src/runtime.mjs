@@ -1,6 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { fs, resolvePath } from '@eliware/common';
 
 export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
   if (!fsImpl.existsSync(filePath)) return;
@@ -17,7 +15,5 @@ export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
 }
 
 export function projectRootFromMeta(importMetaUrl) {
-  const filename = fileURLToPath(importMetaUrl);
-  const dirname = path.dirname(filename);
-  return path.resolve(dirname, '..');
+  return resolvePath({ url: importMetaUrl }, '..');
 }

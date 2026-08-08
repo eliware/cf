@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { fs, fileUrlToPath } from '@eliware/common';
 
 export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
   if (!fsImpl.existsSync(filePath)) return false;
@@ -17,7 +16,8 @@ export function loadEnvFile(filePath, env = process.env, fsImpl = fs) {
 }
 
 export function loadProjectEnv(projectRoot, env = process.env, fsImpl = fs) {
-  return loadEnvFile(path.join(projectRoot, '.env'), env, fsImpl);
+  const rootUrl = new URL(`file://${projectRoot.replaceAll('\\', '/')}/`);
+  return loadEnvFile(fileUrlToPath(new URL('.env', rootUrl)), env, fsImpl);
 }
 
 export function requireEnv(name, env = process.env) {

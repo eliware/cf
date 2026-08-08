@@ -1,6 +1,4 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fs, resolvePath } from '@eliware/common';
 import { parseArgs } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
@@ -15,7 +13,7 @@ import { handleLists } from './handlers/lists.mjs';
 import { handleListItems } from './handlers/list-items.mjs';
 
 export function resolveProjectRoot(importMetaUrl) {
-  return path.resolve(path.dirname(fileURLToPath(importMetaUrl)), '..');
+  return resolvePath({ url: importMetaUrl }, '..');
 }
 
 export function loadBody(opts, fsImpl = fs) {
