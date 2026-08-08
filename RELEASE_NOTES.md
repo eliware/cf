@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.1.3 - 2026-08-08
+
+- Load credentials from `~/.cf-admin` and the current directory `.env`.
+- Preserve environment-variable precedence and add coverage for user configuration.
+- Update CLI documentation for global installations.
+- Verification: `npm test`, `npm run lint`, `npm run test:gaps`, `npm run pack`, and live zone-list smoke test.
+
 ## 1.1.2 - 2026-08-08
 
 - Added Eliware common runtime signal/error handling integration.

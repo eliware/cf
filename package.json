@@ -1,6 +1,6 @@
 {
     "name": "@eliware/cf-admin",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, and list items.",
     "type": "module",
     "scripts": {
