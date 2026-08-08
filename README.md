@@ -26,7 +26,6 @@ A dependency-injected Cloudflare administration CLI for scripting and inspecting
 ## Installation
 
 ```sh
-cd /opt
 git clone git@github.com:eliware/cf-admin.git
 cd cf-admin
 npm install

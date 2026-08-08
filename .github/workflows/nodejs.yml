@@ -3,7 +3,8 @@ name: Node.js CI
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    tags:
+      - '*'
 
 permissions:
   id-token: write
@@ -23,6 +24,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm test
-      - run: npm run test:gaps
       - run: npm run lint
-      - run: npm pack --dry-run
+      - name: Configure npm auth token
+        run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -11,7 +11,7 @@ export function getId(opts) {
 }
 
 export function requireValue(value, message, fail) {
-  if (!value) fail(message);
+  if (!value || (typeof value === 'string' && !value.trim())) fail(message);
   return value;
 }
 
