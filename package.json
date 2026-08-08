@@ -4,7 +4,7 @@
   "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, GitOps workflows, and infrastructure automation.",
   "type": "module",
   "scripts": {
-    "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --coverage --detectOpenHandles --silent",
+    "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
     "lint": "npx oxlint .",
     "test:gaps": "npm test 2>&1 | grep '|' | grep -vF '|     100 |      100 |     100 |     100 |'",
     "pack": "npm pack --dry-run"
@@ -41,9 +41,7 @@
   "jest": {
     "testEnvironment": "node",
     "testMatch": [
-      "**/?(*.)+(spec|test).[jt]s?(x)",
-      "**/?(*.)+(spec|test).mjs",
-      "**/?(*.)+(spec|test).cjs"
+      "**/?(*.)+(spec|test).mjs"
     ],
     "coveragePathIgnorePatterns": [
       "/bin/"

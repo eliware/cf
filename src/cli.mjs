@@ -5,6 +5,7 @@ import { parseArgs } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
 import { printHelp, printResourceHelp } from './help.mjs';
+import { VERSION } from './version.mjs';
 import { toJsonOutput } from './output.mjs';
 import { handleZones } from './handlers/zones.mjs';
 import { handleZoneSettings } from './handlers/zone-settings.mjs';
@@ -31,6 +32,7 @@ export async function run({
   exit = code => process.exit(code),
 } = {}) {
   const { args, opts } = parseArgs(argv);
+  if (opts.version) return printer.log(VERSION);
   if (opts.help || args.length === 0) return printHelp(printer);
   const resource = args[0];
   const action = args[1];

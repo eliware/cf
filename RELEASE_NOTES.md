@@ -5,6 +5,7 @@
 - Standardized CLI documentation and help on `cf-admin`.
 - Removed the legacy underscore executable alias.
 - Aligned configuration examples, package contents, and project documentation with Eliware conventions.
+- Added `cf-admin --version` output.
 - Verification: `npm test`, `npm run lint`, and `npm pack --dry-run`.
 
 ## Initial Version (1.1.0)

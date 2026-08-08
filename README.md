@@ -20,8 +20,8 @@ A dependency-injected Cloudflare administration CLI for scripting and inspecting
 
 - Node.js 26+ required
 - Cloudflare API credentials
-- Cloudflare account ID for account-scoped resources
-- Cloudflare zone ID for zone-scoped resources
+- Cloudflare account ID for account-scoped resources when not supplied on the command
+- Cloudflare zone ID for zone-scoped resources supplied on the command
 
 ## Installation
 
@@ -39,6 +39,7 @@ The global install provides:
 
 ```sh
 cf-admin --help
+cf-admin --version
 ```
 
 ## Configuration
@@ -46,13 +47,13 @@ cf-admin --help
 Set credentials in the environment or a local `.env` file:
 
 ```env
-CLOUDFLARE_EMAIL=you@example.com
-CLOUDFLARE_API_KEY=your_api_key
-CLOUDFLARE_ACCOUNT_ID=your_account_id
-CLOUDFLARE_LIST_ID=your_list_id
+CLOUDFLARE_EMAIL=you@example.com       # required secret; API email
+CLOUDFLARE_API_KEY=your_api_key        # required secret; API key
+CLOUDFLARE_ACCOUNT_ID=your_account_id  # optional default for account resources
+CLOUDFLARE_LIST_ID=your_list_id        # optional local default; reserved for list workflows
 ```
 
-Never commit `.env`, credentials, tokens, or generated state.
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. Account and list IDs are optional identifiers, not secrets; command-line IDs take precedence where supported. Never commit `.env`, credentials, tokens, or generated state.
 
 ## Usage
 

@@ -8,6 +8,7 @@ Usage:
 
 Global options:
   --help                 Show help
+  --version              Show version
   --json                 Output JSON
   --output <format>      json|text (default text)
   --force                Confirm destructive writes
