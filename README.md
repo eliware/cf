@@ -18,7 +18,7 @@ A dependency-injected Cloudflare administration CLI for scripting and inspecting
 
 ## Requirements
 
-- Node.js 18+ recommended
+- Node.js 26+ required
 - Cloudflare API credentials
 - Cloudflare account ID for account-scoped resources
 - Cloudflare zone ID for zone-scoped resources
