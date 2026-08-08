@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
-import fs from 'fs';
+import { fs } from '@eliware/common';
+import path from 'node:path';
 import os from 'os';
-import path from 'path';
 import { loadEnvFile, loadProjectEnv, requireEnv } from '../src/env.mjs';
 
 describe('env helpers', () => {

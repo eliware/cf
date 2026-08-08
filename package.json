@@ -1,7 +1,7 @@
 {
   "name": "@eliware/cf-admin",
   "version": "1.1.1",
-  "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, GitOps workflows, and infrastructure automation.",
+  "description": "Cloudflare administration CLI for zones, DNS, rulesets, settings, lists, and list items.",
   "type": "module",
   "scripts": {
     "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
@@ -67,6 +67,7 @@
     "src",
     "README.md",
     "RELEASE_NOTES.md",
-    "LICENSE"
+    "LICENSE",
+    "docs"
   ]
 }

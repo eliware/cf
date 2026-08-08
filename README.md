@@ -101,20 +101,22 @@ Run `<resource> --help` for action-specific help.
 
 ## Security
 
-`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. Account and list IDs are optional defaults; zone and account scope can also be supplied on commands. Never log or commit credentials.
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. The account ID is an optional default; zone and account scope can also be supplied on commands. Never log or commit credentials.
 
 ## Development
 
 ```sh
 npm test
 npm run lint
+npm run test:gaps
+npm run pack
 ```
 
 The test suite uses injected Cloudflare clients, filesystem adapters, environment loaders, printers, handlers, and process exits. Current source coverage is 100%.
 
 ## Project Structure
 
-- `bin/` - CLI entry point and compatibility link
+- `bin/` - CLI entry point
 - `src/cli.mjs` - dependency-injected command runtime
 - `src/handlers/` - resource handlers
 - `src/` - argument, environment, API, help, and output utilities
