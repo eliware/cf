@@ -31,6 +31,8 @@ Run from the repository root:
 ```sh
 npm test
 npm run lint
+npm run test:gaps
+npm run pack
 ```
 
 Tests should preserve 100% source coverage where practical.

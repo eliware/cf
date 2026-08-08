@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { handleZones } from '../src/handlers/zones.mjs';
-import { handleZoneSettings } from '../src/handlers/zone-settings.mjs';
-import { handleDnsRecords } from '../src/handlers/dns-records.mjs';
-import { handleRulesets } from '../src/handlers/rulesets.mjs';
-import { handleLists } from '../src/handlers/lists.mjs';
-import { handleListItems } from '../src/handlers/list-items.mjs';
+import { handleZones } from '../../src/handlers/zones.mjs';
+import { handleZoneSettings } from '../../src/handlers/zone-settings.mjs';
+import { handleDnsRecords } from '../../src/handlers/dns-records.mjs';
+import { handleRulesets } from '../../src/handlers/rulesets.mjs';
+import { handleLists } from '../../src/handlers/lists.mjs';
+import { handleListItems } from '../../src/handlers/list-items.mjs';
 
 describe('Cloudflare handlers', () => {
   let fail;

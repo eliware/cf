@@ -32,6 +32,8 @@ cd cf-admin
 npm install
 npm test
 npm run lint
+npm run test:gaps
+npm run pack
 npm install -g .
 ```
 
@@ -50,10 +52,9 @@ Set credentials in the environment or a local `.env` file:
 CLOUDFLARE_EMAIL=you@example.com       # required secret; API email
 CLOUDFLARE_API_KEY=your_api_key        # required secret; API key
 CLOUDFLARE_ACCOUNT_ID=your_account_id  # optional default for account resources
-CLOUDFLARE_LIST_ID=your_list_id        # optional local default; reserved for list workflows
 ```
 
-`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. Account and list IDs are optional identifiers, not secrets; command-line IDs take precedence where supported. Never commit `.env`, credentials, tokens, or generated state.
+`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. The account ID is an optional identifier, not a secret; command-line IDs take precedence where supported. Never commit `.env`, credentials, tokens, or generated state.
 
 ## Usage
 
