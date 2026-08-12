@@ -255,7 +255,7 @@ test("OAuth success page confirms the account without exposing the token", async
   );
   const promise = loginOAuth({
     clientId: "client",
-    scopes: ["zone.read", "dns.read"],
+    scopes: ["user-details.read", "zone.read", "dns.read"],
     ports: [0],
     open: jest.fn(),
     print: (value) => printed.push(value),
@@ -284,7 +284,7 @@ test("OAuth success page confirms the account without exposing the token", async
   );
   await expect(promise).resolves.toMatchObject({
     account: { name: `Acme & <Co> "'` },
-    scopes: ["zone.read", "dns.read"],
+    scopes: ["user-details.read", "zone.read", "dns.read"],
   });
 });
 

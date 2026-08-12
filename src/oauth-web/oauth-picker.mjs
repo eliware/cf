@@ -1,6 +1,7 @@
 (() => {
-  const { categories, modules } = window.CF_SCOPE_MODEL;
-  const selected = new Set();
+  const { categories, modules, requiredScopes = [] } = window.CF_SCOPE_MODEL;
+  const required = new Set(requiredScopes);
+  const selected = new Set(requiredScopes);
   const enabledModules = new Set();
   const boxes = [];
   const owners = new Map();
@@ -19,6 +20,7 @@
   const render = () => {
     boxes.forEach((box) => {
       box.checked = selected.has(box.value);
+      box.disabled = required.has(box.value);
     });
     document.querySelector("#scope-count").textContent = selected.size;
     document.querySelectorAll(".login").forEach((button) => {
@@ -62,7 +64,7 @@
     enabledModules.delete(id);
     module.scopes.forEach((scope) => {
       if (!(owners.get(scope) || []).some((owner) => enabledModules.has(owner)))
-        selected.delete(scope);
+        if (!required.has(scope)) selected.delete(scope);
     });
   };
   const moduleTier = (tier, enable) =>
@@ -135,7 +137,9 @@
   document.querySelectorAll("[data-category-disable]").forEach((button) =>
     button.addEventListener("click", () => {
       categories[button.dataset.categoryDisable].forEach((feature) =>
-        feature.scopes.forEach((scope) => selected.delete(scope.scope)),
+        feature.scopes.forEach((scope) => {
+          if (!required.has(scope.scope)) selected.delete(scope.scope);
+        }),
       );
       render();
     }),
@@ -146,6 +150,7 @@
   });
   document.querySelector("[data-all-disable]").addEventListener("click", () => {
     selected.clear();
+    required.forEach((scope) => selected.add(scope));
     enabledModules.clear();
     render();
   });

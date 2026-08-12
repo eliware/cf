@@ -49,6 +49,10 @@
           <div id="module-groups"></div>
         </details>
       </section>
+      <p class="required-scopes">
+        <strong>Required:</strong> identity access and zone discovery are always
+        enabled so cf can confirm your account and provide basic commands.
+      </p>
       <form method="post" action="/oauth/start" id="scope-form">
         <button class="login" type="submit" disabled>
           Log in with Cloudflare
@@ -87,6 +91,42 @@
         </p>
       </form>
     </main>
+    <section class="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently asked questions</h2>
+      <details>
+        <summary>What are scopes?</summary>
+        <p>
+          Scopes are permissions granted to cf by Cloudflare. Each scope
+          controls a capability, such as reading zones or changing DNS records.
+          Choose only the permissions you expect to use.
+        </p>
+      </details>
+      <details>
+        <summary>What do the modules do?</summary>
+        <p>
+          Modules group the scopes used by built-in cf commands. Enabling a
+          module selects its required permissions; shared permissions stay
+          selected while another enabled module still needs them.
+        </p>
+      </details>
+      <details>
+        <summary>How do I use custom scopes with cf api?</summary>
+        <p>
+          Expand the full scope list and select the permissions for the
+          Cloudflare endpoints you plan to call with <code>cf api</code>. The
+          raw API command can reach endpoints beyond the built-in modules, so
+          its required scopes depend on the endpoint and HTTP method you use.
+        </p>
+      </details>
+      <details>
+        <summary>Can I add permissions later?</summary>
+        <p>
+          Yes. Run <code>cf auth login</code> again, select the additional
+          permissions, and authorize the updated profile. Existing credentials
+          are replaced with the new authorization.
+        </p>
+      </details>
+    </section>
     <footer>
       <p>© __COPYRIGHT_YEAR__ Eliware · cf v__APP_VERSION__</p>
       <nav aria-label="Site information">

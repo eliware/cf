@@ -53,6 +53,7 @@ export const DEFAULT_OAUTH_SCOPES = [
   "access.read",
   "access.write",
 ];
+export const REQUIRED_OAUTH_SCOPES = ["user-details.read", "zone.read"];
 export const DEFAULT_OAUTH_CLIENT_ID = "f4fb39624f6674b6fb50d5a793a23389";
 const AUTH_URL = "https://dash.cloudflare.com/oauth2/auth";
 const TOKEN_URL = "https://dash.cloudflare.com/oauth2/token";
@@ -208,6 +209,7 @@ const pickerHtml = () =>
       JSON.stringify({
         categories: SCOPE_CATALOG_DATA,
         modules: MODULE_CATALOG,
+        requiredScopes: REQUIRED_OAUTH_SCOPES,
       }).replace(/</g, "\\u003c"),
     )
     .replaceAll(
@@ -316,7 +318,7 @@ export async function loginOAuth({
     }).toString();
     return authorization;
   };
-  let selectedScopes = [...scopes];
+  let selectedScopes = [...new Set([...REQUIRED_OAUTH_SCOPES, ...scopes])];
   print(
     `Open this URL to ${scopePicker ? "set up cf" : "authorize cf"}: ${scopePicker ? `http://${redirectHost}:${port}/` : makeAuthorization(selectedScopes)}`,
   );
@@ -405,7 +407,12 @@ export async function loginOAuth({
           const requested = form
             .getAll("scope")
             .filter((scope) => ALLOWED_OAUTH_SCOPES.has(scope));
-          selectedScopes = [...new Set(requested.length ? requested : scopes)];
+          selectedScopes = [
+            ...new Set([
+              ...REQUIRED_OAUTH_SCOPES,
+              ...(requested.length ? requested : scopes),
+            ]),
+          ];
           response.writeHead(302, {
             location: makeAuthorization(selectedScopes).toString(),
           });
