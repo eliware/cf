@@ -151,3 +151,13 @@ test('CLI dispatches built-in load-balancer and tunnel handlers', async () => {
   await mod.run({ ...common, argv: ['tunnel', 'list', '--account-id', 'a1'] });
   expect(printer.log).toHaveBeenCalled();
 });
+
+test('CLI dispatches account platform handlers', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 12}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const cfFactory = jest.fn(() => ({ get: jest.fn().mockResolvedValue({ ok: true }) }));
+  for (const resource of ['workers', 'pages', 'r2', 'd1', 'queues', 'stream', 'images', 'ai', 'access']) {
+    await mod.run({ argv: [resource, 'list', '--account-id', 'a1'], printer, loadEnv: jest.fn(), cfFactory, env: {}, exit: jest.fn() });
+  }
+  expect(printer.log).toHaveBeenCalled();
+});

@@ -94,6 +94,9 @@ cf inventory export --account-id <account_id> --json
 cf origin-ca list --json
 cf load-balancer list --zone-id <zone_id> --json
 cf tunnel list --account-id <account_id> --json
+cf workers list --account-id <account_id> --json
+cf pages list --account-id <account_id> --json
+cf r2 list --account-id <account_id> --json
 ```
 
 Use JSON output for automation:

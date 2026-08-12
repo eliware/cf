@@ -61,14 +61,14 @@
 
 ## Platform resources
 
-- [ ] Add Workers commands.
-- [ ] Add Pages commands.
-- [ ] Add R2 commands.
-- [ ] Add D1 commands.
-- [ ] Add Queues and Durable Objects commands.
-- [ ] Add Stream and Images commands.
-- [ ] Add AI and Vectorize commands.
-- [ ] Add Access and Zero Trust commands.
+- [x] Add Workers commands.
+- [x] Add Pages commands.
+- [x] Add R2 commands.
+- [x] Add D1 commands.
+- [x] Add Queues and Durable Objects commands.
+- [x] Add Stream and Images commands.
+- [x] Add AI and Vectorize commands.
+- [x] Add Access and Zero Trust commands.
 
 ## Extensions and polish
 

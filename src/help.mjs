@@ -45,6 +45,15 @@ Resources:
   origin-ca              Manage Origin CA certificates
   load-balancer           Manage zone Load Balancers
   tunnel                  Manage account tunnels
+  workers                 Manage Workers resources
+  pages                   Manage Pages projects
+  r2                      Manage R2 buckets
+  d1                      Manage D1 databases
+  queues                  Manage Queues
+  stream                  Manage Stream resources
+  images                  Manage Images
+  ai                      Manage AI resources
+  access                  Manage Access applications
 
 Examples:
   cf zones list
