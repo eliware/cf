@@ -37,14 +37,6 @@ import {
   suggestCommand,
 } from "./suggestions.mjs";
 
-const aliases = {
-  zone: "zones",
-  setting: "zone-settings",
-  dns: "dns-records",
-  rules: "rulesets",
-  list: "lists",
-  "list-item": "list-items",
-};
 const defaultHandlers = {
   loadBalancer: makeSimpleResource({
     name: "load-balancer",
@@ -124,7 +116,7 @@ export async function run({
   let { args, opts } = parseArgs(argv);
   if (opts.version) return printer.log(VERSION);
   if (args.length === 0) return printHelp(printer);
-  let resource = aliases[args[0]] || args[0];
+  let resource = args[0];
   let action = args[1];
   if (resource === "alias") {
     const stored = readAliases(homeDir, fsImpl);
@@ -182,7 +174,7 @@ export async function run({
     );
     args = expanded.args;
     opts = { ...expanded.opts, ...opts };
-    resource = aliases[args[0]] || args[0];
+    resource = args[0];
     action = args[1];
   }
   const extensionManifest = discoverExtensions(homeDir, fsImpl).find(

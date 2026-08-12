@@ -1,4 +1,4 @@
-export function printLegacyHelp(printer = console) {
+export function printDetailedHelp(printer = console) {
   printer.log(`cf - Cloudflare admin utility
 
 Usage:
@@ -31,8 +31,8 @@ Global options:
   --data <json>          JSON body inline
   --method <method>      API method for cf api (default GET)
 
-Compatibility: singular resources (zone, dns, setting, rules, list)
-are preferred; plural resource names remain supported aliases.
+Use the resource names shown above directly; define personal shortcuts with
+'cf alias set' when needed.
 
 Resources:
   zones                  List, inspect, create, edit, delete zones
@@ -74,7 +74,7 @@ Examples:
   cf rulesets update --zone-id <zone_id> --id <ruleset_id> --file ruleset.json
   cf lists list --account-id <account_id>
   cf list-items list --account-id <account_id> --id <list_id>
-  cf zone list
+  cf zones list
   cf api /zones --json
   cf api zones/<zone_id>/dns_records --json
   cf auth status
@@ -99,11 +99,11 @@ USAGE
 
 CORE COMMANDS
   auth:          Authenticate and manage Cloudflare profiles
-  zone:          Manage zones
-  dns:           Manage DNS records
-  setting:       Manage zone settings
-  rules:         Manage rulesets
-  list:          Manage account lists and list items
+  zones:         Manage zones
+  dns-records:   Manage DNS records
+  zone-settings: Manage zone settings
+  rulesets:      Manage rulesets
+  lists:         Manage account lists
   ssl:           Inspect and configure SSL/TLS
   api:           Make an authenticated Cloudflare API request
 
@@ -151,20 +151,21 @@ FLAGS
   --data         Use an inline JSON request body
 
 EXAMPLES
-  $ cf zone list
-  $ cf dns list --zone-id <zone_id>
+  $ cf zones list
+  $ cf dns-records list --zone-id <zone_id>
   $ cf api /zones --json
   $ cf auth status
   $ cf extension list
 
 LEARN MORE
   Use 'cf <command> <subcommand> --help' for more information.
-  Singular commands are preferred; plural resource names remain compatible aliases.`);
+  Use the resource names shown above directly; define personal shortcuts with
+  'cf alias set' when needed.`);
 }
 
 export function printResourceHelp(resource, printer = console) {
   const map = {
-    zones: `zones (alias: zone)
+    zones: `zones
   list                 List zones
   get                  Get zone details
   audit                Audit zone metadata, SSL, and DNS
@@ -172,10 +173,10 @@ export function printResourceHelp(resource, printer = console) {
   create               Create zone
   update               Edit zone
   delete               Delete zone`,
-    'zone-settings': `zone-settings (alias: setting)
+    "zone-settings": `zone-settings
   get                  Get one zone setting
   set                  Update one zone setting`,
-    'dns-records': `dns-records (alias: dns)
+    "dns-records": `dns-records
   list                 List DNS records
   get                  Get DNS record
   create               Create DNS record
@@ -183,15 +184,15 @@ export function printResourceHelp(resource, printer = console) {
   delete               Delete DNS record
   diff                 Compare DNS records with desired JSON
   apply                Apply a DNS diff (requires --force)`,
-    rulesets: `rulesets (alias: rules)
+    rulesets: `rulesets
   list                 List rulesets
   get                  Get ruleset
   create               Create ruleset
   update               Update ruleset`,
-    lists: `lists (alias: list)
+    lists: `lists
   list                 List lists
   get                  Get list`,
-    'list-items': `list-items (alias: list-item)
+    "list-items": `list-items
   list                 List items in a list
   create               Add item to a list
   delete               Delete item from a list`,
@@ -200,7 +201,7 @@ export function printResourceHelp(resource, printer = console) {
 
   Options: --method GET|POST|PUT|PATCH|DELETE, --data, --file,
   --json, --dry-run, and --force for DELETE`,
-  auth: `auth
+    auth: `auth
   status               Verify the active Cloudflare identity
   verify               Verify the active API token
   list                 Show configured credential contexts
@@ -208,7 +209,7 @@ export function printResourceHelp(resource, printer = console) {
   switch               Activate a saved profile
   logout               Remove a saved profile
   verify               Verify the active API token`,
-  ssl: `ssl
+    ssl: `ssl
   get                  Read a zone SSL/TLS setting
   set                  Update a zone SSL/TLS setting
   certificates         List certificate packs
@@ -224,25 +225,25 @@ export function printResourceHelp(resource, printer = console) {
   list                 List account audit logs`,
     inventory: `inventory
   export               Export zones, DNS records, and SSL settings`,
-    'origin-ca': `origin-ca
+    "origin-ca": `origin-ca
   list                 List Origin CA certificates
   create               Create an Origin CA certificate
   revoke               Revoke a certificate (requires --force)`,
-    'load-balancer': `load-balancer
+    "load-balancer": `load-balancer
   list/get/create/update/delete  Manage zone Load Balancers`,
     tunnel: `tunnel
   list/get/create/update/delete  Manage account tunnels`,
-  extension: `extension
+    extension: `extension
   list                 List installed extensions
   info                 Show installed extension metadata
   install              Install from a local extension directory
   upgrade              Replace an installed extension from a local directory
   remove               Remove an extension (requires --force)`,
-  alias: `alias
+    alias: `alias
   list                 List saved command aliases
   set <name> <command> Save a command alias
   delete <name>        Delete a command alias`,
-  config: `config
+    config: `config
   list                 List saved configuration
   get <name>           Read a configuration value
   set <name> <value>   Save a configuration value
@@ -252,7 +253,7 @@ export function printResourceHelp(resource, printer = console) {
 }
 
 const commandHelp = {
-  'auth login': `Authenticate with Cloudflare.
+  "auth login": `Authenticate with Cloudflare.
 
 USAGE
   cf auth login [flags]
@@ -279,7 +280,7 @@ EXAMPLES
   $ cf auth login --profile work
   $ printf '%s' "$CLOUDFLARE_API_TOKEN" | cf auth login --token-stdin
   $ cf auth login --oauth --profile work`,
-  'auth status': `Show the active Cloudflare identity.
+  "auth status": `Show the active Cloudflare identity.
 
 USAGE
   cf auth status [flags]
@@ -287,36 +288,36 @@ USAGE
 EXAMPLES
   $ cf auth status
   $ cf auth status --json`,
-  'auth switch': `Activate a saved Cloudflare profile.
+  "auth switch": `Activate a saved Cloudflare profile.
 
 USAGE
   cf auth switch --profile <name>
 
 EXAMPLES
   $ cf auth switch --profile work`,
-  'auth logout': `Remove a saved Cloudflare profile.
+  "auth logout": `Remove a saved Cloudflare profile.
 
 USAGE
   cf auth logout [--profile <name>]
 
 EXAMPLES
   $ cf auth logout --profile work`,
-  'zones list': `List zones available to the active profile.
+  "zones list": `List zones available to the active profile.
 
 USAGE
-  cf zone list [flags]
+  cf zones list [flags]
 
 FLAGS
   --paginate              Fetch all supported pages
   --json                  Emit machine-readable JSON
 
 EXAMPLES
-  $ cf zone list
-  $ cf zone list --json`,
-  'dns-records list': `List DNS records in a zone.
+  $ cf zones list
+  $ cf zones list --json`,
+  "dns-records list": `List DNS records in a zone.
 
 USAGE
-  cf dns list --zone-id <zone_id> [flags]
+  cf dns-records list --zone-id <zone_id> [flags]
 
 FLAGS
   --zone-id <id>          Zone to inspect
@@ -324,15 +325,15 @@ FLAGS
   --json                  Emit machine-readable JSON
 
 EXAMPLES
-  $ cf dns list --zone-id <zone_id>`,
-  'dns-records create': `Create a DNS record.
+  $ cf dns-records list --zone-id <zone_id>`,
+  "dns-records create": `Create a DNS record.
 
 USAGE
   cf dns create --zone-id <zone_id> (--data <json> | --file <path>) [flags]
 
 EXAMPLES
   $ cf dns create --zone-id <zone_id> --data '{"type":"A","name":"www","content":"1.2.3.4"}'`,
-  'dns-records delete': `Delete a DNS record.
+  "dns-records delete": `Delete a DNS record.
 
 USAGE
   cf dns delete --zone-id <zone_id> --id <record_id> --force
@@ -354,7 +355,7 @@ FLAGS
 EXAMPLES
   $ cf api /zones --json
   $ cf api zones/<zone_id>/dns_records --method GET`,
-  'cache purge': `Purge a zone's cache.
+  "cache purge": `Purge a zone's cache.
 
 USAGE
   cf cache purge --zone-id <zone_id> --force [flags]
@@ -363,50 +364,53 @@ The --force flag is required because this operation cannot be undone.
 
 EXAMPLES
   $ cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force`,
-  'ssl set': `Update a zone SSL/TLS setting.
+  "ssl set": `Update a zone SSL/TLS setting.
 
 USAGE
   cf ssl set --zone-id <zone_id> --setting <name> --data <json> [flags]
 
 EXAMPLES
   $ cf ssl set --zone-id <zone_id> --setting mode --data '{"value":"strict"}'`,
-  'origin-ca revoke': `Revoke an Origin CA certificate.
+  "origin-ca revoke": `Revoke an Origin CA certificate.
 
 USAGE
   cf origin-ca revoke --id <certificate_id> --force
 
 The --force flag is required for destructive operations.`,
-  'extension remove': `Remove an installed extension.
+  "extension remove": `Remove an installed extension.
 
 USAGE
   cf extension remove <name> --force
 
 The --force flag is required for destructive operations.`,
-  'alias set': `Save a command alias.
+  "alias set": `Save a command alias.
 
 USAGE
   cf alias set <name> <command...>
 
 EXAMPLES
-  $ cf alias set zones 'zone list'`,
-  'alias delete': `Delete a saved command alias.
+  $ cf alias set work 'zones list'`,
+  "alias delete": `Delete a saved command alias.
 
 USAGE
   cf alias delete <name>
 
 EXAMPLES
   $ cf alias delete zones`,
-  'config set': `Save a local cf configuration value.
+  "config set": `Save a local cf configuration value.
 
 USAGE
   cf config set <name> <value>`,
-  'config unset': `Remove a local cf configuration value.
+  "config unset": `Remove a local cf configuration value.
 
 USAGE
   cf config unset <name>`,
 };
 
 export function printCommandHelp(resource, action, printer = console) {
-  const key = `${resource} ${action || ''}`.trim();
-  printer.log(commandHelp[key] || `${resource} ${action || ''}\n\nUSAGE\n  cf ${resource} ${action || '<subcommand>'} [flags]\n\nUse 'cf ${resource} --help' for available subcommands.`);
+  const key = `${resource} ${action || ""}`.trim();
+  printer.log(
+    commandHelp[key] ||
+      `${resource} ${action || ""}\n\nUSAGE\n  cf ${resource} ${action || "<subcommand>"} [flags]\n\nUse 'cf ${resource} --help' for available subcommands.`,
+  );
 }

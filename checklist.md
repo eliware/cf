@@ -79,7 +79,7 @@
 - [ ] Add VyOS and certificate deployment extension package(s) when those integrations are requested.
 - [x] Add Bash, Zsh, and Fish completion.
 - [x] Add man pages.
-- [x] Add consistent migration notices for compatibility aliases.
+- [x] Use explicit resource names consistently in help and documentation.
 - [x] Add end-to-end CLI tests.
 - [x] Update README with a `gh`-to-`cf` orientation guide.
 

@@ -217,11 +217,11 @@ test("loadBody returns null when no input is provided", async () => {
   expect(loadBody({})).toBeNull();
 });
 
-test("CLI normalizes singular aliases before dispatch", async () => {
+test("CLI dispatches canonical resource names", async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 8}`);
   const handler = jest.fn();
   await mod.run({
-    argv: ["zone", "list"],
+    argv: ["zones", "list"],
     printer: { log: jest.fn(), error: jest.fn() },
     loadEnv: jest.fn(),
     cfFactory: jest.fn(() => ({})),
@@ -389,16 +389,16 @@ test("CLI prints dashboard links before dispatch", async () => {
   };
   await mod.run({
     ...common,
-    argv: ["zone", "get", "--zone-id", "z1", "--web"],
+    argv: ["zones", "get", "--zone-id", "z1", "--web"],
   });
   expect(printer.log).toHaveBeenCalledWith(
     "https://dash.cloudflare.com/zones/z1",
   );
   await mod.run({
     ...common,
-    argv: ["zone", "get", "--account-id", "a1", "--web"],
+    argv: ["zones", "get", "--account-id", "a1", "--web"],
   });
-  await mod.run({ ...common, argv: ["zone", "get", "--web"] });
+  await mod.run({ ...common, argv: ["zones", "get", "--web"] });
 });
 
 test("CLI renders templates through injected handlers", async () => {

@@ -44,14 +44,14 @@ Implement `cf api <path>` with method selection, JSON input, query parameters, p
 
 ### 5. Migrate current functionality
 
-Make familiar commands primary while retaining compatibility aliases temporarily:
+Use explicit resource names consistently across the CLI:
 
 ```text
-zones        -> zone
-dns-records  -> dns
-zone-settings -> setting
-rulesets     -> rules
-lists        -> list
+zones
+dns-records
+zone-settings
+rulesets
+lists
 ```
 
 ### 6. Complete core Cloudflare operations

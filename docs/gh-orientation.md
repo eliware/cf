@@ -9,19 +9,19 @@ cf <resource> <action> [flags]
 
 Common translations:
 
-| GitHub CLI habit | Cloudflare CLI equivalent |
-| --- | --- |
-| `gh repo list` | `cf zone list` |
-| `gh api <endpoint>` | `cf api <endpoint>` |
-| `gh auth status` | `cf auth status` |
-| `gh auth login` | `cf auth login --profile <name>` (defaults to OAuth) |
-| `gh auth switch` | `cf auth switch --profile <name>` |
-| `gh auth logout` | `cf auth logout --profile <name>` |
-| `--json` / field filtering | `--json --jq '.result[].name'` |
-| preview a mutation | `--dry-run` |
+| GitHub CLI habit           | Cloudflare CLI equivalent                            |
+| -------------------------- | ---------------------------------------------------- |
+| `gh repo list`             | `cf zones list`                                      |
+| `gh api <endpoint>`        | `cf api <endpoint>`                                  |
+| `gh auth status`           | `cf auth status`                                     |
+| `gh auth login`            | `cf auth login --profile <name>` (defaults to OAuth) |
+| `gh auth switch`           | `cf auth switch --profile <name>`                    |
+| `gh auth logout`           | `cf auth logout --profile <name>`                    |
+| `--json` / field filtering | `--json --jq '.result[].name'`                       |
+| preview a mutation         | `--dry-run`                                          |
 
-Cloudflare-specific resources use singular names (`zone`, `dns`, `setting`,
-`rules`, and `list`). The original plural names remain compatibility aliases.
+Cloudflare resources use explicit names such as `zones`, `dns-records`,
+`zone-settings`, `rulesets`, and `lists`. Use `cf alias` for personal shortcuts.
 The universal `cf api` command accepts any relative Cloudflare API path, so a
 dedicated resource command is never required before an endpoint can be used.
 
@@ -37,8 +37,8 @@ or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. Like
 `XDG_CONFIG_HOME/cf` is used when `XDG_CONFIG_HOME` is set. When the optional
 OS keychain adapter is available, `cf auth login` stores secrets in the native
 credential store and leaves only profile metadata in `profiles.json`; otherwise
-it safely falls back to the 0600 file. API tokens are preferred; the
-email/API-key pair remains supported for compatibility.
+it safely falls back to the 0600 file. Interactive login uses OAuth; API tokens
+are supported for headless automation.
 
 Interactive login uses Cloudflare Authorization Code + PKCE OAuth. Register
 these localhost callback URLs on the OAuth client so the CLI can fall back when
