@@ -1,0 +1,90 @@
+# `cf` CLI Checklist
+
+## Foundation
+
+- [ ] Define and document command grammar and resource naming.
+- [ ] Define standard verbs, flags, exit codes, JSON schemas, and pagination behavior.
+- [ ] Add shared help conventions and examples.
+
+## Authentication and context
+
+- [ ] Implement `cf auth login`.
+- [ ] Implement `cf auth status`.
+- [ ] Implement `cf auth list` and `cf auth switch`.
+- [ ] Implement `cf auth logout`.
+- [ ] Implement token verification and permission inspection.
+- [ ] Support multiple profiles and Cloudflare accounts.
+- [ ] Support account and zone defaults.
+- [ ] Preserve environment-variable and CI authentication.
+- [ ] Store credentials securely without logging or exposing tokens.
+
+## Output and API access
+
+- [ ] Standardize human-readable tables.
+- [ ] Add stable `--json` output.
+- [ ] Add `--jq` filtering.
+- [ ] Add template output if useful.
+- [ ] Add `--web` dashboard links.
+- [ ] Handle pagination consistently.
+- [ ] Add quiet and verbose modes.
+- [ ] Implement `cf api` with GET/POST/PATCH/DELETE support.
+- [ ] Support JSON files and inline request bodies.
+- [ ] Add dry-run and mutation confirmation to API calls.
+- [ ] Add rate-limit backoff and credential redaction.
+
+## Core resources
+
+- [ ] Migrate zones to `cf zone`.
+- [ ] Migrate DNS to `cf dns`.
+- [ ] Migrate zone settings to `cf setting`.
+- [ ] Migrate rulesets to `cf rules`.
+- [ ] Migrate lists to `cf list`.
+- [ ] Add SSL/TLS inspection and configuration.
+- [ ] Add Origin CA certificate management.
+- [ ] Add cache purge commands.
+- [ ] Add health-check commands.
+- [ ] Add Load Balancer commands.
+- [ ] Add tunnel commands.
+- [ ] Add audit-log commands.
+
+## Workflows and safety
+
+- [ ] Add zone configuration audits.
+- [ ] Add security baseline checks.
+- [ ] Add DNS diff and apply workflows.
+- [ ] Add TLS certificate coverage checks.
+- [ ] Add inventory export.
+- [ ] Make workflows plan-first by default.
+- [ ] Require explicit confirmation for destructive actions.
+- [ ] Test success, failure, validation, dry-run, and API error paths.
+
+## Platform resources
+
+- [ ] Add Workers commands.
+- [ ] Add Pages commands.
+- [ ] Add R2 commands.
+- [ ] Add D1 commands.
+- [ ] Add Queues and Durable Objects commands.
+- [ ] Add Stream and Images commands.
+- [ ] Add AI and Vectorize commands.
+- [ ] Add Access and Zero Trust commands.
+
+## Extensions and polish
+
+- [ ] Implement `cf extension list`.
+- [ ] Implement extension install/remove/upgrade.
+- [ ] Add Kubernetes/GitOps extension support.
+- [ ] Add VyOS and certificate deployment extensions.
+- [ ] Add Bash, Zsh, Fish, and PowerShell completion.
+- [ ] Add man pages.
+- [ ] Add consistent migration notices for compatibility aliases.
+- [ ] Add end-to-end CLI tests.
+- [ ] Update README with a `gh`-to-`cf` orientation guide.
+
+## Release gates
+
+- [ ] `npm test`
+- [ ] `npm run lint`
+- [ ] `npm run test:gaps`
+- [ ] `npm run pack`
+- [ ] Verify `cf --help` and representative JSON/JQ commands.
