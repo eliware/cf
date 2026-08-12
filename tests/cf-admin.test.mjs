@@ -53,6 +53,15 @@ test('CLI loads file bodies and supports injected output/failure dependencies', 
   expect(printer.log).toHaveBeenCalledWith({ name: 'example.com' }, true);
 });
 
+test('CLI does not require API credentials before auth login', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 20}`);
+  const cfFactory = jest.fn(() => { throw new Error('client should not be created'); });
+  const auth = jest.fn();
+  await mod.run({ argv: ['auth', 'login'], env: {}, loadEnv: jest.fn(), cfFactory, printer: { log: jest.fn(), error: jest.fn() }, handlers: { auth }, fsImpl: { readFileSync: jest.fn(() => '') }, exit: jest.fn() });
+  expect(auth).toHaveBeenCalledWith(expect.objectContaining({ cf: null }));
+  expect(cfFactory).not.toHaveBeenCalled();
+});
+
 test('CLI reports unknown resources through injected dependencies', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 2}`);
   const printer = { log: jest.fn(), error: jest.fn() };

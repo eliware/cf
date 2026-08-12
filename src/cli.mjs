@@ -96,7 +96,7 @@ export async function run({
 
   loadEnv(projectRoot, env, fsImpl);
   await applyActiveProfile(env, homeDir, fsImpl);
-  const cf = cfFactory({ env });
+  const cf = resource === 'auth' && action === 'login' ? null : cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
   const settings = readSettings(homeDir, fsImpl);
   const color = terminalColorMode(opts.color ?? settings.color, { isTTY: Boolean(process.stdout?.isTTY) });
