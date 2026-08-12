@@ -36,6 +36,8 @@ import {
   resourceNames,
   suggestCommand,
 } from "./suggestions.mjs";
+import { missingScopes } from "./scopes.mjs";
+import { formatCloudflareError } from "./errors.mjs";
 
 const defaultHandlers = {
   loadBalancer: makeSimpleResource({
@@ -246,6 +248,16 @@ export async function run({
 
   loadEnv(projectRoot, env, fsImpl);
   await applyActiveProfile(env, homeDir, fsImpl);
+  const grantedScopes = env.CF_OAUTH_SCOPES?.split(",")
+    .map((scope) => scope.trim())
+    .filter(Boolean);
+  const missing = missingScopes(resource, action, grantedScopes);
+  if (missing.length) {
+    printer.error(
+      `Your Cloudflare login is missing scope${missing.length === 1 ? "" : "s"}: ${missing.join(", ")}\n\nRun cf auth login again and select the required permissions, or use:\n  cf auth login --scopes ${missing.join(",")}`,
+    );
+    return exit(1);
+  }
   const cf =
     resource === "auth" && action === "login" ? null : cfFactory({ env });
   const outputJson = opts.json || opts.output === "json";
@@ -333,9 +345,20 @@ export async function run({
     extension: handlers.extension || handleExtension,
   };
   if (dispatch[resource]) {
-    const result = await dispatch[resource](common);
-    await terminal.flush();
-    return result;
+    try {
+      const result = await dispatch[resource](common);
+      await terminal.flush();
+      return result;
+    } catch (error) {
+      const message = formatCloudflareError(error, {
+        resource,
+        action,
+        outputJson,
+      });
+      if (!message) throw error;
+      printer.error(message);
+      return exit(1);
+    }
   }
   printHelp(printer);
   exit(1);

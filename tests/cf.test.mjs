@@ -231,6 +231,26 @@ test("CLI dispatches canonical resource names", async () => {
   expect(handler).toHaveBeenCalled();
 });
 
+test("CLI reports missing OAuth scopes before creating a Cloudflare client", async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 81}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const exit = jest.fn();
+  const cfFactory = jest.fn();
+  await mod.run({
+    argv: ["zones", "list"],
+    env: { CF_OAUTH_SCOPES: "zone.write" },
+    printer,
+    loadEnv: jest.fn(),
+    cfFactory,
+    exit,
+  });
+  expect(cfFactory).not.toHaveBeenCalled();
+  expect(printer.error).toHaveBeenCalledWith(
+    expect.stringContaining("zone.read"),
+  );
+  expect(exit).toHaveBeenCalledWith(1);
+});
+
 test("CLI applies basic jq selection to JSON callbacks", async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 9}`);
   const printer = { log: jest.fn(), error: jest.fn() };
