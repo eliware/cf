@@ -64,7 +64,7 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(fitTerminal('short', 80)).toBe('short');
   expect(fitTerminal('short')).toBe('short');
   expect(styleTerminalText('ID', { color: true, width: 80 })).toBe('ID');
-  expect(terminalColorMode()).toBe(false);
+  expect(terminalColorMode(undefined, { isTTY: false, noColor: false })).toBe(false);
   expect(terminalWidth()).toBe(120);
   expect(styleTerminalText('ID')).toBe('ID');
   const defaults = createTerminalOutput({ printer }); defaults.log('default');
