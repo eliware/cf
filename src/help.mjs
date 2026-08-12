@@ -13,6 +13,10 @@ Global options:
   --output <format>      json|text (default text)
   --jq <expression>      Select fields from JSON output (basic jq paths)
   --quiet                Suppress normal command output
+  --pager                Pipe human-readable output through the configured pager
+  --no-pager             Disable paging for this invocation
+  --color <mode>         always|never|auto (default auto)
+  --width <columns>      Terminal output width override
   --verbose              Include verbose diagnostics where supported
   --paginate              Fetch all pages for supported list/API requests
   --template <text>       Render JSON values with {{.field}} placeholders
@@ -131,6 +135,10 @@ FLAGS
   --jq           Select fields from JSON output
   --template     Render JSON values with {{.field}} placeholders
   --quiet        Suppress normal output
+  --pager        Page human-readable output
+  --no-pager     Disable paging
+  --color        always|never|auto
+  --width        Terminal width override
   --verbose      Include diagnostic details
   --paginate     Fetch all supported pages
   --web          Open a Cloudflare dashboard link

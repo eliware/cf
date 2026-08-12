@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import { log } from '@eliware/common';
 import { toJsonOutput, printTextList, selectJson, renderTemplate, renderTable, printTable } from '../src/output.mjs';
+import { fitTerminal, styleTerminalText, terminalColorMode, terminalWidth } from '../src/terminal.mjs';
 
 describe('output helpers', () => {
   test('toJsonOutput uses injected printer', () => {
@@ -44,4 +45,15 @@ test('selectJson supports nested values and arrays', () => {
 test('renderTemplate interpolates selected fields', () => {
   expect(renderTemplate({ name: 'example.com', count: 2 }, '{{.name}} ({{count}})')).toBe('example.com (2)');
   expect(renderTemplate({ name: null }, '{{.name}}')).toBe('');
+});
+
+test('terminal helpers honor color, width, and safe defaults', () => {
+  expect(terminalColorMode('never', { isTTY: true })).toBe(false);
+  expect(terminalColorMode('always', { isTTY: false })).toBe(true);
+  expect(terminalColorMode(undefined, { isTTY: false, noColor: false })).toBe(false);
+  expect(terminalWidth('80')).toBe(80);
+  expect(terminalWidth('20')).toBe(120);
+  expect(fitTerminal('abcdef', 5)).toBe('abcd…');
+  expect(styleTerminalText('ID\n1', { color: false, width: 80 })).toBe('ID\n1');
+  expect(styleTerminalText('ID\n1', { color: true, width: 80 })).toContain('\u001b[36mID');
 });

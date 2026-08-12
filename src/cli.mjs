@@ -26,6 +26,7 @@ import { applyActiveProfile } from './profiles.mjs';
 import { discoverExtensions, loadExtensionCommand } from './extensions.mjs';
 import { readAliases, writeAliases } from './aliases.mjs';
 import { readSettings, writeSettings } from './settings.mjs';
+import { createTerminalOutput, terminalColorMode, terminalWidth } from './terminal.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 const defaultHandlers = {
@@ -97,10 +98,18 @@ export async function run({
   await applyActiveProfile(env, homeDir, fsImpl);
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
-  const commandPrinter = opts.quiet ? { ...printer, log: () => {} } : printer;
+  const settings = readSettings(homeDir, fsImpl);
+  const color = terminalColorMode(opts.color ?? settings.color, { isTTY: Boolean(process.stdout?.isTTY) });
+  const pagerSetting = opts.pager === true ? settings.pager : (opts.pager || settings.pager);
+  const pager = outputJson || opts['no-pager'] || opts.quiet || pagerSetting === 'never' ? null : pagerSetting || null;
+  const useTerminal = Boolean(pager || opts.color !== undefined || opts.width !== undefined || settings.color || settings.width);
+  const terminal = useTerminal
+    ? createTerminalOutput({ printer, json: outputJson, color, width: terminalWidth(opts.width ?? settings.width), pager })
+    : { ...printer, flush: async () => {} };
+  const commandPrinter = opts.quiet ? { ...terminal, log: () => {} } : terminal;
   if (opts.web) {
     const target = opts['zone-id'] ? `zones/${opts['zone-id']}` : opts['account-id'] ? `accounts/${opts['account-id']}` : '';
-    return printer.log(`https://dash.cloudflare.com/${target}`);
+    return commandPrinter.log(`https://dash.cloudflare.com/${target}`);
   }
   const body = loadBody(opts, fsImpl);
   const fail = (message, code = 1) => { printer.error(message); exit(code); };
@@ -136,7 +145,11 @@ export async function run({
     access: handlers.access || defaultHandlers.access,
     extension: handlers.extension || handleExtension,
   };
-  if (dispatch[resource]) return dispatch[resource](common);
+  if (dispatch[resource]) {
+    const result = await dispatch[resource](common);
+    await terminal.flush();
+    return result;
+  }
   printHelp(printer);
   exit(1);
 }
