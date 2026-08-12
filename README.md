@@ -83,7 +83,7 @@ cf api zones/<zone_id>/dns_records --json
 cf auth status
 cf auth verify
 cf auth list
-cf auth login --profile work
+cf auth login --profile work                 # opens the default OAuth browser flow
 printf '%s' "$CLOUDFLARE_API_TOKEN" | cf auth login --profile ci --token-stdin
 CF_OAUTH_CLIENT_ID='...' cf auth login --profile work --oauth
 cf auth switch --profile work

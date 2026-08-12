@@ -13,7 +13,8 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   }
   if (action === 'login') {
     const name = opts?.profile || 'default';
-    if (opts?.oauth) {
+    const hasEnvironmentCredentials = process.env.CLOUDFLARE_API_TOKEN || process.env.CLOUDFLARE_EMAIL || process.env.CLOUDFLARE_API_KEY;
+    if (opts?.oauth || (!opts?.['token-stdin'] && !hasEnvironmentCredentials)) {
       const scopes = (process.env.CF_OAUTH_SCOPES || DEFAULT_OAUTH_SCOPES.join(',')).split(',').map(scope => scope.trim()).filter(Boolean);
       const oauth = await oauthLogin({ clientId: process.env.CF_OAUTH_CLIENT_ID || DEFAULT_OAUTH_CLIENT_ID, scopes, bindHost: process.env.CF_OAUTH_BIND_HOST || '0.0.0.0', redirectHost: process.env.CF_OAUTH_REDIRECT_HOST || '127.0.0.1' });
       const storedInKeychain = await writeCredentialImpl(name, { oauthAccessToken: oauth.accessToken, oauthRefreshToken: oauth.refreshToken, expiresIn: oauth.expiresIn, expiresAt: oauth.expiresAt });

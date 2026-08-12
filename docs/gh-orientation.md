@@ -14,7 +14,7 @@ Common translations:
 | `gh repo list` | `cf zone list` |
 | `gh api <endpoint>` | `cf api <endpoint>` |
 | `gh auth status` | `cf auth status` |
-| `gh auth login` | `cf auth login --profile <name>` |
+| `gh auth login` | `cf auth login --profile <name>` (defaults to OAuth) |
 | `gh auth switch` | `cf auth switch --profile <name>` |
 | `gh auth logout` | `cf auth logout --profile <name>` |
 | `--json` / field filtering | `--json --jq '.result[].name'` |

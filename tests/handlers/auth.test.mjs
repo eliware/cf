@@ -62,7 +62,7 @@ test('auth list reports the active context', async () => {
 test('auth status rejects missing credentials and unknown actions', async () => {
   const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
   delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
-  const ctx = base(); await handleAuth({ ...ctx, action: 'status' }); await handleAuth({ ...ctx, action: 'login' });
+  const ctx = base(); await handleAuth({ ...ctx, action: 'status' }); await handleAuth({ ...ctx, action: 'login', opts: { 'token-stdin': true }, readToken: () => '' });
   expect(ctx.fail).toHaveBeenCalledTimes(2);
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
 });
@@ -111,7 +111,7 @@ test('auth login, switch, logout, and profile errors use injected storage', asyn
   await handleAuth({ ...bad, action: 'logout', opts: { profile: 'missing' }, read, write });
   expect(bad.fail).toHaveBeenCalledTimes(2);
   delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY;
-  await handleAuth({ ...bad, action: 'login', opts: {}, read, write });
+  await handleAuth({ ...bad, action: 'login', opts: { 'token-stdin': true }, read, write, readToken: () => '' });
   const defaultLogout = base(); await handleAuth({ ...defaultLogout, action: 'logout', opts: {}, read, write });
   expect(defaultLogout.fail).not.toHaveBeenCalled();
   const unknown = base(); await handleAuth({ ...unknown, action: 'unknown', opts: {}, read, write });
@@ -134,6 +134,15 @@ test('auth OAuth login saves and activates the returned token profile', async ()
   const write = jest.fn(); const ctx = base();
   await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh', expiresIn: 3600, expiresAt: Date.now() + 3600000 }) });
   expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'oauth' }), undefined, undefined);
+});
+
+test('auth login defaults to OAuth without environment credentials', async () => {
+  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
+  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
+  const oauthLogin = jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh' }); const write = jest.fn(); const ctx = base();
+  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'default-oauth' }, read: () => ({ active: null, profiles: {} }), write, oauthLogin });
+  expect(oauthLogin).toHaveBeenCalled(); expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'default-oauth' }), undefined, undefined);
+  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });
 
 test('auth stores keychain credentials without duplicating secrets in profile metadata', async () => {
