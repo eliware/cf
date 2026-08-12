@@ -7,6 +7,7 @@
         "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
         "lint": "npx oxlint .",
         "test:gaps": "node scripts/test-gaps.mjs",
+        "test:live": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --runInBand --testPathIgnorePatterns=/node_modules/ --runTestsByPath tests/live/cli-live.test.mjs",
         "test:e2e:screenshots": "node tests/e2e/oauth-picker.e2e.mjs",
         "test:e2e:lighthouse": "node tests/e2e/oauth-picker.lighthouse.mjs",
         "test:e2e:web": "npm run test:e2e:screenshots && npm run test:e2e:lighthouse",
@@ -64,7 +65,12 @@
             "**/?(*.)+(spec|test).mjs"
         ],
         "coveragePathIgnorePatterns": [
-            "/bin/"
+            "/bin/",
+            "/tests/live/"
+        ],
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            "/tests/live/"
         ]
     },
     "allowScripts": {
