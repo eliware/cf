@@ -85,7 +85,9 @@ export function printResourceHelp(resource, printer = console) {
   get                  Get DNS record
   create               Create DNS record
   update               Update DNS record
-  delete               Delete DNS record`,
+  delete               Delete DNS record
+  diff                 Compare DNS records with desired JSON
+  apply                Apply a DNS diff (requires --force)`,
     rulesets: `rulesets (alias: rules)
   list                 List rulesets
   get                  Get ruleset

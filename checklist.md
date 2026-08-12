@@ -52,11 +52,11 @@
 
 - [x] Add zone configuration audits.
 - [ ] Add security baseline checks.
-- [ ] Add DNS diff and apply workflows.
+- [x] Add DNS diff and apply workflows.
 - [ ] Add TLS certificate coverage checks.
 - [ ] Add inventory export.
-- [ ] Make workflows plan-first by default.
-- [ ] Require explicit confirmation for destructive actions.
+- [x] Make workflows plan-first by default.
+- [x] Require explicit confirmation for destructive actions.
 - [ ] Test success, failure, validation, dry-run, and API error paths.
 
 ## Platform resources

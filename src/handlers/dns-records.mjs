@@ -11,6 +11,24 @@ export async function handleDnsRecords({ cf, action, opts, body, outputJson, pri
     return outputJson ? toJsonOutput(items) : items.forEach(r => printer.log(`${r.id} ${r.type} ${r.name} ${r.content}`));
   }
 
+  if (action === 'diff' || action === 'apply') {
+    requireValue(body, 'Missing desired records in --data or --file', fail);
+    const desired = Array.isArray(body) ? body : body.records;
+    requireValue(desired, 'Expected an array of desired records', fail);
+    const currentResponse = await cf.dns.records.list({ zone_id: zoneId });
+    const current = Array.isArray(currentResponse?.result) ? currentResponse.result : [];
+    const key = record => JSON.stringify({ type: record.type, name: record.name, content: record.content, ttl: record.ttl, proxied: record.proxied });
+    const desiredKeys = new Set(desired.map(key)); const currentKeys = new Set(current.map(key));
+    const add = desired.filter(record => !currentKeys.has(key(record)));
+    const remove = current.filter(record => !desiredKeys.has(key(record)));
+    const plan = { zoneId, add, remove, unchanged: current.filter(record => desiredKeys.has(key(record))) };
+    if (action === 'diff' || opts['dry-run']) return outputJson ? toJsonOutput(plan) : printer.log(JSON.stringify(plan, null, 2));
+    requireValue(opts.force, 'Refusing DNS apply without --force', fail);
+    for (const record of add) await cf.dns.records.create({ zone_id: zoneId, ...record });
+    for (const record of remove) await cf.dns.records.delete(record.id, { zone_id: zoneId });
+    return outputJson ? toJsonOutput({ ...plan, applied: true }) : printer.log(JSON.stringify({ ...plan, applied: true }, null, 2));
+  }
+
   if (action === 'get') {
     requireValue(id, 'Missing --id', fail);
     const res = await cf.dns.records.get(id, { zone_id: zoneId });

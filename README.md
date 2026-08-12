@@ -72,6 +72,8 @@ cf zone audit --zone-id <zone_id> --json
 cf dns-records list --zone-id <zone_id>
 cf dns-records create --zone-id <zone_id> \
   --data '{"type":"A","name":"www","content":"1.2.3.4"}'
+cf dns diff --zone-id <zone_id> --file desired-records.json
+cf dns apply --zone-id <zone_id> --file desired-records.json --force
 cf rulesets list --zone-id <zone_id> --json
 cf zone-settings get --zone-id <zone_id> --setting development_mode
 cf api /zones --json
