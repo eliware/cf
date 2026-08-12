@@ -53,3 +53,31 @@ test('OAuth login falls back when the first callback port is busy', async () => 
     await new Promise(resolve => occupied.close(resolve));
   }
 });
+
+test('OAuth callback rejects invalid state and provider errors', async () => {
+  for (const providerError of [false, true]) {
+    const printed = [];
+    const promise = loginOAuth({ clientId: 'client', ports: [0], open: jest.fn(), print: value => printed.push(value) });
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const authorization = new URL(printed[0].split('\n')[1]);
+    const rejection = expect(promise).rejects.toThrow(providerError ? 'Cloudflare authorization failed' : 'Invalid OAuth state');
+    const query = providerError ? `state=${authorization.searchParams.get('state')}&error=access_denied` : 'state=wrong&code=code';
+    await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?${query}`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
+    await rejection;
+  }
+});
+
+test('OAuth callback reports token exchange and response errors', async () => {
+  for (const [fetchImpl, message] of [
+    [jest.fn().mockResolvedValue({ ok: false, status: 500 }), 'OAuth token exchange failed'],
+    [jest.fn().mockResolvedValue({ ok: true, json: async () => ({}) }), 'OAuth token response did not include'],
+  ]) {
+    const printed = [];
+    const promise = loginOAuth({ clientId: 'client', ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const authorization = new URL(printed[0].split('\n')[1]);
+    const rejection = expect(promise).rejects.toThrow(message);
+    await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
+    await rejection;
+  }
+});
