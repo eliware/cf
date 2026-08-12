@@ -1,4 +1,4 @@
-import { parseArgs } from '../src/args.mjs';
+import { parseArgs, tokenizeCommand } from '../src/args.mjs';
 
 describe('parseArgs', () => {
   test('splits positional args from flags', () => {
@@ -21,4 +21,9 @@ describe('parseArgs', () => {
       opts: { 'account-id': 'acct1', force: true },
     });
   });
+});
+
+test('tokenizeCommand preserves quoted alias arguments and rejects incomplete quotes', () => {
+  expect(tokenizeCommand('dns list --name "example.com" --comment \'hello world\'')).toEqual(['dns', 'list', '--name', 'example.com', '--comment', 'hello world']);
+  expect(() => tokenizeCommand('dns list --name "example.com')).toThrow('Unterminated quote');
 });

@@ -1,6 +1,6 @@
 import { fs } from '@eliware/common';
 import os from 'node:os';
-import { parseArgs } from './args.mjs';
+import { parseArgs, tokenizeCommand } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
 import { printHelp, printResourceHelp } from './help.mjs';
@@ -78,7 +78,7 @@ export async function run({
     return printResourceHelp('config', printer);
   }
   const expansion = readAliases(homeDir, fsImpl)[args[0]];
-  if (expansion) { const expanded = parseArgs(`${expansion} ${args.slice(1).join(' ')}`.trim().split(/\s+/)); args = expanded.args; opts = { ...expanded.opts, ...opts }; resource = aliases[args[0]] || args[0]; action = args[1]; }
+  if (expansion) { const expanded = parseArgs(tokenizeCommand(`${expansion} ${args.slice(1).join(' ')}`.trim())); args = expanded.args; opts = { ...expanded.opts, ...opts }; resource = aliases[args[0]] || args[0]; action = args[1]; }
   const extensionManifest = discoverExtensions(homeDir, fsImpl).find(manifest => manifest.commands[resource]);
   if ((args.length === 1 && !extensionManifest) || opts.help) return printResourceHelp(resource, printer);
 
