@@ -77,6 +77,8 @@ Use JSON output for automation:
 ```sh
 cf zones list --json
 cf dns-records get --zone-id <zone_id> --id <record_id> --output json
+cf zones list --json --jq '.result[]'
+cf api /zones --json --jq '.result[].name'
 ```
 
 Preview supported writes:

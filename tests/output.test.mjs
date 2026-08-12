@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { log } from '@eliware/common';
-import { toJsonOutput, printTextList } from '../src/output.mjs';
+import { toJsonOutput, printTextList, selectJson } from '../src/output.mjs';
 
 describe('output helpers', () => {
   test('toJsonOutput uses injected printer', () => {
@@ -22,4 +22,13 @@ test('output helpers support default console printers', () => {
   printTextList([{ id: 2 }], x => `id:${x.id}`);
   expect(spy).toHaveBeenCalledTimes(2);
   spy.mockRestore();
+});
+
+test('selectJson supports nested values and arrays', () => {
+  const value = { result: [{ name: 'a' }, { name: 'b' }], meta: { count: 2 } };
+  expect(selectJson(value, '.meta.count')).toBe(2);
+  expect(selectJson(value, '.result[]')).toEqual(value.result);
+  expect(selectJson(value, '.result[].name')).toEqual(['a', 'b']);
+  expect(selectJson(value, '.missing[]')).toEqual([]);
+  expect(selectJson(value, '.')).toBe(value);
 });

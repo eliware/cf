@@ -123,3 +123,12 @@ test('CLI normalizes singular aliases before dispatch', async () => {
     loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: handler }, exit: jest.fn() });
   expect(handler).toHaveBeenCalled();
 });
+
+test('CLI applies basic jq selection to JSON callbacks', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 9}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['zones', 'list', '--json', '--jq', '.name'], printer,
+    loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})),
+    handlers: { zones: ({ toJsonOutput }) => toJsonOutput({ name: 'example.com' }) }, exit: jest.fn() });
+  expect(printer.log).toHaveBeenCalledWith('"example.com"');
+});

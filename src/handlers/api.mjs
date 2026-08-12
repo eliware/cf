@@ -1,3 +1,5 @@
+import { selectJson } from '../output.mjs';
+
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
 function apiPath(value, fail) {
@@ -23,5 +25,5 @@ export async function handleApi({ cf, action, opts, body, printer, fail }) {
   const request = cf[method.toLowerCase()];
   if (typeof request !== 'function') { fail(`Cloudflare client does not support ${method}`); return; }
   const result = await request.call(cf, path, body === null ? undefined : { body });
-  printer.log(JSON.stringify(result, null, 2));
+  printer.log(JSON.stringify(selectJson(result, opts.jq), null, 2));
 }

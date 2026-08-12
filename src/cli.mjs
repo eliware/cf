@@ -4,7 +4,7 @@ import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
 import { printHelp, printResourceHelp } from './help.mjs';
 import { VERSION } from './version.mjs';
-import { toJsonOutput } from './output.mjs';
+import { selectJson, toJsonOutput } from './output.mjs';
 import { handleZones } from './handlers/zones.mjs';
 import { handleZoneSettings } from './handlers/zone-settings.mjs';
 import { handleDnsRecords } from './handlers/dns-records.mjs';
@@ -41,7 +41,7 @@ export async function run({
   const body = loadBody(opts, fsImpl);
   const fail = (message, code = 1) => { printer.error(message); exit(code); };
   const common = { cf, action, opts, body, outputJson, printer,
-    toJsonOutput: value => toJsonOutput(value, printer.log), fail };
+    toJsonOutput: value => toJsonOutput(selectJson(value, opts.jq), printer.log), fail };
   const dispatch = {
     zones: handlers.zones || handleZones,
     'zone-settings': handlers.zoneSettings || handleZoneSettings,

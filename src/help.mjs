@@ -11,6 +11,7 @@ Global options:
   --version              Show version
   --json                 Output JSON
   --output <format>      json|text (default text)
+  --jq <expression>      Select fields from JSON output (basic jq paths)
   --force                Confirm destructive writes
   --dry-run              Show what would change without writing
   --account-id <id>      Cloudflare account id

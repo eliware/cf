@@ -22,7 +22,7 @@
 
 - [ ] Standardize human-readable tables.
 - [x] Add stable `--json` output.
-- [ ] Add `--jq` filtering.
+- [x] Add `--jq` filtering.
 - [ ] Add template output if useful.
 - [ ] Add `--web` dashboard links.
 - [ ] Handle pagination consistently.
