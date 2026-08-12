@@ -72,11 +72,13 @@ export function openBrowser(url, options, spawnImpl = spawn) {
       : platform === "win32"
         ? "start"
         : "xdg-open";
-  return configuredSpawnImpl(command, [url], {
+  const child = configuredSpawnImpl(command, [url], {
     detached: true,
     stdio: "ignore",
     shell: platform === "win32",
-  }).unref();
+  });
+  child.unref();
+  return child;
 }
 
 export async function refreshOAuth({
@@ -316,7 +318,7 @@ export async function loginOAuth({
   };
   let selectedScopes = [...scopes];
   print(
-    `Open this URL to ${scopePicker ? "set up cf" : "authorize cf"}:\n${scopePicker ? `http://${redirectHost}:${port}/` : makeAuthorization(selectedScopes)}`,
+    `Open this URL to ${scopePicker ? "set up cf" : "authorize cf"}: ${scopePicker ? `http://${redirectHost}:${port}/` : makeAuthorization(selectedScopes)}`,
   );
   const callback = new Promise((resolve, reject) =>
     server.on("request", (request, response) => {
@@ -434,11 +436,21 @@ export async function loginOAuth({
       resolve({ code: url.searchParams.get("code"), response });
     }),
   );
-  open(
-    scopePicker
-      ? `http://${redirectHost}:${port}/`
-      : makeAuthorization(selectedScopes).toString(),
-  );
+  const browserUrl = scopePicker
+    ? `http://${redirectHost}:${port}/`
+    : makeAuthorization(selectedScopes).toString();
+  try {
+    const browser = open(browserUrl);
+    browser?.once?.("error", (error) => {
+      print(
+        `Could not open a browser automatically (${error.code || error.message}). Copy the URL above into a browser.`,
+      );
+    });
+  } catch (error) {
+    print(
+      `Could not open a browser automatically (${error.code || error.message}). Copy the URL above into a browser.`,
+    );
+  }
   try {
     const { code, response: callbackResponse } = await callback;
     try {

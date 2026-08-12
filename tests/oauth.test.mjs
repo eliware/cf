@@ -123,7 +123,7 @@ test("OAuth login serves a state-protected callback and exchanges the code", asy
     fetchImpl,
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const authorization = new URL(printed[0].split("\n")[1]);
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   await new Promise((resolve, reject) =>
     http
       .get(
@@ -176,7 +176,7 @@ test("OAuth scope picker opens a local setup page and redirects with selected sc
     fetchImpl,
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const landing = new URL(printed[0].split("\n")[1]);
+  const landing = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   await new Promise((resolve, reject) =>
     http
       .get(landing, (response) => {
@@ -262,7 +262,7 @@ test("OAuth success page confirms the account without exposing the token", async
     fetchImpl,
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const authorization = new URL(printed[0].split("\n")[1]);
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   await new Promise((resolve, reject) =>
     http
       .get(
@@ -305,7 +305,7 @@ test("OAuth success page remains useful when account confirmation fails", async 
     fetchImpl,
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const authorization = new URL(printed[0].split("\n")[1]);
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   await new Promise((resolve, reject) =>
     http
       .get(
@@ -337,7 +337,7 @@ test("OAuth success page tolerates an unavailable account response", async () =>
     fetchImpl,
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const authorization = new URL(printed[0].split("\n")[1]);
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   await new Promise((resolve, reject) =>
     http
       .get(
@@ -391,7 +391,7 @@ test("OAuth login falls back when the first callback port is busy", async () => 
       }),
     });
     await new Promise((resolve) => setTimeout(resolve, 10));
-    const authorization = new URL(printed[0].split("\n")[1]);
+    const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
     await new Promise((resolve, reject) =>
       http
         .get(
@@ -419,7 +419,7 @@ test("OAuth callback rejects invalid state and provider errors", async () => {
       print: (value) => printed.push(value),
     });
     await new Promise((resolve) => setTimeout(resolve, 10));
-    const authorization = new URL(printed[0].split("\n")[1]);
+    const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
     const rejection = expect(promise).rejects.toThrow(
       providerError ? "Cloudflare authorization failed" : "Invalid OAuth state",
     );
@@ -470,7 +470,7 @@ test("OAuth callback reports token exchange and response errors", async () => {
       fetchImpl,
     });
     await new Promise((resolve) => setTimeout(resolve, 10));
-    const authorization = new URL(printed[0].split("\n")[1]);
+    const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
     const rejection = expect(promise).rejects.toThrow(message);
     await new Promise((resolve, reject) =>
       http
@@ -561,7 +561,7 @@ test("OAuth login accepts a callback server without an address object", async ()
     }),
   });
   await new Promise((resolve) => setTimeout(resolve, 10));
-  const authorization = new URL(printed[0].split("\n")[1]);
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
   const response = { writeHead: jest.fn(), end: jest.fn() };
   server.emit(
     "request",
