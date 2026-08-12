@@ -25,9 +25,9 @@ test('profile selection honors explicit profile and missing storage', async () =
   expect(readProfiles(undefined, {})).toEqual({ active: null, profiles: {} });
   expect(activeProfile({}, undefined, {})).toBeNull();
   expect(await applyActiveProfile({}, undefined, {})).toBeNull();
-  expect(activeProfile()).toBeNull();
-  expect(await applyActiveProfile({})).toBeNull();
-  expect(await applyActiveProfile()).toBeNull();
+  expect(activeProfile({}, home, {})).toBeNull();
+  expect(await applyActiveProfile({}, home, {})).toBeNull();
+  expect(await applyActiveProfile({}, home, {})).toBeNull();
 });
 
 test('profile writer tolerates adapters without chmod', () => {

@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { handleAuth } from '../../src/handlers/auth.mjs';
 
 const base = () => ({ cf: { get: jest.fn().mockResolvedValue({ result: { id: 'user-1' } }) },
-  outputJson: true, printer: { log: jest.fn() }, toJsonOutput: jest.fn(), fail: jest.fn() });
+  outputJson: true, printer: { log: jest.fn() }, toJsonOutput: jest.fn(), fail: jest.fn(), read: () => ({ active: null, profiles: {} }) });
 
 const stored = () => ({ active: 'work', profiles: { work: { email: 'work@example.com', apiKey: 'key' }, other: { email: 'other@example.com' } } });
 
@@ -109,4 +109,13 @@ test('auth login, switch, logout, and profile errors use injected storage', asyn
   const noProfile = base(); await handleAuth({ ...noProfile, action: 'logout', opts: {}, read: () => ({ active: null, profiles: {} }), write });
   const last = base(); await handleAuth({ ...last, action: 'logout', opts: { profile: 'only' }, read: () => ({ active: 'only', profiles: { only: {} } }), write });
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
+});
+
+test('auth login accepts a token from stdin without environment credentials', async () => {
+  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
+  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
+  const write = jest.fn(); const ctx = base();
+  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'ci', 'token-stdin': true, 'account-id': 'acct' }, read: () => ({ active: null, profiles: {} }), write, readToken: () => 'stdin-token' });
+  expect(write).toHaveBeenCalledWith({ active: 'ci', profiles: { ci: expect.objectContaining({ apiToken: 'stdin-token', accountId: 'acct' }) } }, undefined, undefined);
+  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });

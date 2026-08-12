@@ -1,8 +1,9 @@
 import { readProfiles, writeProfiles } from '../profiles.mjs';
 import { printTable } from '../output.mjs';
 import { deleteCredential, writeCredential } from '../credentials.mjs';
+import { fs } from '@eliware/common';
 
-export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles }) {
+export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles, readToken = () => fs.readFileSync(0, 'utf8').trim() }) {
   const data = read(profileHome, profileFs);
   if (action === 'list') {
     const profiles = Object.entries(data.profiles).map(([name, value]) => ({ name, email: value.email || null, active: name === data.active }));
@@ -11,10 +12,12 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   }
   if (action === 'login') {
     const name = opts?.profile || 'default';
-    if (!process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) { fail('To log in, set CLOUDFLARE_API_TOKEN or CLOUDFLARE_EMAIL and CLOUDFLARE_API_KEY, then run: cf auth login'); return; }
+    const stdinToken = opts?.['token-stdin'] ? readToken() : null;
+    if (!stdinToken && !process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) { fail('To log in, set CLOUDFLARE_API_TOKEN or CLOUDFLARE_EMAIL and CLOUDFLARE_API_KEY, or pipe a token with --token-stdin'); return; }
     const credential = { email: process.env.CLOUDFLARE_EMAIL, apiKey: process.env.CLOUDFLARE_API_KEY, apiToken: process.env.CLOUDFLARE_API_TOKEN };
+    if (stdinToken) { credential.email = undefined; credential.apiKey = undefined; credential.apiToken = stdinToken; }
     const storedInKeychain = await writeCredential(name, credential);
-    data.profiles[name] = { accountId: process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: process.env.CLOUDFLARE_ZONE_ID, ...(storedInKeychain ? {} : credential) };
+    data.profiles[name] = { accountId: opts?.['account-id'] || process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: opts?.['zone-id'] || process.env.CLOUDFLARE_ZONE_ID, ...(storedInKeychain ? {} : credential) };
     data.active = name; write(data, profileHome, profileFs); return printer.log(`Saved and activated profile ${name}`);
   }
   if (action === 'switch') {
