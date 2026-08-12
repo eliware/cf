@@ -132,3 +132,12 @@ test('CLI applies basic jq selection to JSON callbacks', async () => {
     handlers: { zones: ({ toJsonOutput }) => toJsonOutput({ name: 'example.com' }) }, exit: jest.fn() });
   expect(printer.log).toHaveBeenCalledWith('"example.com"');
 });
+
+test('CLI quiet mode suppresses normal handler output', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 10}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['zones', 'list', '--quiet'], printer,
+    loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})),
+    handlers: { zones: ({ printer: injected }) => injected.log('hidden') }, exit: jest.fn() });
+  expect(printer.log).not.toHaveBeenCalledWith('hidden');
+});

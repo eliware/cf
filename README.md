@@ -76,6 +76,7 @@ cf zone-settings get --zone-id <zone_id> --setting development_mode
 cf api /zones --json
 cf api zones/<zone_id>/dns_records --json
 cf auth status
+cf auth verify
 cf auth list
 cf auth login --profile work
 cf auth switch --profile work

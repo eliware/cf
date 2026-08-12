@@ -35,6 +35,24 @@ test('auth status supports API-token authentication', async () => {
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });
 
+test('auth verify checks active API tokens', async () => {
+  const old = process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_API_TOKEN = 'token';
+  const ctx = base(); ctx.cf.get.mockResolvedValue({ result: { status: 'active' } });
+  await handleAuth({ ...ctx, action: 'verify' });
+  expect(ctx.cf.get).toHaveBeenCalledWith('/user/tokens/verify');
+  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ verified: true, status: 'active' });
+  ctx.outputJson = false; ctx.cf.get.mockResolvedValue({ result: { status: 'inactive' } });
+  await handleAuth({ ...ctx, action: 'verify' });
+  expect(ctx.printer.log).toHaveBeenCalledWith('inactive');
+  ctx.outputJson = true; ctx.cf.get.mockResolvedValue({ result: {} });
+  await handleAuth({ ...ctx, action: 'verify' });
+  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ verified: false, status: 'unknown' });
+  delete process.env.CLOUDFLARE_API_TOKEN;
+  await handleAuth({ ...ctx, action: 'verify' });
+  expect(ctx.fail).toHaveBeenCalledWith(expect.stringContaining('requires'));
+  process.env.CLOUDFLARE_API_TOKEN = old;
+});
+
 test('auth list reports the active context', async () => {
   const old = process.env.CLOUDFLARE_EMAIL; process.env.CLOUDFLARE_EMAIL = 'user@example.com';
   const ctx = base(); await handleAuth({ ...ctx, action: 'list' });

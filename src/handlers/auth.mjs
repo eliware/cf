@@ -32,5 +32,11 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
     const status = { authenticated: true, profile: data.active || 'environment', method: process.env.CLOUDFLARE_API_TOKEN ? 'api-token' : 'api-key', email: process.env.CLOUDFLARE_EMAIL || null, id: identity?.result?.id || null };
     return outputJson ? toJsonOutput(status) : printer.log(`${status.email} authenticated`);
   }
+  if (action === 'verify') {
+    if (!process.env.CLOUDFLARE_API_TOKEN) { fail('cf auth verify requires CLOUDFLARE_API_TOKEN'); return; }
+    const result = await cf.get('/user/tokens/verify');
+    const verified = { verified: result?.result?.status === 'active', status: result?.result?.status || 'unknown' };
+    return outputJson ? toJsonOutput(verified) : printer.log(`${verified.status}`);
+  }
   fail(`Unknown auth action: ${action}`);
 }

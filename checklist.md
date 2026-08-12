@@ -13,7 +13,7 @@
 - [x] Implement `cf auth list`.
 - [x] Implement `cf auth switch`.
 - [x] Implement `cf auth logout`.
-- [ ] Implement token verification and permission inspection.
+- [x] Implement token verification and permission inspection.
 - [x] Support multiple profiles and Cloudflare accounts.
 - [x] Support account and zone defaults.
 - [x] Preserve environment-variable and CI authentication.
@@ -27,7 +27,7 @@
 - [ ] Add template output if useful.
 - [ ] Add `--web` dashboard links.
 - [ ] Handle pagination consistently.
-- [ ] Add quiet and verbose modes.
+- [x] Add quiet and verbose modes.
 - [x] Implement `cf api` with GET/POST/PUT/PATCH/DELETE support.
 - [x] Support JSON files and inline request bodies.
 - [x] Add dry-run and mutation confirmation to API calls.

@@ -12,6 +12,8 @@ Global options:
   --json                 Output JSON
   --output <format>      json|text (default text)
   --jq <expression>      Select fields from JSON output (basic jq paths)
+  --quiet                Suppress normal command output
+  --verbose              Include verbose diagnostics where supported
   --force                Confirm destructive writes
   --dry-run              Show what would change without writing
   --account-id <id>      Cloudflare account id
@@ -101,10 +103,12 @@ export function printResourceHelp(resource, printer = console) {
   --json, --dry-run, and --force for DELETE`,
     auth: `auth
   status               Verify the active Cloudflare identity
+  verify               Verify the active API token
   list                 Show configured credential contexts
   login                Save current environment credentials as a profile
   switch               Activate a saved profile
-  logout               Remove a saved profile`,
+  logout               Remove a saved profile
+  verify               Verify the active API token`,
     ssl: `ssl
   get                  Read a zone SSL/TLS setting
   set                  Update a zone SSL/TLS setting`,

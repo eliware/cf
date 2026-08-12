@@ -45,9 +45,10 @@ export async function run({
   applyActiveProfile(env, undefined, fsImpl);
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
+  const commandPrinter = opts.quiet ? { ...printer, log: () => {} } : printer;
   const body = loadBody(opts, fsImpl);
   const fail = (message, code = 1) => { printer.error(message); exit(code); };
-  const common = { cf, action, opts, body, outputJson, printer,
+  const common = { cf, action, opts, body, outputJson, printer: commandPrinter,
     toJsonOutput: value => toJsonOutput(selectJson(value, opts.jq), printer.log), fail };
   const dispatch = {
     zones: handlers.zones || handleZones,
