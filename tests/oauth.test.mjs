@@ -64,7 +64,7 @@ test('OAuth scope picker opens a local setup page and redirects with selected sc
   const promise = loginOAuth({ clientId: 'client', scopePicker: true, scopes: ['zone.read'], ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
   await new Promise(resolve => setTimeout(resolve, 10));
   const landing = new URL(printed[0].split('\n')[1]);
-  await new Promise((resolve, reject) => http.get(landing, response => { let body = ''; response.on('data', chunk => { body += chunk; }); response.on('end', () => { expect(body).toContain('Set up your Cloudflare CLI'); resolve(); }); }).on('error', reject));
+   await new Promise((resolve, reject) => http.get(landing, response => { let body = ''; response.on('data', chunk => { body += chunk; }); response.on('end', () => { expect(body).toContain('Choose what cf can do'); resolve(); }); }).on('error', reject));
   let authorization;
   const startUrl = new URL(landing); startUrl.pathname = '/oauth/start';
   await new Promise((resolve, reject) => { const request = http.request(startUrl, { method: 'POST' }, response => { expect(response.statusCode).toBe(302); response.resume(); response.on('end', resolve); }); request.on('error', reject); request.end(); });
