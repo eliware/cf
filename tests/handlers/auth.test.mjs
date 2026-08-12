@@ -125,3 +125,15 @@ test('auth OAuth login saves and activates the returned token profile', async ()
   await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh', expiresIn: 3600, expiresAt: Date.now() + 3600000 }) });
   expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'oauth' }), undefined, undefined);
 });
+
+test('auth stores keychain credentials without duplicating secrets in profile metadata', async () => {
+  const write = jest.fn(); const writeCredentialImpl = jest.fn().mockResolvedValue(true); const ctx = base();
+  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, writeCredentialImpl, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh' }) });
+  expect(write).toHaveBeenCalledWith(expect.objectContaining({ profiles: { oauth: expect.not.objectContaining({ apiToken: 'oauth-token' }) } }), undefined, undefined);
+});
+
+test('auth logout revokes stored OAuth credentials before deletion', async () => {
+  const write = jest.fn(); const revokeOAuthImpl = jest.fn(); const deleteCredentialImpl = jest.fn(); const ctx = base();
+  await handleAuth({ ...ctx, action: 'logout', opts: { profile: 'work' }, read: stored, write, readCredentialImpl: jest.fn().mockResolvedValue({ oauthAccessToken: 'oauth-token' }), revokeOAuthImpl, deleteCredentialImpl });
+  expect(revokeOAuthImpl).toHaveBeenCalledWith({ accessToken: 'oauth-token' }); expect(deleteCredentialImpl).toHaveBeenCalledWith('work');
+});
