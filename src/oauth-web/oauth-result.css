@@ -42,11 +42,6 @@ body {
   color: #111;
   font-weight: 800;
 }
-.status {
-  color: #ff9f9f;
-  font-size: 42px;
-  margin: 28px 0 4px;
-}
 h1 {
   font-size: clamp(30px, 6vw, 48px);
   margin: 0 0 12px;
@@ -59,6 +54,38 @@ p {
   border-top: 1px solid #303030;
   margin-top: 25px;
   padding-top: 20px;
+}
+.faq {
+  margin-top: 24px;
+}
+.faq details {
+  border-top: 1px solid #303030;
+  padding: 14px 0;
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.faq p {
+  margin-bottom: 0;
+}
+footer {
+  border-top: 1px solid #303030;
+  color: #777;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  justify-content: space-between;
+  margin-top: 28px;
+  padding-top: 18px;
+  font-size: 13px;
+}
+footer nav {
+  display: flex;
+  gap: 14px;
+}
+footer a {
+  color: #aaa;
 }
 @media (max-width: 520px) {
   .card {

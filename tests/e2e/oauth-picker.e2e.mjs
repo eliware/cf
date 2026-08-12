@@ -61,6 +61,39 @@ try {
   callback.search = `?state=${authorization.searchParams.get("state")}&code=preview`;
   await page.goto(callback, { waitUntil: "domcontentloaded" }).catch(() => {});
   await login;
+  assert.equal(await page.title(), "Cloudflare connected · cf");
+  assert.match(await page.$eval("h1", (heading) => heading.textContent), /connected/i);
+  const successHtml = await page.content();
+  const desktopSuccessPage = await browser.newPage();
+  await desktopSuccessPage.setViewport({
+    width: 1440,
+    height: 1000,
+    deviceScaleFactor: 1,
+  });
+  await desktopSuccessPage.setContent(successHtml, {
+    waitUntil: "domcontentloaded",
+  });
+  await desktopSuccessPage.screenshot({
+    path: join(outputDir, "oauth-success-desktop.png"),
+    fullPage: true,
+  });
+  await desktopSuccessPage.close();
+  console.log("Captured desktop OAuth success screenshot");
+  const mobileSuccessPage = await browser.newPage();
+  await mobileSuccessPage.setViewport({
+    width: 390,
+    height: 844,
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 1,
+  });
+  await mobileSuccessPage.setContent(successHtml, { waitUntil: "domcontentloaded" });
+  await mobileSuccessPage.screenshot({
+    path: join(outputDir, "oauth-success-mobile.png"),
+    fullPage: true,
+  });
+  await mobileSuccessPage.close();
+  console.log("Captured mobile OAuth success screenshot");
 
   const cancellationPrinted = [];
   const cancellationLogin = loginOAuth({

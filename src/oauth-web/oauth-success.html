@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,__CF_LOGO_DATA__" />
+    <title>Cloudflare connected · cf</title>
+    <style>__SUCCESS_CSS__</style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="brand"><img class="mark" src="data:image/svg+xml,__CF_LOGO_DATA__" alt="cf" width="42" height="42" /><strong>Cloudflare authorization</strong></div>
+      <div class="success-mark" aria-hidden="true">✓</div>
+      <h1>Cloudflare connected.</h1>
+      <p>You’re signed in as <span class="account">__ACCOUNT__</span>. Your local profile is ready to use.</p>
+      <div class="grid">
+        <div class="stat"><strong>__SCOPE_COUNT__</strong><span>approved scopes</span></div>
+        <div class="stat"><strong>__ENABLED_COUNT__</strong><span>modules enabled</span></div>
+        <div class="stat"><strong>__ZONE_COUNT__</strong><span>zones found</span></div>
+        <div class="stat"><strong>__DNS_COUNT__</strong><span>DNS records sampled</span></div>
+      </div>
+      <section><h2>Your enabled modules</h2><div class="module-list">__ENABLED_MODULES__</div></section>
+      <section><h2>Modules not enabled</h2><p>Run <code>cf auth login --scopes ...</code> with the required scopes if you need these modules.</p><div class="module-list">__DISABLED_MODULES__</div></section>
+      <section class="next"><h2>Get started</h2><p>Try <code>cf zone list</code> or <code>cf auth status --json</code>. Examples below use resources available to your profile.</p><div class="examples">__EXAMPLES__</div></section>
+      <section class="faq">
+        <details><summary>What are scopes?</summary><p>Scopes are permissions Cloudflare grants to this profile. Only selected modules and their required scopes are enabled.</p></details>
+        <details><summary>How do I enable another module?</summary><p>Run <code>cf auth login --scopes scope.one,scope.two</code> or use the browser picker.</p></details>
+        <details><summary>Can I use the raw API?</summary><p>Yes. Log in with the additional scopes required by the endpoint, then use <code>cf api</code>.</p></details>
+      </section>
+      <footer><span>© __COPYRIGHT__ Eliware · cf __VERSION__</span><nav><a href="https://eliware.org/cf">Project</a><a href="https://eliware.org/cf/policy">Policy</a><a href="https://eliware.org/cf/tos">Terms</a></nav></footer>
+    </main>
+  </body>
+</html>

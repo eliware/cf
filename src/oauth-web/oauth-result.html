@@ -25,7 +25,6 @@
         />
         <strong>Cloudflare authorization</strong>
       </div>
-      <div class="status" aria-hidden="true">×</div>
       <h1>__RESULT_TITLE__</h1>
       <p>__RESULT_DETAIL__</p>
       <section class="next">
@@ -34,6 +33,24 @@
           ready to try again.
         </p>
       </section>
+      <section class="faq">
+        <details>
+          <summary>Why did this happen?</summary>
+          <p>OAuth callbacks are single-use and tied to the login request that created them.</p>
+        </details>
+        <details>
+          <summary>How do I try again?</summary>
+          <p>Close this tab and run <code>cf auth login</code> again.</p>
+        </details>
+      </section>
+      <footer>
+        <span>© __COPYRIGHT__ Eliware · cf __VERSION__</span>
+        <nav>
+          <a href="https://eliware.org/cf">Project</a>
+          <a href="https://eliware.org/cf/policy">Policy</a>
+          <a href="https://eliware.org/cf/tos">Terms</a>
+        </nav>
+      </footer>
     </main>
   </body>
 </html>
