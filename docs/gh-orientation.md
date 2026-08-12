@@ -54,9 +54,11 @@ callback and use the server's Tailscale address, registering the matching URI:
 
 ```sh
 CF_OAUTH_BIND_HOST=0.0.0.0 \\
-CF_OAUTH_REDIRECT_HOST=100.112.180.56 \\
 CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth
 ```
 
-Binding to `0.0.0.0` should only be used with a trusted network path and
-firewall; loopback plus SSH forwarding remains safer.
+The authorization request and registered redirect remain `127.0.0.1`. If the
+browser is remote, replace only the redirected URL host with the server's
+Tailscale address before loading it. Binding to `0.0.0.0` should only be used
+with a trusted network path and firewall; loopback plus SSH forwarding remains
+safer.

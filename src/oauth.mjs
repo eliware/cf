@@ -13,7 +13,7 @@ function openBrowser(url) {
   return spawn(command, [url], { detached: true, stdio: 'ignore', shell: process.platform === 'win32' }).unref();
 }
 
-export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, bindHost = '127.0.0.1', redirectHost = bindHost, fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
+export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, bindHost = '127.0.0.1', redirectHost = '127.0.0.1', fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
   if (!clientId) throw new Error('Missing CF_OAUTH_CLIENT_ID');
   const verifier = base64url(crypto.randomBytes(32));
   const challenge = base64url(crypto.createHash('sha256').update(verifier).digest());
