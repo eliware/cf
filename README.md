@@ -120,6 +120,14 @@ cf auth logout --profile work
 
 An unauthenticated command reports that the user is not logged in and directs them to `cf auth login`, matching the familiar GitHub CLI workflow.
 
+The CLI checks npm for a newer version at most once per day. The check is
+best-effort, does not delay commands, and never updates automatically. Disable
+it with `CF_NO_UPDATE_CHECK=1` or permanently with:
+
+```sh
+cf config set update-check false
+```
+
 ## Configuration
 
 Environment variables may be supplied directly, through a local `.env`, or as optional defaults in the project configuration:

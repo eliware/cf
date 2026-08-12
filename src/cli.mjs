@@ -38,6 +38,7 @@ import {
 } from "./suggestions.mjs";
 import { missingScopes } from "./scopes.mjs";
 import { formatCloudflareError } from "./errors.mjs";
+import { checkForUpdate, updateNotice } from "./update-check.mjs";
 
 const defaultHandlers = {
   loadBalancer: makeSimpleResource({
@@ -114,6 +115,7 @@ export async function run({
   projectRoot = process.cwd(),
   homeDir = os.homedir(),
   exit = (code) => process.exit(code),
+  updateCheck = checkForUpdate,
 } = {}) {
   let { args, opts } = parseArgs(argv);
   if (opts.version) return printer.log(VERSION);
@@ -262,6 +264,17 @@ export async function run({
     resource === "auth" && action === "login" ? null : cfFactory({ env });
   const outputJson = opts.json || opts.output === "json";
   const settings = readSettings(homeDir, fsImpl);
+  if (!outputJson && !opts.quiet && settings["update-check"] !== false && settings["update-check"] !== "false") {
+    /* istanbul ignore next -- best-effort async notification. */
+    void updateCheck({ currentVersion: VERSION, homeDir, env, fsImpl })
+      /* istanbul ignore next -- best-effort async notification callback. */
+      .then((latestVersion) => {
+        const notice = updateNotice(latestVersion, VERSION);
+        /* istanbul ignore next -- asynchronous best-effort notice. */
+        if (notice) printer.error(notice);
+      })
+      .catch(() => {});
+  }
   const color = terminalColorMode(opts.color ?? settings.color, {
     isTTY: Boolean(process.stdout?.isTTY),
   });
