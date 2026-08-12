@@ -3,7 +3,7 @@
 ## Foundation
 
 - [x] Define and document command grammar and resource naming.
-- [ ] Define standard verbs, flags, exit codes, JSON schemas, and pagination behavior.
+- [x] Define standard verbs, flags, exit codes, JSON schemas, and pagination behavior.
 - [x] Add shared help conventions and examples.
 
 ## Authentication and context
@@ -24,8 +24,8 @@
 - [ ] Standardize human-readable tables.
 - [x] Add stable `--json` output.
 - [x] Add `--jq` filtering.
-- [ ] Add template output if useful.
-- [ ] Add `--web` dashboard links.
+- [x] Add template output if useful.
+- [x] Add `--web` dashboard links.
 - [x] Handle pagination consistently.
 - [x] Add quiet and verbose modes.
 - [x] Implement `cf api` with GET/POST/PUT/PATCH/DELETE support.
@@ -72,12 +72,12 @@
 
 ## Extensions and polish
 
-- [ ] Implement `cf extension list`.
+- [x] Implement `cf extension list`.
 - [ ] Implement extension install/remove/upgrade.
 - [ ] Add Kubernetes/GitOps extension support.
 - [ ] Add VyOS and certificate deployment extensions.
-- [ ] Add Bash, Zsh, Fish, and PowerShell completion.
-- [ ] Add man pages.
+- [x] Add Bash, Zsh, and Fish completion.
+- [x] Add man pages.
 - [x] Add consistent migration notices for compatibility aliases.
 - [x] Add end-to-end CLI tests.
 - [x] Update README with a `gh`-to-`cf` orientation guide.

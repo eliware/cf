@@ -142,6 +142,22 @@ test('CLI quiet mode suppresses normal handler output', async () => {
   expect(printer.log).not.toHaveBeenCalledWith('hidden');
 });
 
+test('CLI prints dashboard links before dispatch', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 13}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['zone', 'get', '--zone-id', 'z1', '--web'], printer, exit: jest.fn() });
+  expect(printer.log).toHaveBeenCalledWith('https://dash.cloudflare.com/zones/z1');
+  await mod.run({ argv: ['zone', 'get', '--account-id', 'a1', '--web'], printer, exit: jest.fn() });
+  await mod.run({ argv: ['zone', 'get', '--web'], printer, exit: jest.fn() });
+});
+
+test('CLI renders templates through injected handlers', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 14}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['zones', 'list', '--template', '{{.name}}'], printer, loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: ({ toJsonOutput }) => toJsonOutput({ name: 'example.com' }) }, exit: jest.fn() });
+  expect(printer.log).toHaveBeenCalledWith('example.com');
+});
+
 test('CLI dispatches built-in load-balancer and tunnel handlers', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 11}`);
   const printer = { log: jest.fn(), error: jest.fn() };

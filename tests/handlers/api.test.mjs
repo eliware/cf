@@ -24,6 +24,11 @@ test('API GET can paginate', async () => {
   expect(ctx.printer.log).toHaveBeenCalledWith(expect.stringContaining('page'));
 });
 
+test('API supports template output', async () => {
+  const ctx = context({ opts: { template: '{{.name}}' } }); ctx.cf.get.mockResolvedValue({ name: 'example.com' });
+  await handleApi(ctx); expect(ctx.printer.log).toHaveBeenCalledWith('example.com');
+});
+
 test('calls mutation with JSON body', async () => {
   const ctx = context({ action: '/zones', opts: { method: 'post' }, body: { name: 'x' } });
   await handleApi(ctx);

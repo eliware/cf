@@ -1,0 +1,2 @@
+#compdef cf
+_arguments '1:resource:(auth zone zones dns setting rules list api ssl cache health audit inventory origin-ca load-balancer tunnel workers pages r2 d1 queues stream images ai access extension)' '*:options:(--help --json --jq --template --web --dry-run --force)'

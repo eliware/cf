@@ -97,6 +97,7 @@ cf tunnel list --account-id <account_id> --json
 cf workers list --account-id <account_id> --json
 cf pages list --account-id <account_id> --json
 cf r2 list --account-id <account_id> --json
+cf extension list
 ```
 
 Use JSON output for automation:
@@ -106,6 +107,8 @@ cf zones list --json
 cf dns-records get --zone-id <zone_id> --id <record_id> --output json
 cf zones list --json --jq '.result[]'
 cf api /zones --json --jq '.result[].name'
+cf api /zones --json --template '{{.result}}'
+cf zone get --zone-id <zone_id> --web
 ```
 
 Preview supported writes:

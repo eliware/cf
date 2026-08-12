@@ -15,6 +15,8 @@ Global options:
   --quiet                Suppress normal command output
   --verbose              Include verbose diagnostics where supported
   --paginate              Fetch all pages for supported list/API requests
+  --template <text>       Render JSON values with {{.field}} placeholders
+  --web                   Print the Cloudflare dashboard link
   --force                Confirm destructive writes
   --dry-run              Show what would change without writing
   --account-id <id>      Cloudflare account id
@@ -54,6 +56,7 @@ Resources:
   images                  Manage Images
   ai                      Manage AI resources
   access                  Manage Access applications
+  extension               Manage local cf extensions
 
 Examples:
   cf zones list
@@ -153,6 +156,8 @@ export function printResourceHelp(resource, printer = console) {
   list/get/create/update/delete  Manage zone Load Balancers`,
     tunnel: `tunnel
   list/get/create/update/delete  Manage account tunnels`,
+    extension: `extension
+  list                 List installed extensions`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }

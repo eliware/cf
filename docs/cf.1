@@ -1,0 +1,16 @@
+.TH CF 1
+.SH NAME
+cf \- Cloudflare administration CLI
+.SH SYNOPSIS
+.B cf
+<resource> <action> [options]
+.SH DESCRIPTION
+Use cf for Cloudflare resources, authentication profiles, audits, and raw API calls.
+.SH EXAMPLES
+.B cf auth status
+.br
+.B cf zone list --json
+.br
+.B cf api /zones --json --jq '.result[].name'
+.SH SEE ALSO
+cf --help

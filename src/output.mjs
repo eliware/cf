@@ -17,6 +17,13 @@ export function selectJson(value, expression) {
   }, value);
 }
 
+export function renderTemplate(value, template) {
+  return template.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_, expression) => {
+    const selected = selectJson(value, expression.trim().startsWith('.') ? expression.trim() : `.${expression.trim()}`);
+    return selected === undefined || selected === null ? '' : String(selected);
+  });
+}
+
 export function printTextList(items, formatter, printer = log.info.bind(log)) {
   for (const item of items) printer(formatter(item));
 }

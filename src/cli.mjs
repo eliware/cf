@@ -4,7 +4,7 @@ import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
 import { printHelp, printResourceHelp } from './help.mjs';
 import { VERSION } from './version.mjs';
-import { selectJson, toJsonOutput } from './output.mjs';
+import { renderTemplate, selectJson, toJsonOutput } from './output.mjs';
 import { handleZones } from './handlers/zones.mjs';
 import { handleZoneSettings } from './handlers/zone-settings.mjs';
 import { handleDnsRecords } from './handlers/dns-records.mjs';
@@ -20,6 +20,7 @@ import { handleAudit } from './handlers/audit.mjs';
 import { handleInventory } from './handlers/inventory.mjs';
 import { handleOriginCa } from './handlers/origin-ca.mjs';
 import { makeSimpleResource } from './handlers/simple-resource.mjs';
+import { handleExtension } from './handlers/extension.mjs';
 import { applyActiveProfile } from './profiles.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
@@ -62,10 +63,16 @@ export async function run({
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
   const commandPrinter = opts.quiet ? { ...printer, log: () => {} } : printer;
+  if (opts.web) {
+    const target = opts['zone-id'] ? `zones/${opts['zone-id']}` : opts['account-id'] ? `accounts/${opts['account-id']}` : '';
+    return printer.log(`https://dash.cloudflare.com/${target}`);
+  }
   const body = loadBody(opts, fsImpl);
   const fail = (message, code = 1) => { printer.error(message); exit(code); };
   const common = { cf, action, opts, body, outputJson, printer: commandPrinter,
-    toJsonOutput: value => toJsonOutput(selectJson(value, opts.jq), printer.log), fail };
+    toJsonOutput: value => opts.template
+      ? printer.log(renderTemplate(selectJson(value, opts.jq), opts.template))
+      : toJsonOutput(selectJson(value, opts.jq), printer.log), fail };
   const dispatch = {
     zones: handlers.zones || handleZones,
     'zone-settings': handlers.zoneSettings || handleZoneSettings,
@@ -92,6 +99,7 @@ export async function run({
     images: handlers.images || defaultHandlers.images,
     ai: handlers.ai || defaultHandlers.ai,
     access: handlers.access || defaultHandlers.access,
+    extension: handlers.extension || handleExtension,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

@@ -69,5 +69,6 @@
         "RELEASE_NOTES.md",
         "LICENSE",
         "docs"
+        ,"completions"
     ]
 }

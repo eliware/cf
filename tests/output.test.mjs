@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { log } from '@eliware/common';
-import { toJsonOutput, printTextList, selectJson } from '../src/output.mjs';
+import { toJsonOutput, printTextList, selectJson, renderTemplate } from '../src/output.mjs';
 
 describe('output helpers', () => {
   test('toJsonOutput uses injected printer', () => {
@@ -31,4 +31,9 @@ test('selectJson supports nested values and arrays', () => {
   expect(selectJson(value, '.result[].name')).toEqual(['a', 'b']);
   expect(selectJson(value, '.missing[]')).toEqual([]);
   expect(selectJson(value, '.')).toBe(value);
+});
+
+test('renderTemplate interpolates selected fields', () => {
+  expect(renderTemplate({ name: 'example.com', count: 2 }, '{{.name}} ({{count}})')).toBe('example.com (2)');
+  expect(renderTemplate({ name: null }, '{{.name}}')).toBe('');
 });

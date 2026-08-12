@@ -1,4 +1,4 @@
-import { selectJson } from '../output.mjs';
+import { renderTemplate, selectJson } from '../output.mjs';
 import { getAllPages, requestWithBackoff, withPage } from '../request.mjs';
 
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
@@ -28,5 +28,6 @@ export async function handleApi({ cf, action, opts, body, printer, fail }) {
   const requestPage = page => requestWithBackoff(() => request.call(cf, withPage(path, page), undefined));
   const first = await requestWithBackoff(() => request.call(cf, path, body === null ? undefined : { body }));
   const result = method === 'GET' ? await getAllPages(requestPage, first, { paginate: opts.paginate }) : first;
-  printer.log(JSON.stringify(selectJson(result, opts.jq), null, 2));
+  const selected = selectJson(result, opts.jq);
+  printer.log(opts.template ? renderTemplate(selected, opts.template) : JSON.stringify(selected, null, 2));
 }
