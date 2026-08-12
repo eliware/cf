@@ -126,6 +126,43 @@
           are replaced with the new authorization.
         </p>
       </details>
+      <details>
+        <summary>Can I use my own OAuth client?</summary>
+        <p>
+          Yes. Create a Cloudflare OAuth application in your own account or
+          organization, enable the authorization-code flow, and register the
+          local callback URL
+          <code>http://127.0.0.1:8765/oauth/callback</code>. If your client
+          registration supports multiple redirect URLs, also register ports
+          <code>8766</code> through <code>8769</code> because cf uses them as
+          fallbacks when a port is busy. Select every Cloudflare scope your
+          client should be allowed to request. Then start the normal login
+          command with your client ID:
+        </p>
+        <pre><code>CF_OAUTH_CLIENT_ID=your-client-id cf auth login</code></pre>
+        <p>
+          The command starts the local OAuth web server and opens the scope
+          picker for you; no separate server command is required. The picker
+          can only request scopes allowed by your Cloudflare client. For a
+          remote or headless setup, keep the registered redirect host at
+          <code>127.0.0.1</code> and use
+          <code>CF_OAUTH_BIND_HOST=0.0.0.0</code> if the browser reaches the
+          machine through another address.
+        </p>
+      </details>
+      <details>
+        <summary>Can Eliware access my Cloudflare account?</summary>
+        <p>
+          No. The default Eliware OAuth client identifies the application, but
+          cf sends the authorization flow directly between your browser and
+          Cloudflare. The resulting credentials are stored locally in your
+          operating-system keychain and API calls go directly from cf to
+          Cloudflare. Eliware does not receive your token, proxy your requests,
+          or choose permissions on your behalf. You can use your own OAuth
+          client at any time if you prefer to manage the client registration
+          yourself.
+        </p>
+      </details>
     </section>
     <footer>
       <p>© __COPYRIGHT_YEAR__ Eliware · cf v__APP_VERSION__</p>

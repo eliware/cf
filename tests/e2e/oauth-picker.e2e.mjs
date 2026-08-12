@@ -49,6 +49,9 @@ try {
       ),
       "Search permission scopes",
     );
+    const pickerText = await page.$eval(".faq", (faq) => faq.textContent);
+    assert.match(pickerText, /Can I use my own OAuth client\?/);
+    assert.match(pickerText, /Can Eliware access my Cloudflare account\?/);
     console.log(`Captured ${name} OAuth picker screenshot`);
   }
   const start = await fetch(new URL("/oauth/start", previewUrl), {

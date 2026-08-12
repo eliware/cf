@@ -58,6 +58,50 @@ cf auth login
 
 The local web interface lets users select the scopes they need before authorizing with Cloudflare. Access and refresh credentials are stored in the operating system keychain when available. The callback page confirms success or failure and then the temporary local server shuts down.
 
+### Default OAuth client
+
+Running `cf auth login` uses the public Eliware OAuth client built into the
+CLI. The command starts a temporary local OAuth web server, opens the scope
+picker, and then sends the selected authorization request to Cloudflare. The
+client can request only scopes enabled in its Cloudflare registration, so the
+picker's selections are limited by that registration.
+
+### Use your own OAuth client
+
+You can register and manage a Cloudflare OAuth client in your own account or
+organization. This is useful for teams that want their own application identity
+or a different set of approved scopes:
+
+1. Create an OAuth application in Cloudflare.
+2. Enable the authorization-code response type (`Code`), rather than an
+   implicit token response.
+3. Register `http://127.0.0.1:8765/oauth/callback` as the redirect URL. If the
+   registration accepts multiple redirect URLs, also add ports `8766` through
+   `8769`; `cf` uses those ports when an earlier one is busy.
+4. Select all scopes the client is allowed to request. The scope picker can
+   select permissions only when the Cloudflare client registration permits
+   them.
+5. Start the normal login command with the client ID:
+
+```sh
+CF_OAUTH_CLIENT_ID=your-client-id cf auth login
+```
+
+There is no separate OAuth-server command: `cf auth login` starts the
+temporary server automatically. The default browser redirect remains
+`127.0.0.1`; for remote access, the server can bind on all interfaces while
+the registered redirect remains local to the browser:
+
+```sh
+CF_OAUTH_CLIENT_ID=your-client-id \
+CF_OAUTH_BIND_HOST=0.0.0.0 \
+CF_OAUTH_REDIRECT_HOST=127.0.0.1 \
+cf auth login
+```
+
+The client ID environment variable overrides the built-in Eliware client for
+that login only. Do not commit client credentials, tokens, or `.env` files.
+
 For headless automation, provide an API token through standard input:
 
 ```sh
