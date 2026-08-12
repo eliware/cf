@@ -38,7 +38,9 @@ test('browser launcher selects the native command for each platform', () => {
     expect(unref).toHaveBeenCalled();
   }
   const unref = jest.fn(); openBrowser('https://example.test', { spawnImpl: jest.fn(() => ({ unref })) }); expect(unref).toHaveBeenCalled();
-  openBrowser('about:blank');
+  const defaultUnref = jest.fn();
+  openBrowser('about:blank', undefined, jest.fn(() => ({ unref: defaultUnref })));
+  expect(defaultUnref).toHaveBeenCalled();
 });
 
 test('OAuth login validates client configuration before opening a browser', async () => {
