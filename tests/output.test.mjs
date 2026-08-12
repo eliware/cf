@@ -103,3 +103,14 @@ test('terminal pager propagates non-EPIPE stdin and spawn errors', async () => {
   const spawnFailure = createTerminalOutput({ printer, pager: 'pager', spawnImpl: () => { throw new Error('spawn failed'); } }); spawnFailure.log('x');
   await expect(spawnFailure.flush()).rejects.toThrow('spawn failed');
 });
+
+test('terminal pager ignores EPIPE while writing to stdin', async () => {
+  const child = { stdin: { on: jest.fn(), end: jest.fn() }, once: jest.fn() };
+  child.once.mockImplementation((event, handler) => { if (event === 'close') handler(0); });
+  const output = createTerminalOutput({ pager: 'pager', spawnImpl: () => child });
+  output.log('output');
+  const flushed = output.flush();
+  const errorHandler = child.stdin.on.mock.calls[0][1];
+  expect(() => errorHandler(Object.assign(new Error('broken pipe'), { code: 'EPIPE' }))).not.toThrow();
+  await expect(flushed).resolves.toBeUndefined();
+});
