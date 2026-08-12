@@ -21,7 +21,7 @@
 
 ## Output and API access
 
-- [ ] Standardize human-readable tables.
+- [x] Standardize human-readable tables.
 - [x] Add stable `--json` output.
 - [x] Add `--jq` filtering.
 - [x] Add template output if useful.
