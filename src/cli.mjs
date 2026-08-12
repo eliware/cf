@@ -13,6 +13,8 @@ import { handleLists } from './handlers/lists.mjs';
 import { handleListItems } from './handlers/list-items.mjs';
 import { handleApi } from './handlers/api.mjs';
 import { handleAuth } from './handlers/auth.mjs';
+import { handleSsl } from './handlers/ssl.mjs';
+import { handleCache } from './handlers/cache.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 
@@ -52,6 +54,8 @@ export async function run({
     'list-items': handlers.listItems || handleListItems,
     api: handlers.api || handleApi,
     auth: handlers.auth || handleAuth,
+    ssl: handlers.ssl || handleSsl,
+    cache: handlers.cache || handleCache,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

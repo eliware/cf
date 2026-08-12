@@ -18,6 +18,7 @@ A dependency-injected Cloudflare administration CLI for scripting and inspecting
 - Singular aliases for familiar resources (`cf zone`, `cf dns`, `cf rules`)
 - Universal `cf api` escape hatch for any Cloudflare API endpoint
 - Read-only authentication status and context inspection
+- SSL/TLS setting inspection and controlled cache purges
 
 ## Requirements
 
@@ -75,6 +76,8 @@ cf api /zones --json
 cf api zones/<zone_id>/dns_records --json
 cf auth status
 cf auth list
+cf ssl get --zone-id <zone_id>
+cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
 ```
 
 Use JSON output for automation:

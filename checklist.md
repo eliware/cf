@@ -40,9 +40,9 @@
 - [x] Migrate zone settings to `cf setting`.
 - [x] Migrate rulesets to `cf rules`.
 - [x] Migrate lists to `cf list`.
-- [ ] Add SSL/TLS inspection and configuration.
+- [x] Add SSL/TLS inspection and configuration.
 - [ ] Add Origin CA certificate management.
-- [ ] Add cache purge commands.
+- [x] Add cache purge commands.
 - [ ] Add health-check commands.
 - [ ] Add Load Balancer commands.
 - [ ] Add tunnel commands.

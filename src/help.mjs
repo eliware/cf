@@ -31,6 +31,8 @@ Resources:
   list-items             List or manage list items
   api                    Call any relative Cloudflare API path
   auth                   Inspect Cloudflare authentication context
+  ssl                    Inspect or configure zone SSL/TLS settings
+  cache                  Purge zone cache
 
 Examples:
   cf zones list
@@ -48,6 +50,8 @@ Examples:
   cf api /zones --json
   cf api zones/<zone_id>/dns_records --json
   cf auth status
+  cf ssl get --zone-id <zone_id>
+  cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
 `);
 }
 
@@ -88,6 +92,11 @@ export function printResourceHelp(resource, printer = console) {
     auth: `auth
   status               Verify the active Cloudflare identity
   list                 Show configured credential contexts`,
+    ssl: `ssl
+  get                  Read a zone SSL/TLS setting
+  set                  Update a zone SSL/TLS setting`,
+    cache: `cache
+  purge                Purge zone cache (requires --force)`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
