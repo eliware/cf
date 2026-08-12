@@ -1,5 +1,6 @@
 import { jest } from "@jest/globals";
 import { handleAuth } from "../../src/handlers/auth.mjs";
+import { fs } from "@eliware/common";
 
 const base = () => ({
   cf: { get: jest.fn().mockResolvedValue({ result: { id: "user-1" } }) },
@@ -96,6 +97,7 @@ test("auth OAuth login saves and activates the returned token profile", async ()
       accessToken: "oauth-token",
       refreshToken: "refresh",
     }),
+    writeCredentialImpl: jest.fn().mockResolvedValue(false),
   });
   expect(write).toHaveBeenCalledWith(
     expect.objectContaining({ active: "oauth" }),
@@ -219,10 +221,30 @@ test("auth handles an empty token when environment credentials are absent", asyn
   const oldToken = process.env.CLOUDFLARE_API_TOKEN;
   delete process.env.CLOUDFLARE_API_TOKEN;
   const ctx = base();
-  await handleAuth({ ...ctx, action: "login", opts: { "token-stdin": true }, readToken: () => "" });
+  const readFileSync = jest.spyOn(fs, "readFileSync").mockReturnValue("");
+  await handleAuth({ ...ctx, action: "login", opts: { "token-stdin": true } });
+  readFileSync.mockRestore();
   expect(ctx.fail).toHaveBeenCalledWith("You are not logged into Cloudflare. Run: cf auth login");
   if (oldToken === undefined) delete process.env.CLOUDFLARE_API_TOKEN;
   else process.env.CLOUDFLARE_API_TOKEN = oldToken;
+});
+
+test("auth OAuth login omits the token when keychain storage succeeds", async () => {
+  const write = jest.fn();
+  const ctx = base();
+  await handleAuth({
+    ...ctx,
+    action: "login",
+    opts: { profile: "secure", oauth: true },
+    write,
+    oauthLogin: jest.fn().mockResolvedValue({ accessToken: "access" }),
+    writeCredentialImpl: async () => true,
+  });
+  expect(write).toHaveBeenCalledWith(
+    expect.objectContaining({ profiles: { secure: expect.not.objectContaining({ apiToken: expect.anything() }) } }),
+    undefined,
+    undefined,
+  );
 });
 
 test("auth OAuth login accepts configured and requested scopes", async () => {

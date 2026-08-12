@@ -93,10 +93,10 @@ export async function handleAuth({
       data.profiles[name] = {
         authMethod: "oauth",
         scopes: oauth.scopes || scopes,
-        ...(storedInKeychain ? {} : { apiToken: oauth.accessToken }),
         accountId: opts?.["account-id"] || process.env.CLOUDFLARE_ACCOUNT_ID,
         zoneId: opts?.["zone-id"] || process.env.CLOUDFLARE_ZONE_ID,
       };
+      if (!storedInKeychain) data.profiles[name].apiToken = oauth.accessToken;
       data.active = name;
       write(data, profileHome, profileFs);
       return printer.log(`Saved and activated profile ${name}`);
