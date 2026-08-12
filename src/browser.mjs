@@ -1,5 +1,5 @@
 import { access } from "node:fs/promises";
-import { delimiter, join, win32 } from "node:path";
+import { join, win32 } from "node:path";
 
 const windowsCandidates = [
   ["PROGRAMFILES", "Google", "Chrome", "Application", "chrome.exe"],
@@ -52,7 +52,7 @@ export async function findBrowser({
   }
 
   if (puppeteerPath && await accessImpl(puppeteerPath)) return puppeteerPath;
-  const pathDelimiter = platform === "win32" ? ";" : delimiter;
+  const pathDelimiter = platform === "win32" ? ";" : ":";
   /* istanbul ignore next -- PATH is always present in supported runtimes. */
   const pathEntries = (env.PATH ?? "").split(pathDelimiter).filter(Boolean);
   const executableNames = platform === "win32"

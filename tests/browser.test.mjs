@@ -57,8 +57,8 @@ test("browser discovery covers the default filesystem access failure", async () 
   await expect(findBrowser({
     env: { CHROME_PATH: "/definitely/missing/browser" },
   })).rejects.toThrow("CHROME_PATH does not exist");
-  await expect(findBrowser({ env: { CHROME_PATH: "/dev/null" } })).resolves.toBe(
-    "/dev/null",
+  await expect(findBrowser({ env: { CHROME_PATH: process.execPath } })).resolves.toBe(
+    process.execPath,
   );
 });
 
