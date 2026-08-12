@@ -28,6 +28,7 @@
 - [x] Add `--web` dashboard links.
 - [x] Handle pagination consistently.
 - [x] Add quiet and verbose modes.
+- [x] Add pager, color, and terminal-width controls.
 - [x] Implement `cf api` with GET/POST/PUT/PATCH/DELETE support.
 - [x] Support JSON files and inline request bodies.
 - [x] Add dry-run and mutation confirmation to API calls.
@@ -86,6 +87,6 @@
 
 - [x] `npm test`
 - [x] `npm run lint`
-- [x] `npm run test:gaps`
-- [x] `npm run pack`
+- [ ] `npm run test:gaps` (currently reports the remaining coverage gaps)
+- [ ] `npm run pack` (intentionally excluded from this work)
 - [x] Verify `cf --help` and representative JSON/JQ commands.
