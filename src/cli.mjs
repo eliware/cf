@@ -17,6 +17,7 @@ import { handleSsl } from './handlers/ssl.mjs';
 import { handleCache } from './handlers/cache.mjs';
 import { handleHealth } from './handlers/health.mjs';
 import { handleAudit } from './handlers/audit.mjs';
+import { handleInventory } from './handlers/inventory.mjs';
 import { applyActiveProfile } from './profiles.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
@@ -63,6 +64,7 @@ export async function run({
     cache: handlers.cache || handleCache,
     health: handlers.health || handleHealth,
     audit: handlers.audit || handleAudit,
+    inventory: handlers.inventory || handleInventory,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

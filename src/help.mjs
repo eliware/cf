@@ -41,6 +41,7 @@ Resources:
   cache                  Purge zone cache
   health                 Inspect zone health checks
   audit                  Inspect account audit logs
+  inventory              Export account inventory
 
 Examples:
   cf zones list
@@ -65,6 +66,7 @@ Examples:
   cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
   cf health list --zone-id <zone_id>
   cf audit list --account-id <account_id>
+  cf inventory export --account-id <account_id> --json
 `);
 }
 
@@ -128,6 +130,8 @@ export function printResourceHelp(resource, printer = console) {
   delete               Delete a health check (requires --force)`,
     audit: `audit
   list                 List account audit logs`,
+    inventory: `inventory
+  export               Export zones, DNS records, and SSL settings`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }

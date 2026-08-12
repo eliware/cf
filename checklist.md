@@ -54,7 +54,7 @@
 - [x] Add security baseline checks.
 - [x] Add DNS diff and apply workflows.
 - [x] Add TLS certificate coverage checks.
-- [ ] Add inventory export.
+- [x] Add inventory export.
 - [x] Make workflows plan-first by default.
 - [x] Require explicit confirmation for destructive actions.
 - [ ] Test success, failure, validation, dry-run, and API error paths.
