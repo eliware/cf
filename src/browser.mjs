@@ -1,5 +1,5 @@
 import { access } from "node:fs/promises";
-import { join, win32 } from "node:path";
+import { posix, win32 } from "node:path";
 
 const windowsCandidates = [
   ["PROGRAMFILES", "Google", "Chrome", "Application", "chrome.exe"],
@@ -62,7 +62,7 @@ export async function findBrowser({
     for (const name of executableNames) {
       const candidate = platform === "win32"
         ? win32.join(directory, name)
-        : join(directory, name);
+        : posix.join(directory, name);
       if (await accessImpl(candidate)) return candidate;
     }
   }
