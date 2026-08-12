@@ -168,6 +168,7 @@ test('CLI manages aliases and config through the command surface', async () => {
   await mod.run({ ...common, argv: ['alias', 'delete', 'work'] });
   await mod.run({ ...common, argv: ['alias', 'delete', 'missing'] });
   await mod.run({ ...common, argv: ['alias', 'set', 'missing'] });
+  await mod.run({ ...common, argv: ['alias', 'unknown'] });
   await mod.run({ ...common, argv: ['config', 'set', 'pager', 'less'] });
   await mod.run({ ...common, argv: ['config', 'get', 'pager'] });
   await mod.run({ ...common, argv: ['config', 'list', '--json'] });
