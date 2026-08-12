@@ -8,6 +8,7 @@
       content="Choose Cloudflare permissions for the cf command-line tool."
     />
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href="/oauth-web/eliware-115x115.png" />
     <title>Set up cf</title>
     <link rel="stylesheet" href="/oauth-picker.css" />
   </head>
@@ -51,10 +52,14 @@
           autocomplete="off"
         />
         <div class="scope-tools">
-          <button type="button" data-all-enable>Enable all</button
-          ><button type="button" data-all-disable>Disable all</button
-          ><button type="button" data-expand>Expand all</button
-          ><button type="button" data-collapse>Collapse all</button>
+          <div class="scope-selection-tools">
+            <button type="button" data-all-enable>Enable all</button>
+            <button type="button" data-all-disable>Disable all</button>
+          </div>
+          <div class="scope-view-tools">
+            <button type="button" data-expand>Expand all</button>
+            <button type="button" data-collapse>Collapse all</button>
+          </div>
         </div>
         <div id="scope-groups"></div>
         <button class="login" type="submit" disabled>

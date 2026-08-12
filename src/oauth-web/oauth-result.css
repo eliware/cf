@@ -1,0 +1,67 @@
+:root {
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #050505;
+  color: #f5f5f5;
+  font:
+    16px system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.card {
+  max-width: 620px;
+  width: 100%;
+  background: #101010;
+  border: 1px solid #303030;
+  border-radius: 20px;
+  padding: 38px;
+  box-shadow: 0 24px 80px #0008;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f6821f;
+  color: #111;
+  font-weight: 800;
+}
+.status {
+  color: #ff9f9f;
+  font-size: 42px;
+  margin: 28px 0 4px;
+}
+h1 {
+  font-size: clamp(30px, 6vw, 48px);
+  margin: 0 0 12px;
+}
+p {
+  color: #a5a5a5;
+  line-height: 1.6;
+}
+.next {
+  border-top: 1px solid #303030;
+  margin-top: 25px;
+  padding-top: 20px;
+}
+@media (max-width: 520px) {
+  .card {
+    padding: 26px;
+  }
+}

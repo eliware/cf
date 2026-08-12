@@ -41,6 +41,16 @@ npm run pack
 npm install -g .
 ```
 
+Run the local OAuth web checks without authenticating:
+
+```sh
+npm run test:e2e:screenshots
+npm run test:e2e:lighthouse
+npm run test:e2e:web
+```
+
+Screenshots and Lighthouse reports are written under `artifacts/` and are ignored by Git.
+
 The global install provides:
 
 ```sh

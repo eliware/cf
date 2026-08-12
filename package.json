@@ -7,6 +7,9 @@
         "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
         "lint": "npx oxlint .",
         "test:gaps": "node scripts/test-gaps.mjs",
+        "test:e2e:screenshots": "node tests/e2e/oauth-picker.e2e.mjs",
+        "test:e2e:lighthouse": "node tests/e2e/oauth-picker.lighthouse.mjs",
+        "test:e2e:web": "npm run test:e2e:screenshots && npm run test:e2e:lighthouse",
         "pack": "npm pack --dry-run"
     },
     "keywords": [
@@ -36,8 +39,11 @@
         "cf": "bin/cf.mjs"
     },
     "devDependencies": {
+        "chrome-launcher": "^1.2.1",
         "jest": "^30.0.4",
-        "oxlint": "^1.73.0"
+        "lighthouse": "^13.4.1",
+        "oxlint": "^1.73.0",
+        "puppeteer": "^25.6.0"
     },
     "jest": {
         "testEnvironment": "node",

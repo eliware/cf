@@ -7,6 +7,7 @@ node_modules/
 .agentx_responseid
 
 coverage/
+artifacts/
 .nyc_output/
 dist/
 .tmp/
