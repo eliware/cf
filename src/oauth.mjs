@@ -36,7 +36,7 @@ export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, port
     if (url.pathname !== '/oauth/callback') { response.writeHead(404); response.end(); return; }
     if (url.searchParams.get('state') !== state) { response.writeHead(400); response.end('Invalid OAuth state'); reject(new Error('Invalid OAuth state')); return; }
     const error = url.searchParams.get('error'); if (error) { response.writeHead(400); response.end('Cloudflare authorization failed'); reject(new Error(`Cloudflare authorization failed: ${error}`)); return; }
-    response.writeHead(200, { 'content-type': 'text/plain' }); response.end('Cloudflare authorization complete. You may close this window.'); resolve(url.searchParams.get('code'));
+    response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); response.end('<!doctype html><title>cf authorization complete</title><p>Cloudflare authorization complete. This window will close automatically.</p><script>window.close();</script>'); resolve(url.searchParams.get('code'));
   }));
   open(authorization.toString());
   try {
