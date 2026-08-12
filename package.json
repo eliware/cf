@@ -6,7 +6,7 @@
     "scripts": {
         "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
         "lint": "npx oxlint .",
-        "test:gaps": "npm test 2>&1 | grep '|' | grep -vF '|     100 |      100 |     100 |     100 |'",
+        "test:gaps": "npm test 2>&1 | awk '/^All files|^ src|^ src\\// { if ($0 !~ /100[[:space:]]+100[[:space:]]+100[[:space:]]+100/) bad=1; print } END { exit bad }'",
         "pack": "npm pack --dry-run"
     },
     "keywords": [

@@ -119,3 +119,9 @@ test('auth login accepts a token from stdin without environment credentials', as
   expect(write).toHaveBeenCalledWith({ active: 'ci', profiles: { ci: expect.objectContaining({ apiToken: 'stdin-token', accountId: 'acct' }) } }, undefined, undefined);
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });
+
+test('auth OAuth login saves and activates the returned token profile', async () => {
+  const write = jest.fn(); const ctx = base();
+  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh', expiresIn: 3600, expiresAt: Date.now() + 3600000 }) });
+  expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'oauth' }), undefined, undefined);
+});
