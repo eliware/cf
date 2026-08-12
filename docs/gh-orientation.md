@@ -48,8 +48,8 @@ http://127.0.0.1:8769/oauth/callback
 
 Then run `cf auth login --profile work --oauth`; the public Eliware client ID
 is built in. `CF_OAUTH_CLIENT_ID=...` overrides it for a different client. The
-default requested scopes are `account.read,zone.read`; set
-`CF_OAUTH_SCOPES=account.read,zone.read,...` to request additional scopes that
+default requested scopes are `account-settings.read,zone.read,account-rule-lists.read,user-details.read`; set
+`CF_OAUTH_SCOPES=account-settings.read,zone.read,...` to request additional scopes that
 are registered on the client. For a remote browser over Tailscale, bind the
 callback and use the server's Tailscale address, registering the matching URI:
 

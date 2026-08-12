@@ -3,7 +3,7 @@ import http from 'node:http';
 import { spawn } from 'node:child_process';
 
 export const DEFAULT_OAUTH_PORTS = [8765, 8766, 8767, 8768, 8769];
-export const DEFAULT_OAUTH_SCOPES = ['account.read', 'zone.read'];
+export const DEFAULT_OAUTH_SCOPES = ['account-settings.read', 'zone.read', 'account-rule-lists.read', 'user-details.read'];
 export const DEFAULT_OAUTH_CLIENT_ID = 'f4fb39624f6674b6fb50d5a793a23389';
 const AUTH_URL = 'https://dash.cloudflare.com/oauth2/auth';
 const TOKEN_URL = 'https://dash.cloudflare.com/oauth2/token';
