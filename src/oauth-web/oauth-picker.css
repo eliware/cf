@@ -82,13 +82,14 @@ p {
   font-size: 13px;
   color: var(--muted);
   font-weight: 600;
-  margin: 0 0 8px;
+  margin: 0;
 }
 .module-tier-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 10px;
 }
 .module-actions,
 .scope-selection-tools,
@@ -191,6 +192,8 @@ p {
   display: none;
 }
 .category summary {
+  display: flex;
+  align-items: center;
   list-style: none;
   cursor: pointer;
   padding: 15px 4px;
@@ -202,16 +205,23 @@ p {
 }
 .category summary:before {
   content: "⌄";
-  display: inline-block;
-  width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 26px;
+  width: 26px;
+  margin-right: 8px;
   color: #aaa;
+  font-size: 18px;
+  line-height: 1;
+  transform-origin: center;
   transition: transform 0.15s;
 }
 .category:not([open]) summary:before {
   transform: rotate(-90deg);
 }
 .category summary b {
-  float: right;
+  margin-left: auto;
   color: #f3f3f3;
   font-size: 12px;
 }
@@ -593,15 +603,29 @@ header .brand-lockup img {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   list-style: none;
   cursor: pointer;
+}
+.quick-setup > summary #module-count {
+  margin-left: auto;
+  text-align: right;
 }
 .quick-setup > summary::-webkit-details-marker {
   display: none;
 }
 .quick-setup > summary:after {
   content: "⌄";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+  width: 18px;
+  margin-left: 0;
   color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  transform-origin: center;
   transition: transform 0.15s;
 }
 .quick-setup:not([open]) > summary:after {
