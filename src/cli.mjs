@@ -24,6 +24,7 @@ import { makeSimpleResource } from './handlers/simple-resource.mjs';
 import { handleExtension } from './handlers/extension.mjs';
 import { applyActiveProfile } from './profiles.mjs';
 import { discoverExtensions, loadExtensionCommand } from './extensions.mjs';
+import { readAliases, writeAliases } from './aliases.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 const defaultHandlers = {
@@ -54,11 +55,20 @@ export async function run({
   homeDir = os.homedir(),
   exit = code => process.exit(code),
 } = {}) {
-  const { args, opts } = parseArgs(argv);
+  let { args, opts } = parseArgs(argv);
   if (opts.version) return printer.log(VERSION);
   if (opts.help || args.length === 0) return printHelp(printer);
-  const resource = aliases[args[0]] || args[0];
-  const action = args[1];
+  let resource = aliases[args[0]] || args[0];
+  let action = args[1];
+  if (resource === 'alias') {
+    const stored = readAliases(homeDir, fsImpl); const aliasName = args[2];
+    if (action === 'list') return opts.json || opts.output === 'json' ? printer.log(JSON.stringify(stored, null, 2)) : Object.entries(stored).forEach(([name, command]) => printer.log(`${name} ${command}`));
+    if (action === 'set') { if (!aliasName || !args[3]) return printer.error('Usage: cf alias set <name> <command>'); stored[aliasName] = args.slice(3).join(' '); writeAliases(stored, homeDir, fsImpl); return printer.log(`Set alias ${aliasName}`); }
+    if (action === 'delete') { if (!aliasName || !stored[aliasName]) return printer.error(`Unknown alias: ${aliasName || '(missing)'}`); delete stored[aliasName]; writeAliases(stored, homeDir, fsImpl); return printer.log(`Deleted alias ${aliasName}`); }
+    return printResourceHelp('alias', printer);
+  }
+  const expansion = readAliases(homeDir, fsImpl)[args[0]];
+  if (expansion) { const expanded = parseArgs(`${expansion} ${args.slice(1).join(' ')}`.trim().split(/\s+/)); args = expanded.args; opts = { ...expanded.opts, ...opts }; resource = aliases[args[0]] || args[0]; action = args[1]; }
   const extensionManifest = discoverExtensions(homeDir, fsImpl).find(manifest => manifest.commands[resource]);
   if ((args.length === 1 && !extensionManifest) || opts.help) return printResourceHelp(resource, printer);
 

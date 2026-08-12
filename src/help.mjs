@@ -226,6 +226,10 @@ export function printResourceHelp(resource, printer = console) {
   install              Install from a local extension directory
   upgrade              Replace an installed extension from a local directory
   remove               Remove an extension (requires --force)`,
+  alias: `alias
+  list                 List saved command aliases
+  set <name> <command> Save a command alias
+  delete <name>        Delete a command alias`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
