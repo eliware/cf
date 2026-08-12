@@ -46,18 +46,19 @@ http://127.0.0.1:8768/oauth/callback
 http://127.0.0.1:8769/oauth/callback
 ```
 
-Then run `CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth`. The
+Then run `cf auth login --profile work --oauth`; the public Eliware client ID
+is built in. `CF_OAUTH_CLIENT_ID=...` overrides it for a different client. The
 default requested scopes are `account.read,zone.read`; set
 `CF_OAUTH_SCOPES=account.read,zone.read,...` to request additional scopes that
 are registered on the client. For a remote browser over Tailscale, bind the
 callback and use the server's Tailscale address, registering the matching URI:
 
 ```sh
-CF_OAUTH_BIND_HOST=0.0.0.0 \\
-CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth
+CF_OAUTH_BIND_HOST=100.112.180.56 cf auth login --profile work --oauth
 ```
 
-The authorization request and registered redirect remain `127.0.0.1`. If the
+The default listener binds to `0.0.0.0`; `CF_OAUTH_BIND_HOST` overrides it. The
+authorization request and registered redirect remain `127.0.0.1`. If the
 browser is remote, replace only the redirected URL host with the server's
 Tailscale address before loading it. Binding to `0.0.0.0` should only be used
 with a trusted network path and firewall; loopback plus SSH forwarding remains
