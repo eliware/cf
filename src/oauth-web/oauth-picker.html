@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Choose Cloudflare permissions for the cf command-line tool."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Set up cf</title>
+    <link rel="stylesheet" href="/oauth-picker.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <div class="brand-lockup">
+          <div class="cf-mark" aria-label="cf">cf</div>
+          <span>for</span>
+          <img src="/oauth-web/cloudflare-115x53.png" alt="Cloudflare" />
+        </div>
+        <h1>Set up cf</h1>
+        <p>Select the capabilities your client needs access to.</p>
+      </header>
+      <section class="modules">
+        <details class="quick-setup" open>
+          <summary>
+            <h2>Quick setup</h2>
+            <span id="module-count"></span>
+          </summary>
+          <div id="module-groups"></div>
+        </details>
+      </section>
+      <form method="post" action="/oauth/start" id="scope-form">
+        <button class="login" type="submit" disabled>
+          Log in with Cloudflare
+        </button>
+        <p class="login-hint" id="login-hint">
+          Select at least one permission scope to continue.
+        </p>
+        <div class="scope-heading">
+          <h2>Select permission scopes</h2>
+          <span aria-live="polite"><b id="scope-count">0</b> selected</span>
+        </div>
+        <p class="hint">Select the scopes your client needs access to.</p>
+        <input
+          id="scope-search"
+          type="search"
+          aria-label="Search permission scopes"
+          placeholder="Search permission scopes"
+          autocomplete="off"
+        />
+        <div class="scope-tools">
+          <button type="button" data-all-enable>Enable all</button
+          ><button type="button" data-all-disable>Disable all</button
+          ><button type="button" data-expand>Expand all</button
+          ><button type="button" data-collapse>Collapse all</button>
+        </div>
+        <div id="scope-groups"></div>
+        <button class="login" type="submit" disabled>
+          Log in with Cloudflare
+        </button>
+        <p class="login-hint bottom-hint" id="bottom-login-hint">
+          Select at least one permission scope to continue.
+        </p>
+      </form>
+    </main>
+    <footer>
+      <p>© __COPYRIGHT_YEAR__ Eliware · cf v__APP_VERSION__</p>
+      <nav aria-label="Site information">
+        <a href="https://eliware.org/cf">Project home</a
+        ><a href="https://eliware.org/cf/policy">Privacy policy</a
+        ><a href="https://eliware.org/cf/tos">Terms of service</a>
+      </nav>
+      <img
+        src="/oauth-web/eliware-115x115.png"
+        alt="Eliware"
+        width="58"
+        height="58"
+      />
+    </footer>
+    <script>
+      window.CF_SCOPE_MODEL = __CF_SCOPE_MODEL__;
+    </script>
+    <script type="module" src="/oauth-picker.mjs"></script>
+  </body>
+</html>
