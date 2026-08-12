@@ -11,6 +11,7 @@ test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
   const fallbackFetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ access_token: 'newer' }) });
   const fallback = await refreshOAuth({ refreshToken: 'old', fetchImpl: fallbackFetch });
   expect(fallback.refreshToken).toBe('old'); expect(fallback.expiresIn).toBeUndefined();
+  await revokeOAuth({ accessToken: 'new', fetchImpl: jest.fn().mockResolvedValue({ ok: true }) });
 });
 
 test('browser launcher selects the native command for each platform', () => {
@@ -20,6 +21,7 @@ test('browser launcher selects the native command for each platform', () => {
     expect(spawnImpl).toHaveBeenCalledWith(platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open', ['https://example.test'], expect.objectContaining({ shell: platform === 'win32' }));
     expect(unref).toHaveBeenCalled();
   }
+  const unref = jest.fn(); openBrowser('https://example.test', { spawnImpl: jest.fn(() => ({ unref })) }); expect(unref).toHaveBeenCalled();
 });
 
 test('OAuth login validates client configuration before opening a browser', async () => {
@@ -95,4 +97,22 @@ test('OAuth login reports exhausted and non-retryable callback listeners', async
   }
   await expect(loginOAuth({ clientId: 'client', ports: [1, 2], serverFactory: () => new FailingServer('EADDRINUSE'), open: jest.fn() })).rejects.toThrow('No OAuth callback port available');
   await expect(loginOAuth({ clientId: 'client', ports: [1], serverFactory: () => new FailingServer('EACCES'), open: jest.fn() })).rejects.toThrow('EACCES');
+  const occupiedError = Object.assign(new Error('busy'), { code: 'EADDRINUSE' });
+  await expect(loginOAuth({ clientId: 'client', ports: [1], serverFactory: () => { throw occupiedError; }, open: jest.fn() })).rejects.toThrow('No OAuth callback port available');
+});
+
+test('OAuth login accepts a callback server without an address object', async () => {
+  class ListeningServer extends EventEmitter {
+    once(...args) { return super.once(...args); }
+    listen() { process.nextTick(() => this.emit('listening')); }
+    address() { return undefined; }
+    close() {}
+  }
+  const server = new ListeningServer(); const printed = [];
+  const promise = loginOAuth({ clientId: 'client', ports: [4321], serverFactory: () => server, open: jest.fn(), print: value => printed.push(value), fetchImpl: jest.fn().mockResolvedValue({ ok: true, json: async () => ({ access_token: 'access' }) }) });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].split('\n')[1]);
+  const response = { writeHead: jest.fn(), end: jest.fn() };
+  server.emit('request', { url: `/oauth/callback?state=${authorization.searchParams.get('state')}&code=code` }, response);
+  await expect(promise).resolves.toMatchObject({ accessToken: 'access' });
 });
