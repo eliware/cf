@@ -151,6 +151,10 @@ test('auth token login supports the default stdin reader and keychain storage', 
   expect(write).toHaveBeenCalled();
 });
 
+test('auth handler rejects a missing context', async () => {
+  await expect(handleAuth()).rejects.toThrow();
+});
+
 test('auth logout revokes stored OAuth credentials before deletion', async () => {
   const write = jest.fn(); const revokeOAuthImpl = jest.fn(); const deleteCredentialImpl = jest.fn(); const ctx = base();
   await handleAuth({ ...ctx, action: 'logout', opts: { profile: 'work' }, read: stored, write, readCredentialImpl: jest.fn().mockResolvedValue({ oauthAccessToken: 'oauth-token' }), revokeOAuthImpl, deleteCredentialImpl });

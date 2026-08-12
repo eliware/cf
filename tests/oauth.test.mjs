@@ -14,6 +14,22 @@ test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
   await revokeOAuth({ accessToken: 'new', fetchImpl: jest.fn().mockResolvedValue({ ok: true }) });
 });
 
+test('OAuth helpers use default clients and fetch implementation', async () => {
+  const originalFetch = globalThis.fetch;
+  const fetchImpl = jest.fn()
+    .mockResolvedValueOnce({ ok: true, json: async () => ({ access_token: 'default-access' }) })
+    .mockResolvedValueOnce({ ok: true });
+  globalThis.fetch = fetchImpl;
+  try {
+    await refreshOAuth({ refreshToken: 'refresh' });
+    await revokeOAuth({ accessToken: 'default-access' });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  expect(fetchImpl).toHaveBeenCalledTimes(2);
+  expect(fetchImpl.mock.calls[0][1].body.get('client_id')).toBe('f4fb39624f6674b6fb50d5a793a23389');
+});
+
 test('browser launcher selects the native command for each platform', () => {
   for (const platform of ['darwin', 'win32', 'linux']) {
     const unref = jest.fn(); const spawnImpl = jest.fn(() => ({ unref }));
@@ -22,6 +38,7 @@ test('browser launcher selects the native command for each platform', () => {
     expect(unref).toHaveBeenCalled();
   }
   const unref = jest.fn(); openBrowser('https://example.test', { spawnImpl: jest.fn(() => ({ unref })) }); expect(unref).toHaveBeenCalled();
+  openBrowser('about:blank');
 });
 
 test('OAuth login validates client configuration before opening a browser', async () => {

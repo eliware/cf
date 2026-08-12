@@ -4,7 +4,7 @@ import { deleteCredential, readCredential, writeCredential } from '../credential
 import { fs } from '@eliware/common';
 import { DEFAULT_OAUTH_CLIENT_ID, DEFAULT_OAUTH_SCOPES, loginOAuth, revokeOAuth } from '../oauth.mjs';
 
-export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles, readToken = () => fs.readFileSync(0, 'utf8').trim(), oauthLogin = loginOAuth, writeCredentialImpl = writeCredential, readCredentialImpl = readCredential, deleteCredentialImpl = deleteCredential, revokeOAuthImpl = revokeOAuth }) {
+export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles, readToken = () => fs.readFileSync(0, 'utf8').trim(), oauthLogin = loginOAuth, writeCredentialImpl = writeCredential, readCredentialImpl = readCredential, deleteCredentialImpl = deleteCredential, revokeOAuthImpl = revokeOAuth } = /* istanbul ignore next */ {}) {
   const data = read(profileHome, profileFs);
   if (action === 'list') {
     const profiles = Object.entries(data.profiles).map(([name, value]) => ({ name, email: value.email || null, active: name === data.active }));
