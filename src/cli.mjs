@@ -15,6 +15,8 @@ import { handleApi } from './handlers/api.mjs';
 import { handleAuth } from './handlers/auth.mjs';
 import { handleSsl } from './handlers/ssl.mjs';
 import { handleCache } from './handlers/cache.mjs';
+import { handleHealth } from './handlers/health.mjs';
+import { handleAudit } from './handlers/audit.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 
@@ -56,6 +58,8 @@ export async function run({
     auth: handlers.auth || handleAuth,
     ssl: handlers.ssl || handleSsl,
     cache: handlers.cache || handleCache,
+    health: handlers.health || handleHealth,
+    audit: handlers.audit || handleAudit,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

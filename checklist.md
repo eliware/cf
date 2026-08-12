@@ -43,10 +43,10 @@
 - [x] Add SSL/TLS inspection and configuration.
 - [ ] Add Origin CA certificate management.
 - [x] Add cache purge commands.
-- [ ] Add health-check commands.
+- [x] Add health-check commands.
 - [ ] Add Load Balancer commands.
 - [ ] Add tunnel commands.
-- [ ] Add audit-log commands.
+- [x] Add audit-log commands.
 
 ## Workflows and safety
 

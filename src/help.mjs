@@ -33,6 +33,8 @@ Resources:
   auth                   Inspect Cloudflare authentication context
   ssl                    Inspect or configure zone SSL/TLS settings
   cache                  Purge zone cache
+  health                 Inspect zone health checks
+  audit                  Inspect account audit logs
 
 Examples:
   cf zones list
@@ -52,6 +54,8 @@ Examples:
   cf auth status
   cf ssl get --zone-id <zone_id>
   cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
+  cf health list --zone-id <zone_id>
+  cf audit list --account-id <account_id>
 `);
 }
 
@@ -97,6 +101,13 @@ export function printResourceHelp(resource, printer = console) {
   set                  Update a zone SSL/TLS setting`,
     cache: `cache
   purge                Purge zone cache (requires --force)`,
+    health: `health
+  list                 List zone health checks
+  get                  Get a health check
+  create               Create a health check
+  delete               Delete a health check (requires --force)`,
+    audit: `audit
+  list                 List account audit logs`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
