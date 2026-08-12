@@ -68,6 +68,7 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(terminalWidth()).toBe(120);
   expect(styleTerminalText('ID')).toBe('ID');
   const defaults = createTerminalOutput({ printer }); defaults.log('default');
+  createTerminalOutput().log('default console output');
 });
 
 test('terminal output preserves JSON and can buffer human-readable output', async () => {

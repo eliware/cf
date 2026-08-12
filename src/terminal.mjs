@@ -21,7 +21,7 @@ export function styleTerminalText(text, { color = false, width = 120 } = {}) {
   const fitted = fitTerminal(text, width);
   if (!color || !fitted.includes('\n')) return fitted;
   const [header, ...rest] = fitted.split('\n');
-  return `${ANSI.bold}${ANSI.cyan}${header}${ANSI.reset}${rest.length ? `\n${rest.join('\n')}` : ''}`;
+  return `${ANSI.bold}${ANSI.cyan}${header}${ANSI.reset}\n${rest.join('\n')}`;
 }
 
 export function createTerminalOutput({ printer = console, json = false, color = false, width = 120, pager = null, spawnImpl = spawn } = {}) {

@@ -191,6 +191,8 @@ test('CLI supports a bare pager flag with and without saved pager settings', asy
   const handler = ({ printer: injected }) => injected.log('pager output');
   const oldPager = process.env.PAGER; process.env.PAGER = 'true';
   try { await mod.run({ argv: ['zones', 'list', '--pager'], env: {}, homeDir: home, fsImpl, printer, loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: handler }, exit: jest.fn() }); } finally { process.env.PAGER = oldPager; }
+  const savedPager = process.env.PAGER; delete process.env.PAGER;
+  try { await mod.run({ argv: ['zones', 'list', '--pager', '--no-pager'], env: {}, homeDir: `${home}-fallback`, fsImpl, printer, loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: handler }, exit: jest.fn() }); } finally { process.env.PAGER = savedPager; }
   expect(printer.error).not.toHaveBeenCalled();
 });
 
