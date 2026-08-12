@@ -25,6 +25,7 @@ import { handleExtension } from './handlers/extension.mjs';
 import { applyActiveProfile } from './profiles.mjs';
 import { discoverExtensions, loadExtensionCommand } from './extensions.mjs';
 import { readAliases, writeAliases } from './aliases.mjs';
+import { readSettings, writeSettings } from './settings.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 const defaultHandlers = {
@@ -66,6 +67,14 @@ export async function run({
     if (action === 'set') { if (!aliasName || !args[3]) return printer.error('Usage: cf alias set <name> <command>'); stored[aliasName] = args.slice(3).join(' '); writeAliases(stored, homeDir, fsImpl); return printer.log(`Set alias ${aliasName}`); }
     if (action === 'delete') { if (!aliasName || !stored[aliasName]) return printer.error(`Unknown alias: ${aliasName || '(missing)'}`); delete stored[aliasName]; writeAliases(stored, homeDir, fsImpl); return printer.log(`Deleted alias ${aliasName}`); }
     return printResourceHelp('alias', printer);
+  }
+  if (resource === 'config') {
+    const settings = readSettings(homeDir, fsImpl); const key = args[2];
+    if (action === 'list') return opts.json || opts.output === 'json' ? printer.log(JSON.stringify(settings, null, 2)) : Object.entries(settings).forEach(([name, value]) => printer.log(`${name} ${value}`));
+    if (action === 'get') return printer.log(settings[key] ?? '');
+    if (action === 'set') { if (!key || args[3] === undefined) return printer.error('Usage: cf config set <name> <value>'); settings[key] = args.slice(3).join(' '); writeSettings(settings, homeDir, fsImpl); return printer.log(`Set config ${key}`); }
+    if (action === 'unset') { delete settings[key]; writeSettings(settings, homeDir, fsImpl); return printer.log(`Unset config ${key}`); }
+    return printResourceHelp('config', printer);
   }
   const expansion = readAliases(homeDir, fsImpl)[args[0]];
   if (expansion) { const expanded = parseArgs(`${expansion} ${args.slice(1).join(' ')}`.trim().split(/\s+/)); args = expanded.args; opts = { ...expanded.opts, ...opts }; resource = aliases[args[0]] || args[0]; action = args[1]; }

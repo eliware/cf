@@ -230,6 +230,11 @@ export function printResourceHelp(resource, printer = console) {
   list                 List saved command aliases
   set <name> <command> Save a command alias
   delete <name>        Delete a command alias`,
+  config: `config
+  list                 List saved configuration
+  get <name>           Read a configuration value
+  set <name> <value>   Save a configuration value
+  unset <name>         Remove a configuration value`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
