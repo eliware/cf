@@ -3,7 +3,7 @@ import os from 'node:os';
 import { parseArgs, tokenizeCommand } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
-import { printHelp, printResourceHelp } from './help.mjs';
+import { printCommandHelp, printHelp, printResourceHelp } from './help.mjs';
 import { VERSION } from './version.mjs';
 import { renderTemplate, selectJson, toJsonOutput } from './output.mjs';
 import { handleZones } from './handlers/zones.mjs';
@@ -59,7 +59,7 @@ export async function run({
 } = {}) {
   let { args, opts } = parseArgs(argv);
   if (opts.version) return printer.log(VERSION);
-  if (opts.help || args.length === 0) return printHelp(printer);
+  if (args.length === 0) return printHelp(printer);
   let resource = aliases[args[0]] || args[0];
   let action = args[1];
   if (resource === 'alias') {
@@ -80,7 +80,8 @@ export async function run({
   const expansion = readAliases(homeDir, fsImpl)[args[0]];
   if (expansion) { const expanded = parseArgs(tokenizeCommand(`${expansion} ${args.slice(1).join(' ')}`.trim())); args = expanded.args; opts = { ...expanded.opts, ...opts }; resource = aliases[args[0]] || args[0]; action = args[1]; }
   const extensionManifest = discoverExtensions(homeDir, fsImpl).find(manifest => manifest.commands[resource]);
-  if ((args.length === 1 && !extensionManifest) || opts.help) return printResourceHelp(resource, printer);
+  if (opts.help) return args.length > 1 ? printCommandHelp(resource, action, printer) : printResourceHelp(resource, printer);
+  if (args.length === 1 && !extensionManifest) return printResourceHelp(resource, printer);
 
   if (extensionManifest) {
     const extensionHandler = await loadExtensionCommand(extensionManifest, resource, homeDir);

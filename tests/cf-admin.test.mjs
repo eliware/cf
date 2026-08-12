@@ -107,6 +107,13 @@ test('CLI exercises no-body and resource-help paths', async () => {
   expect(printer.log).toHaveBeenCalled();
 });
 
+test('CLI routes subcommand help to command-specific output', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 25}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['auth', 'login', '--help'], printer, fsImpl: { readFileSync: jest.fn(() => '') }, exit: jest.fn() });
+  expect(printer.log).toHaveBeenCalledWith(expect.stringContaining('browser-based OAuth flow'));
+});
+
 test('CLI exercises injected failure callback', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 6}`);
   const printer = { log: jest.fn(), error: jest.fn() };
