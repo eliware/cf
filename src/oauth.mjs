@@ -13,7 +13,7 @@ function openBrowser(url) {
   return spawn(command, [url], { detached: true, stdio: 'ignore', shell: process.platform === 'win32' }).unref();
 }
 
-export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
+export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, bindHost = '127.0.0.1', redirectHost = bindHost, fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
   if (!clientId) throw new Error('Missing CF_OAUTH_CLIENT_ID');
   const verifier = base64url(crypto.randomBytes(32));
   const challenge = base64url(crypto.createHash('sha256').update(verifier).digest());
@@ -22,12 +22,12 @@ export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, port
   for (const candidate of ports) {
     try {
       server = serverFactory();
-      await new Promise((resolve, reject) => { const onError = error => { server.removeListener('listening', onListen); reject(error); }; const onListen = () => { server.removeListener('error', onError); resolve(); }; server.once('error', onError); server.once('listening', onListen); server.listen(candidate, '127.0.0.1'); });
+      await new Promise((resolve, reject) => { const onError = error => { server.removeListener('listening', onListen); reject(error); }; const onListen = () => { server.removeListener('error', onError); resolve(); }; server.once('error', onError); server.once('listening', onListen); server.listen(candidate, bindHost); });
       port = candidate; break;
     } catch (error) { if (server) server.close(); if (error.code !== 'EADDRINUSE') throw error; }
   }
   if (!server || !port) throw new Error('No OAuth callback port available (tried 8765-8769)');
-  const redirectUri = `http://127.0.0.1:${port}/oauth/callback`;
+  const redirectUri = `http://${redirectHost}:${port}/oauth/callback`;
   const authorization = new URL(AUTH_URL); authorization.search = new URLSearchParams({ response_type: 'code', client_id: clientId, redirect_uri: redirectUri, scope: scopes.join(' '), code_challenge: challenge, code_challenge_method: 'S256', state }).toString();
   print(`Open this URL to authorize cf:\n${authorization}`);
   const callback = new Promise((resolve, reject) => server.on('request', (request, response) => {
