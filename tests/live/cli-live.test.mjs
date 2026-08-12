@@ -1,6 +1,8 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { jest } from "@jest/globals";
+import { activeProfile } from "../../src/profiles.mjs";
+import { requiredScopes } from "../../src/scopes.mjs";
 
 const execFileAsync = promisify(execFile);
 const cli = process.env.CF_BIN || "cf";
@@ -8,6 +10,15 @@ const liveEnabled = process.env.CF_LIVE_TESTS === "1";
 const wetEnabled = process.env.CF_LIVE_MUTATIONS === "1";
 let zoneId = process.env.CF_LIVE_ZONE_ID;
 let accountId = process.env.CF_LIVE_ACCOUNT_ID;
+const profile = (() => {
+  try {
+    return activeProfile();
+  } catch {
+    return null;
+  }
+})();
+const liveReady = Boolean(profile || process.env.CLOUDFLARE_API_TOKEN);
+const grantedScopes = profile?.scopes?.length ? profile.scopes : null;
 
 async function run(args, options = {}) {
   try {
@@ -28,6 +39,14 @@ async function run(args, options = {}) {
 
 function parseJson(result) {
   return JSON.parse(result.stdout);
+}
+
+function canRun(resource, action = "list") {
+  if (!liveReady) return false;
+  if (!grantedScopes) return true;
+  return requiredScopes(resource, action).every((scope) =>
+    grantedScopes.includes(scope),
+  );
 }
 
 const basicCommands = [
@@ -137,7 +156,7 @@ function withContext(args) {
   return [...args, ...context];
 }
 
-const liveDescribe = liveEnabled ? describe : describe.skip;
+const liveDescribe = liveEnabled && liveReady ? describe : describe.skip;
 
 liveDescribe("authenticated live CLI smoke tests", () => {
   jest.setTimeout(120_000);
@@ -164,13 +183,16 @@ liveDescribe("authenticated live CLI smoke tests", () => {
   });
 
   test.each(basicCommands)("runs %s", async (...args) => {
+    if (!canRun(args[0], args[1])) return;
     const result = await run(withContext(args));
     expect(result.code).toBe(0);
   });
 
   test("all CRUD actions expose working help", async () => {
+    if (!liveReady) return;
     for (const [resource, actions] of crudCommands) {
       for (const action of actions) {
+        if (!canRun(resource, action)) continue;
         const result = await run([resource, action, "--help"]);
         expect(result.code).toBe(0);
       }
@@ -178,6 +200,7 @@ liveDescribe("authenticated live CLI smoke tests", () => {
   });
 
   test("destructive commands require explicit force", async () => {
+    if (!liveReady) return;
     const checks = [
       ["zones", "delete"],
       ["dns-records", "delete"],
@@ -186,6 +209,7 @@ liveDescribe("authenticated live CLI smoke tests", () => {
       ["list-items", "delete"],
     ];
     for (const args of checks) {
+      if (!canRun(args[0], args[1])) continue;
       const result = await run(args);
       expect(result.code).not.toBe(0);
       expect(`${result.stdout}\n${result.stderr}`).toMatch(
@@ -195,7 +219,7 @@ liveDescribe("authenticated live CLI smoke tests", () => {
   });
 
   test("wet DNS CRUD follows the complete create-read-update-read-delete lifecycle", async () => {
-    if (!wetEnabled) return;
+    if (!wetEnabled || !canRun("dns-records", "create")) return;
     expect(zoneId).toEqual(expect.any(String));
     const zonesResult = await run(["zones", "list", "--json"]);
     expect(zonesResult.code).toBe(0);
@@ -246,6 +270,144 @@ liveDescribe("authenticated live CLI smoke tests", () => {
         expect(after.code).toBe(0);
         expect(parseJson(after).some((record) => record.id === recordId)).toBe(false);
       }
+    }
+  });
+
+  test("wet health CRUD creates, reads, deletes, and confirms a disposable monitor", async () => {
+    if (!wetEnabled || !canRun("health", "create")) return;
+    expect(zoneId).toEqual(expect.any(String));
+    const monitor = {
+      type: "HTTPS",
+      address: "eliware.org",
+      port: 443,
+      method: "GET",
+      path: "/health",
+      expected_codes: "200",
+      follow_redirects: true,
+      allow_insecure: false,
+      interval: 60,
+      timeout: 5,
+      retries: 2,
+      consecutive_fails: 3,
+      consecutive_successes: 2,
+    };
+    let monitorId;
+    try {
+      const created = await run([
+        "health",
+        "create",
+        "--zone-id",
+        zoneId,
+        "--data",
+        JSON.stringify(monitor),
+        "--json",
+      ]);
+      expect(created.code).toBe(0);
+      monitorId = parseJson(created).id;
+      expect(monitorId).toEqual(expect.any(String));
+
+      const read = await run([
+        "health",
+        "get",
+        "--zone-id",
+        zoneId,
+        "--id",
+        monitorId,
+        "--json",
+      ]);
+      expect(read.code).toBe(0);
+      expect(parseJson(read).address).toBe("eliware.org");
+    } finally {
+      if (monitorId) {
+        const deleted = await run([
+          "health",
+          "delete",
+          "--zone-id",
+          zoneId,
+          "--id",
+          monitorId,
+          "--force",
+          "--json",
+        ]);
+        expect(deleted.code).toBe(0);
+        const readDeleted = await run([
+          "health",
+          "get",
+          "--zone-id",
+          zoneId,
+          "--id",
+          monitorId,
+          "--json",
+        ]);
+        expect(readDeleted.code).not.toBe(0);
+      }
+    }
+  });
+
+  test("wet list CRUD follows list and item lifecycle", async () => {
+    if (!wetEnabled || !canRun("lists", "create")) return;
+    expect(accountId).toEqual(expect.any(String));
+    const listName = `cf-live-${Date.now()}`;
+    const createList = await run([
+      "lists", "create", "--account-id", accountId, "--data",
+      JSON.stringify({ name: listName, description: "Temporary cf live test list", kind: "ip" }), "--json",
+    ]);
+    expect(createList.code).toBe(0);
+    const createdList = parseJson(createList);
+    const listId = createdList.id;
+    expect(listId).toEqual(expect.any(String));
+    try {
+      const listed = await run(["lists", "list", "--account-id", accountId, "--json"]);
+      expect(listed.code).toBe(0);
+      expect(parseJson(listed).some((list) => list.id === listId)).toBe(true);
+
+      const emptyItems = await run(["list-items", "list", "--account-id", accountId, "--id", listId, "--json"]);
+      expect(emptyItems.code).toBe(0);
+      expect(parseJson(emptyItems)).toEqual([]);
+
+      const createdItem = await run([
+        "list-items", "create", "--account-id", accountId, "--id", listId,
+        "--data", JSON.stringify({ ip: "192.0.2.1" }), "--json",
+      ]);
+      expect(createdItem.code).toBe(0);
+
+      const itemsAfterCreate = await run(["list-items", "list", "--account-id", accountId, "--id", listId, "--json"]);
+      expect(itemsAfterCreate.code).toBe(0);
+      const firstItem = parseJson(itemsAfterCreate)[0];
+      expect(firstItem?.id).toEqual(expect.any(String));
+      expect(firstItem.ip || firstItem.value).toBe("192.0.2.1");
+
+      // Cloudflare list items have no in-place update endpoint; replace the item
+      // and verify the new value through the list read.
+      const removedForUpdate = await run([
+        "list-items", "delete", "--account-id", accountId, "--id", listId,
+        "--data", JSON.stringify({ ids: [firstItem.id] }), "--force", "--json",
+      ]);
+      expect(removedForUpdate.code).toBe(0);
+      const replacedItem = await run([
+        "list-items", "create", "--account-id", accountId, "--id", listId,
+        "--data", JSON.stringify({ ip: "192.0.2.2" }), "--json",
+      ]);
+      expect(replacedItem.code).toBe(0);
+      const itemsAfterUpdate = await run(["list-items", "list", "--account-id", accountId, "--id", listId, "--json"]);
+      expect(itemsAfterUpdate.code).toBe(0);
+      const updatedItem = parseJson(itemsAfterUpdate)[0];
+      expect(updatedItem.ip || updatedItem.value).toBe("192.0.2.2");
+
+      const deletedItem = await run([
+        "list-items", "delete", "--account-id", accountId, "--id", listId,
+        "--data", JSON.stringify({ ids: [updatedItem.id] }), "--force", "--json",
+      ]);
+      expect(deletedItem.code).toBe(0);
+      const emptyAgain = await run(["list-items", "list", "--account-id", accountId, "--id", listId, "--json"]);
+      expect(emptyAgain.code).toBe(0);
+      expect(parseJson(emptyAgain)).toEqual([]);
+    } finally {
+      const deletedList = await run(["lists", "delete", "--account-id", accountId, "--id", listId, "--force", "--json"]);
+      expect(deletedList.code).toBe(0);
+      const listsAfterDelete = await run(["lists", "list", "--account-id", accountId, "--json"]);
+      expect(listsAfterDelete.code).toBe(0);
+      expect(parseJson(listsAfterDelete).some((list) => list.id === listId)).toBe(false);
     }
   });
 });

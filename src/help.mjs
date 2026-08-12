@@ -191,7 +191,10 @@ export function printResourceHelp(resource, printer = console) {
   update               Update ruleset`,
     lists: `lists
   list                 List lists
-  get                  Get list`,
+  get                  Get list
+  create               Create a list
+  update               Update a list
+  delete               Delete a list (requires --force)`,
     "list-items": `list-items
   list                 List items in a list
   create               Add item to a list
