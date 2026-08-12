@@ -56,6 +56,12 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(fitTerminal('abcdef', 5)).toBe('abcd…');
   expect(styleTerminalText('ID\n1', { color: false, width: 80 })).toBe('ID\n1');
   expect(styleTerminalText('ID\n1', { color: true, width: 80 })).toContain('\u001b[36mID');
+  expect(terminalColorMode('true', { isTTY: false })).toBe(true);
+  expect(terminalColorMode('false', { isTTY: true })).toBe(false);
+  expect(terminalColorMode(undefined, { isTTY: true, noColor: true })).toBe(false);
+  expect(terminalWidth('80', 90)).toBe(80);
+  expect(fitTerminal('short', 80)).toBe('short');
+  expect(styleTerminalText('ID', { color: true, width: 80 })).toBe('ID');
 });
 
 test('terminal output preserves JSON and can buffer human-readable output', async () => {

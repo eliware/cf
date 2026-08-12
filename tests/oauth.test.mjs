@@ -8,6 +8,9 @@ test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
   const refreshed = await refreshOAuth({ refreshToken: 'old', clientId: 'client', fetchImpl });
   expect(refreshed.accessToken).toBe('new'); await revokeOAuth({ accessToken: 'new', clientId: 'client', fetchImpl });
   expect(fetchImpl).toHaveBeenCalledTimes(2); expect(fetchImpl.mock.calls[0][1].body.get('grant_type')).toBe('refresh_token');
+  const fallbackFetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ access_token: 'newer' }) });
+  const fallback = await refreshOAuth({ refreshToken: 'old', fetchImpl: fallbackFetch });
+  expect(fallback.refreshToken).toBe('old'); expect(fallback.expiresIn).toBeUndefined();
 });
 
 test('browser launcher selects the native command for each platform', () => {
