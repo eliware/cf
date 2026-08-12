@@ -13,5 +13,5 @@ export async function writeCredential(profile, value, load = keychain) {
 }
 
 export async function deleteCredential(profile, load = keychain) {
-  try { const store = await load(); return store ? store.deletePassword(SERVICE, profile) : false; } catch { return false; }
+  try { const store = await load(); return store ? await store.deletePassword(SERVICE, profile) : false; } catch { return false; }
 }
