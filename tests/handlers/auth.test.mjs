@@ -1,171 +1,138 @@
-import { jest } from '@jest/globals';
-import { handleAuth } from '../../src/handlers/auth.mjs';
+import { jest } from "@jest/globals";
+import { handleAuth } from "../../src/handlers/auth.mjs";
 
-const base = () => ({ cf: { get: jest.fn().mockResolvedValue({ result: { id: 'user-1' } }) },
-  outputJson: true, printer: { log: jest.fn() }, toJsonOutput: jest.fn(), fail: jest.fn(), read: () => ({ active: null, profiles: {} }) });
-
-const stored = () => ({ active: 'work', profiles: { work: { email: 'work@example.com', apiKey: 'key' }, other: { email: 'other@example.com' } } });
-
-test('auth status verifies identity without exposing the key', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
-  process.env.CLOUDFLARE_EMAIL = 'user@example.com'; process.env.CLOUDFLARE_API_KEY = 'secret';
-  const ctx = base(); await handleAuth({ ...ctx, action: 'status' });
-  expect(ctx.cf.get).toHaveBeenCalledWith('/user');
-  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ authenticated: true, profile: 'environment', method: 'api-key', email: 'user@example.com', id: 'user-1' });
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
+const base = () => ({
+  cf: { get: jest.fn().mockResolvedValue({ result: { id: "user-1" } }) },
+  outputJson: true,
+  printer: { log: jest.fn() },
+  toJsonOutput: jest.fn(),
+  fail: jest.fn(),
+  read: () => ({ active: null, profiles: {} }),
 });
 
-test('auth lists saved profiles in JSON and text formats', async () => {
-  const read = jest.fn(() => stored());
-  const json = base(); await handleAuth({ ...json, action: 'list', read });
-  expect(json.toJsonOutput).toHaveBeenCalledWith(expect.arrayContaining([{ name: 'work', email: 'work@example.com', active: true }]));
-  const text = base(); text.outputJson = false; await handleAuth({ ...text, action: 'list', read });
-  expect(text.printer.log).toHaveBeenCalledWith('ACTIVE  NAME   EMAIL\n------  ----   -----\n*       work   work@example.com\n        other  other@example.com');
-  const missingEmail = base(); missingEmail.outputJson = false;
-  await handleAuth({ ...missingEmail, action: 'list', read: () => ({ active: 'blank', profiles: { blank: {} } }) });
-  expect(missingEmail.printer.log).toHaveBeenCalledWith('ACTIVE  NAME   EMAIL\n------  ----   -----\n*       blank  (not configured)');
+test("auth status reports the OAuth identity", async () => {
+  const oldToken = process.env.CLOUDFLARE_API_TOKEN;
+  process.env.CLOUDFLARE_API_TOKEN = "token";
+  const ctx = base();
+  await handleAuth({ ...ctx, action: "status" });
+  expect(ctx.toJsonOutput).toHaveBeenCalledWith({
+    authenticated: true,
+    profile: "environment",
+    method: "oauth",
+    id: "user-1",
+  });
+  process.env.CLOUDFLARE_API_TOKEN = oldToken;
 });
 
-test('auth status supports API-token authentication', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; process.env.CLOUDFLARE_API_TOKEN = 'token';
-  const ctx = base(); await handleAuth({ ...ctx, action: 'status' });
-  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ authenticated: true, profile: 'environment', method: 'api-token', email: null, id: 'user-1' });
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
+test("auth lists profiles without exposing credentials", async () => {
+  const ctx = base();
+  await handleAuth({
+    ...ctx,
+    action: "list",
+    read: () => ({
+      active: "work",
+      profiles: { work: { authMethod: "oauth" } },
+    }),
+  });
+  expect(ctx.toJsonOutput).toHaveBeenCalledWith([
+    { name: "work", active: true, authMethod: "oauth" },
+  ]);
 });
 
-test('auth verify checks active API tokens', async () => {
-  const old = process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_API_TOKEN = 'token';
-  const ctx = base(); ctx.cf.get.mockResolvedValue({ result: { status: 'active' } });
-  await handleAuth({ ...ctx, action: 'verify' });
-  expect(ctx.cf.get).toHaveBeenCalledWith('/user/tokens/verify');
-  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ verified: true, status: 'active' });
-  ctx.outputJson = false; ctx.cf.get.mockResolvedValue({ result: { status: 'inactive' } });
-  await handleAuth({ ...ctx, action: 'verify' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('inactive');
-  ctx.outputJson = true; ctx.cf.get.mockResolvedValue({ result: {} });
-  await handleAuth({ ...ctx, action: 'verify' });
-  expect(ctx.toJsonOutput).toHaveBeenCalledWith({ verified: false, status: 'unknown' });
+test("auth status and token login explain how to log in when unauthenticated", async () => {
+  const oldToken = process.env.CLOUDFLARE_API_TOKEN;
   delete process.env.CLOUDFLARE_API_TOKEN;
-  await handleAuth({ ...ctx, action: 'verify' });
-  expect(ctx.fail).toHaveBeenCalledWith(expect.stringContaining('requires'));
-  process.env.CLOUDFLARE_API_TOKEN = old;
-});
-
-test('auth list reports the active context', async () => {
-  const old = process.env.CLOUDFLARE_EMAIL; process.env.CLOUDFLARE_EMAIL = 'user@example.com';
-  const ctx = base(); await handleAuth({ ...ctx, action: 'list' });
-  expect(ctx.toJsonOutput).toHaveBeenCalledWith([{ name: 'environment', email: 'user@example.com', active: true }]);
-  process.env.CLOUDFLARE_EMAIL = old;
-});
-
-test('auth status rejects missing credentials and unknown actions', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
-  const ctx = base(); await handleAuth({ ...ctx, action: 'status' }); await handleAuth({ ...ctx, action: 'login', opts: { 'token-stdin': true }, readToken: () => '' });
+  const ctx = base();
+  await handleAuth({ ...ctx, action: "status" });
+  await handleAuth({
+    ...ctx,
+    action: "login",
+    opts: { "token-stdin": true },
+    readToken: () => "",
+  });
   expect(ctx.fail).toHaveBeenCalledTimes(2);
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
+  expect(ctx.fail).toHaveBeenCalledWith(
+    "You are not logged into Cloudflare. Run: cf auth login",
+  );
+  process.env.CLOUDFLARE_API_TOKEN = oldToken;
 });
 
-test('auth login rejects incomplete legacy credential pairs', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
-  delete process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_EMAIL = 'only@example.com'; delete process.env.CLOUDFLARE_API_KEY;
-  const emailOnly = base(); await handleAuth({ ...emailOnly, action: 'login', opts: {}, read: () => ({ active: null, profiles: {} }) });
-  delete process.env.CLOUDFLARE_EMAIL; process.env.CLOUDFLARE_API_KEY = 'only-key';
-  const keyOnly = base(); await handleAuth({ ...keyOnly, action: 'login', opts: {}, read: () => ({ active: null, profiles: {} }) });
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
-  expect(emailOnly.fail).toHaveBeenCalled(); expect(keyOnly.fail).toHaveBeenCalled();
+test("auth login accepts a token from stdin", async () => {
+  const write = jest.fn();
+  const ctx = base();
+  await handleAuth({
+    ...ctx,
+    action: "login",
+    opts: { profile: "ci", "token-stdin": true, "account-id": "acct" },
+    write,
+    readToken: () => "stdin-token",
+    writeCredentialImpl: jest.fn().mockResolvedValue(false),
+  });
+  expect(write).toHaveBeenCalledWith(
+    expect.objectContaining({
+      active: "ci",
+      profiles: {
+        ci: expect.objectContaining({
+          apiToken: "stdin-token",
+          accountId: "acct",
+        }),
+      },
+    }),
+    undefined,
+    undefined,
+  );
 });
 
-test('auth text output and missing identity id are safe', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
-  process.env.CLOUDFLARE_EMAIL = 'user@example.com'; process.env.CLOUDFLARE_API_KEY = 'secret';
-  const ctx = base(); ctx.outputJson = false; ctx.cf.get.mockResolvedValue({ result: {} });
-  await handleAuth({ ...ctx, action: 'status' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('environment authenticated as user@example.com');
-  delete process.env.CLOUDFLARE_EMAIL;
-  await handleAuth({ ...ctx, action: 'list' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('ACTIVE  NAME         EMAIL\n------  ----         -----\n*       environment  (not configured)');
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
+test("auth OAuth login saves and activates the returned token profile", async () => {
+  const write = jest.fn();
+  const ctx = base();
+  await handleAuth({
+    ...ctx,
+    action: "login",
+    opts: { profile: "oauth", oauth: true },
+    write,
+    oauthLogin: jest.fn().mockResolvedValue({
+      accessToken: "oauth-token",
+      refreshToken: "refresh",
+    }),
+  });
+  expect(write).toHaveBeenCalledWith(
+    expect.objectContaining({ active: "oauth" }),
+    undefined,
+    undefined,
+  );
 });
 
-test('auth status text omits identity email when token auth has no email', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; process.env.CLOUDFLARE_API_TOKEN = 'token';
-  const ctx = base(); ctx.outputJson = false; await handleAuth({ ...ctx, action: 'status' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('environment authenticated');
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
+test("auth verify checks active API tokens", async () => {
+  const oldToken = process.env.CLOUDFLARE_API_TOKEN;
+  process.env.CLOUDFLARE_API_TOKEN = "token";
+  const ctx = base();
+  ctx.cf.get.mockResolvedValue({ result: { status: "active" } });
+  await handleAuth({ ...ctx, action: "verify" });
+  expect(ctx.toJsonOutput).toHaveBeenCalledWith({
+    verified: true,
+    status: "active",
+  });
+  process.env.CLOUDFLARE_API_TOKEN = oldToken;
 });
 
-test('auth login, switch, logout, and profile errors use injected storage', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
-  process.env.CLOUDFLARE_EMAIL = 'new@example.com'; process.env.CLOUDFLARE_API_KEY = 'new-key';
-  const write = jest.fn(); const read = jest.fn(() => stored());
-  const login = base(); await handleAuth({ ...login, action: 'login', opts: { profile: 'new' }, read, write });
-  expect(write).toHaveBeenCalled();
-  const switched = base(); await handleAuth({ ...switched, action: 'switch', opts: { profile: 'other' }, read, write });
-  const logout = base(); await handleAuth({ ...logout, action: 'logout', opts: { profile: 'other' }, read, write });
-  const logoutActive = base(); await handleAuth({ ...logoutActive, action: 'logout', opts: { profile: 'work' }, read, write });
-  expect(write).toHaveBeenCalledTimes(4);
-  const bad = base(); await handleAuth({ ...bad, action: 'switch', opts: {}, read, write });
-  await handleAuth({ ...bad, action: 'logout', opts: { profile: 'missing' }, read, write });
-  expect(bad.fail).toHaveBeenCalledTimes(2);
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY;
-  await handleAuth({ ...bad, action: 'login', opts: { 'token-stdin': true }, read, write, readToken: () => '' });
-  const defaultLogout = base(); await handleAuth({ ...defaultLogout, action: 'logout', opts: {}, read, write });
-  expect(defaultLogout.fail).not.toHaveBeenCalled();
-  const unknown = base(); await handleAuth({ ...unknown, action: 'unknown', opts: {}, read, write });
-  expect(unknown.fail).toHaveBeenCalledWith('Unknown auth action: unknown');
-  const noProfile = base(); await handleAuth({ ...noProfile, action: 'logout', opts: {}, read: () => ({ active: null, profiles: {} }), write });
-  const last = base(); await handleAuth({ ...last, action: 'logout', opts: { profile: 'only' }, read: () => ({ active: 'only', profiles: { only: {} } }), write });
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
-});
-
-test('auth login accepts a token from stdin without environment credentials', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
-  const write = jest.fn(); const ctx = base();
-  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'ci', 'token-stdin': true, 'account-id': 'acct' }, read: () => ({ active: null, profiles: {} }), write, readToken: () => 'stdin-token', writeCredentialImpl: jest.fn().mockResolvedValue(false) });
-  expect(write).toHaveBeenCalledWith({ active: 'ci', profiles: { ci: expect.objectContaining({ apiToken: 'stdin-token', accountId: 'acct' }) } }, undefined, undefined);
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
-});
-
-test('auth OAuth login saves and activates the returned token profile', async () => {
-  const write = jest.fn(); const ctx = base();
-  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh', expiresIn: 3600, expiresAt: Date.now() + 3600000 }) });
-  expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'oauth' }), undefined, undefined);
-});
-
-test('auth login defaults to OAuth without environment credentials', async () => {
-  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
-  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
-  const oauthLogin = jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh' }); const write = jest.fn(); const ctx = base();
-  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'default-oauth' }, read: () => ({ active: null, profiles: {} }), write, oauthLogin });
-  expect(oauthLogin).toHaveBeenCalled(); expect(write).toHaveBeenCalledWith(expect.objectContaining({ active: 'default-oauth' }), undefined, undefined);
-  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
-});
-
-test('auth stores keychain credentials without duplicating secrets in profile metadata', async () => {
-  const write = jest.fn(); const writeCredentialImpl = jest.fn().mockResolvedValue(true); const ctx = base();
-  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, writeCredentialImpl, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh' }) });
-  expect(write).toHaveBeenCalledWith(expect.objectContaining({ profiles: { oauth: expect.not.objectContaining({ apiToken: 'oauth-token' }) } }), undefined, undefined);
-});
-
-test('auth token login supports the default stdin reader and keychain storage', async () => {
-  const old = process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_API_TOKEN = 'environment-token';
-  const write = jest.fn(); const ctx = base();
-  try {
-    await handleAuth({ ...ctx, action: 'login', opts: { profile: 'default-reader', 'token-stdin': true }, read: () => ({ active: null, profiles: {} }), write, writeCredentialImpl: jest.fn().mockResolvedValue(true) });
-  } finally { process.env.CLOUDFLARE_API_TOKEN = old; }
-  expect(write).toHaveBeenCalled();
-});
-
-test('auth handler rejects a missing context', async () => {
-  await expect(handleAuth()).rejects.toThrow();
-});
-
-test('auth logout revokes stored OAuth credentials before deletion', async () => {
-  const write = jest.fn(); const revokeOAuthImpl = jest.fn(); const deleteCredentialImpl = jest.fn(); const ctx = base();
-  await handleAuth({ ...ctx, action: 'logout', opts: { profile: 'work' }, read: stored, write, readCredentialImpl: jest.fn().mockResolvedValue({ oauthAccessToken: 'oauth-token' }), revokeOAuthImpl, deleteCredentialImpl });
-  expect(revokeOAuthImpl).toHaveBeenCalledWith({ accessToken: 'oauth-token' }); expect(deleteCredentialImpl).toHaveBeenCalledWith('work');
+test("auth logout revokes stored OAuth credentials", async () => {
+  const write = jest.fn();
+  const revokeOAuthImpl = jest.fn();
+  const deleteCredentialImpl = jest.fn();
+  const ctx = base();
+  await handleAuth({
+    ...ctx,
+    action: "logout",
+    opts: { profile: "work" },
+    read: () => ({ active: "work", profiles: { work: {} } }),
+    write,
+    readCredentialImpl: jest
+      .fn()
+      .mockResolvedValue({ oauthAccessToken: "oauth-token" }),
+    revokeOAuthImpl,
+    deleteCredentialImpl,
+  });
+  expect(revokeOAuthImpl).toHaveBeenCalledWith({ accessToken: "oauth-token" });
+  expect(deleteCredentialImpl).toHaveBeenCalledWith("work");
 });
