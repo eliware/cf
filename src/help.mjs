@@ -120,6 +120,8 @@ PLATFORM COMMANDS
   ai:            Manage AI and Vectorize
   access:        Manage Access and Zero Trust
   extension:     Manage local cf extensions
+  alias:          Manage command aliases
+  config:         Manage local cf settings
 
 FLAGS
   --help         Show help for command
@@ -223,6 +225,7 @@ export function printResourceHelp(resource, printer = console) {
   list/get/create/update/delete  Manage account tunnels`,
   extension: `extension
   list                 List installed extensions
+  info                 Show installed extension metadata
   install              Install from a local extension directory
   upgrade              Replace an installed extension from a local directory
   remove               Remove an extension (requires --force)`,

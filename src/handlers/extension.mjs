@@ -8,6 +8,12 @@ export function handleExtension({ action, opts, outputJson, printer, toJsonOutpu
     const manifests = discoverExtensions(homeDir, fsImpl);
     return outputJson ? toJsonOutput(manifests) : printTable(['NAME', 'VERSION'], manifests.map(manifest => [manifest.name, manifest.version]), printer.log);
   }
+  if (action === 'info') {
+    if (!opts.name) { fail('Missing --name'); return; }
+    const manifest = discoverExtensions(homeDir, fsImpl).find(item => item.name === opts.name);
+    if (!manifest) { fail(`Unknown extension: ${opts.name}`); return; }
+    return outputJson ? toJsonOutput(manifest) : printer.log(`${manifest.name} ${manifest.version}\n${manifest.description || '(no description)'}`);
+  }
   if (action === 'install' || action === 'upgrade') {
     if (!opts.path) { fail('Missing --path to an extension directory'); return; }
     const source = opts.path; const manifest = JSON.parse(fsImpl.readFileSync(`${source}/cf-extension.json`, 'utf8'));

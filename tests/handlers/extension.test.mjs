@@ -18,9 +18,11 @@ test('extension install, list, upgrade, and remove work locally', () => {
   handleExtension({ ...common, action: 'install', opts: { path: source } });
   handleExtension({ ...common, action: 'list', opts: {} });
   handleExtension({ ...common, action: 'list', opts: {}, outputJson: false });
+  handleExtension({ ...common, action: 'info', opts: { name: 'hello' }, outputJson: false });
   handleExtension({ ...common, action: 'upgrade', opts: { path: source } });
   handleExtension({ ...common, action: 'remove', opts: { name: 'hello', force: true } });
   expect(printer.log).toHaveBeenCalledWith('Installed extension hello');
+  expect(printer.log).toHaveBeenCalledWith('hello 1.0.0\n(no description)');
   expect(common.toJsonOutput).toHaveBeenCalledWith([{ name: 'hello', version: '1.0.0', commands: { hello: 'hello.mjs' } }]);
   expect(printer.log).toHaveBeenCalledWith('Removed extension hello');
   handleExtension({ ...common, action: 'list', outputJson: false });
@@ -34,6 +36,7 @@ test('extension validation and safety errors are reported', () => {
   const invalid = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-ext-invalid-')); fs.writeFileSync(path.join(invalid, 'cf-extension.json'), '{}');
   handleExtension({ ...common, action: 'install', opts: { path: invalid } });
   handleExtension({ ...common, action: 'unknown', opts: {} });
+  handleExtension({ ...common, action: 'info', opts: { name: 'missing' } });
   expect(fail).toHaveBeenCalled(); expect(source).toBeTruthy();
   handleExtension({ action: 'list', opts: {}, outputJson: true, toJsonOutput: jest.fn(), printer: { log: jest.fn() }, fail: jest.fn() });
 });

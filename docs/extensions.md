@@ -21,6 +21,8 @@ Install and use the example:
 cf extension install --path examples/extensions/hello
 cf hello --name Eli
 cf extension list
+cf extension info --name hello
+cf extension upgrade --path examples/extensions/hello
 cf extension remove --name hello --force
 ```
 
