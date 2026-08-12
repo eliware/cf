@@ -17,6 +17,7 @@ import { handleSsl } from './handlers/ssl.mjs';
 import { handleCache } from './handlers/cache.mjs';
 import { handleHealth } from './handlers/health.mjs';
 import { handleAudit } from './handlers/audit.mjs';
+import { applyActiveProfile } from './profiles.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 
@@ -41,6 +42,7 @@ export async function run({
   if (args.length === 1 || opts.help) return printResourceHelp(resource, printer);
 
   loadEnv(projectRoot, env, fsImpl);
+  applyActiveProfile(env, undefined, fsImpl);
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
   const body = loadBody(opts, fsImpl);

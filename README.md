@@ -77,6 +77,9 @@ cf api /zones --json
 cf api zones/<zone_id>/dns_records --json
 cf auth status
 cf auth list
+cf auth login --profile work
+cf auth switch --profile work
+cf auth logout --profile work
 cf ssl get --zone-id <zone_id>
 cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
 cf health list --zone-id <zone_id>

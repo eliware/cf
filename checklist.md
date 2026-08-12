@@ -8,16 +8,16 @@
 
 ## Authentication and context
 
-- [ ] Implement `cf auth login`.
+- [x] Implement `cf auth login`.
 - [x] Implement `cf auth status`.
 - [x] Implement `cf auth list`.
-- [ ] Implement `cf auth switch`.
-- [ ] Implement `cf auth logout`.
+- [x] Implement `cf auth switch`.
+- [x] Implement `cf auth logout`.
 - [ ] Implement token verification and permission inspection.
-- [ ] Support multiple profiles and Cloudflare accounts.
+- [x] Support multiple profiles and Cloudflare accounts.
 - [x] Support account and zone defaults.
 - [x] Preserve environment-variable and CI authentication.
-- [ ] Store credentials securely without logging or exposing tokens.
+- [x] Store credentials securely without logging or exposing tokens.
 
 ## Output and API access
 

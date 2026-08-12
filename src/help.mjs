@@ -52,6 +52,9 @@ Examples:
   cf api /zones --json
   cf api zones/<zone_id>/dns_records --json
   cf auth status
+  cf auth login --profile work
+  cf auth switch --profile work
+  cf auth logout --profile work
   cf ssl get --zone-id <zone_id>
   cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
   cf health list --zone-id <zone_id>
@@ -95,7 +98,10 @@ export function printResourceHelp(resource, printer = console) {
   --json, --dry-run, and --force for DELETE`,
     auth: `auth
   status               Verify the active Cloudflare identity
-  list                 Show configured credential contexts`,
+  list                 Show configured credential contexts
+  login                Save current environment credentials as a profile
+  switch               Activate a saved profile
+  logout               Remove a saved profile`,
     ssl: `ssl
   get                  Read a zone SSL/TLS setting
   set                  Update a zone SSL/TLS setting`,
