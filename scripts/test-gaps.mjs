@@ -1,7 +1,9 @@
 import { spawn } from 'node:child_process';
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-const child = spawn(npmCommand, ['test', '--', '--runInBand'], { stdio: ['ignore', 'pipe', 'pipe'] });
+const isWindows = process.platform === 'win32';
+const command = isWindows ? process.env.ComSpec || 'cmd.exe' : 'npm';
+const args = isWindows ? ['/d', '/s', '/c', 'npm test -- --runInBand'] : ['test', '--', '--runInBand'];
+const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] });
 let stdout = '';
 let stderr = '';
 child.stdout.on('data', chunk => { stdout += chunk.toString(); });
