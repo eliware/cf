@@ -70,6 +70,10 @@ export async function run({
     return extensionHandler({ cf: null, action, opts, body: extensionBody, outputJson: opts.json || opts.output === 'json', printer, toJsonOutput: value => toJsonOutput(value, printer.log), fail: extensionFail });
   }
 
+  if (resource === 'extension') {
+    return handleExtension({ action, opts, outputJson: opts.json || opts.output === 'json', printer, toJsonOutput: value => toJsonOutput(value, printer.log), fail: message => printer.error(message), fsImpl, homeDir });
+  }
+
   loadEnv(projectRoot, env, fsImpl);
   applyActiveProfile(env, homeDir, fsImpl);
   const cf = cfFactory({ env });
