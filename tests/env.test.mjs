@@ -22,9 +22,9 @@ describe('env helpers', () => {
     expect(process.env.B_TEST_KEY).toBe('from-env');
   });
 
-  test('loadUserEnv reads ~/.cf-admin', () => {
+  test('loadUserEnv reads ~/.cf', () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cloudflare-home-'));
-    fs.writeFileSync(path.join(tmp, '.cf-admin'), 'A_TEST_KEY=from-home\n');
+    fs.writeFileSync(path.join(tmp, '.cf'), 'A_TEST_KEY=from-home\n');
 
     loadUserEnv(tmp);
 

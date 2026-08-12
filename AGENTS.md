@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`@eliware/cf-admin` is a standalone ESM Node.js CLI for Cloudflare administration.
+`@eliware/cf` is a standalone ESM Node.js CLI for Cloudflare administration.
 
 Current resources:
 

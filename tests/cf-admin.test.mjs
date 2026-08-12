@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-describe('cf-admin run()', () => {
+describe('cf run()', () => {
   test('dispatches to injected handlers and loads env', async () => {
     const log = jest.fn();
     const error = jest.fn();
@@ -8,7 +8,7 @@ describe('cf-admin run()', () => {
     const loadEnv = jest.fn();
     const zones = jest.fn().mockResolvedValue(undefined);
 
-    const mod = await import(`../bin/cf-admin.mjs?ts=${Date.now()}`);
+    const mod = await import(`../bin/cf.mjs?ts=${Date.now()}`);
     await mod.run({
       argv: ['zones', 'list', '--json', '--data', '{}'],
       cfFactory,
@@ -28,7 +28,7 @@ describe('cf-admin run()', () => {
   test('prints help with no args and unknown resource', async () => {
     const log = jest.fn();
     const error = jest.fn();
-    const mod = await import(`../bin/cf-admin.mjs?ts=${Date.now() + 1}`);
+    const mod = await import(`../bin/cf.mjs?ts=${Date.now() + 1}`);
     await mod.run({ argv: [], printer: { log, error }, fsImpl: { readFileSync: jest.fn(() => '') }, exit: jest.fn() });
     await mod.run({ argv: ['nope', 'list'], printer: { log, error }, fsImpl: { readFileSync: jest.fn(() => '') }, cfFactory: jest.fn(), loadEnv: jest.fn(), exit: jest.fn() });
     expect(error).not.toHaveBeenCalled();

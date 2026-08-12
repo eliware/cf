@@ -1,6 +1,6 @@
-# cf-admin Dream Sprints
+# cf Dream Sprints
 
-Roadmap for evolving cf-admin from a CRUD wrapper into a reliable Cloudflare operations and GitOps platform.
+Roadmap for evolving cf from a CRUD wrapper into a reliable Cloudflare operations and GitOps platform.
 
 ## Sprint 0: Foundation
 
@@ -19,8 +19,8 @@ Roadmap for evolving cf-admin from a CRUD wrapper into a reliable Cloudflare ope
 
 ## Sprint 1: Profiles and Configuration
 
-- [ ] `cf-admin profile list`
-- [ ] `cf-admin profile use <name>`
+- [ ] `cf profile list`
+- [ ] `cf profile use <name>`
 - [ ] Separate account/zone credentials and scopes
 - [ ] Safe config storage outside the repository
 - [ ] Environment-variable precedence documentation

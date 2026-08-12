@@ -19,7 +19,7 @@ describe('runtime helpers', () => {
 
   test('projectRootFromMeta returns the parent directory', () => {
     const expected = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-    expect(projectRootFromMeta(new URL('../bin/cf-admin.mjs', import.meta.url).href)).toBe(expected);
+    expect(projectRootFromMeta(new URL('../bin/cf.mjs', import.meta.url).href)).toBe(expected);
   });
 });
 

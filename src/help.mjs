@@ -1,10 +1,10 @@
 export function printHelp(printer = console) {
-  printer.log(`cf-admin - Cloudflare admin utility
+  printer.log(`cf - Cloudflare admin utility
 
 Usage:
-  cf-admin --help
-  cf-admin <resource> --help
-  cf-admin <resource> <action> [options]
+  cf --help
+  cf <resource> --help
+  cf <resource> <action> [options]
 
 Global options:
   --help                 Show help
@@ -29,17 +29,17 @@ Resources:
   list-items             List or manage list items
 
 Examples:
-  cf-admin zones list
-  cf-admin zones get --zone-id <zone_id>
-  cf-admin zones create --data '{"account":{"id":"..."},"name":"example.com","type":"full"}'
-  cf-admin zone-settings get --zone-id <zone_id> --setting development_mode
-  cf-admin zone-settings set --zone-id <zone_id> --setting development_mode --data '{"value":"on"}'
-  cf-admin dns-records list --zone-id <zone_id>
-  cf-admin dns-records create --zone-id <zone_id> --data '{"type":"A","name":"www","content":"1.2.3.4"}'
-  cf-admin rulesets list --zone-id <zone_id>
-  cf-admin rulesets update --zone-id <zone_id> --id <ruleset_id> --file ruleset.json
-  cf-admin lists list --account-id <account_id>
-  cf-admin list-items list --account-id <account_id> --id <list_id>
+  cf zones list
+  cf zones get --zone-id <zone_id>
+  cf zones create --data '{"account":{"id":"..."},"name":"example.com","type":"full"}'
+  cf zone-settings get --zone-id <zone_id> --setting development_mode
+  cf zone-settings set --zone-id <zone_id> --setting development_mode --data '{"value":"on"}'
+  cf dns-records list --zone-id <zone_id>
+  cf dns-records create --zone-id <zone_id> --data '{"type":"A","name":"www","content":"1.2.3.4"}'
+  cf rulesets list --zone-id <zone_id>
+  cf rulesets update --zone-id <zone_id> --id <ruleset_id> --file ruleset.json
+  cf lists list --account-id <account_id>
+  cf list-items list --account-id <account_id> --id <list_id>
 `);
 }
 

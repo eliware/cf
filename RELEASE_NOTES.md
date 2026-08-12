@@ -2,7 +2,7 @@
 
 ## 1.1.3 - 2026-08-08
 
-- Load credentials from `~/.cf-admin` and the current directory `.env`.
+- Load credentials from `~/.cf` and the current directory `.env`.
 - Preserve environment-variable precedence and add coverage for user configuration.
 - Update CLI documentation for global installations.
 - Verification: `npm test`, `npm run lint`, `npm run test:gaps`, `npm run pack`, and live zone-list smoke test.
@@ -16,10 +16,10 @@
 
 ## 1.1.1 - 2026-08-08
 
-- Standardized CLI documentation and help on `cf-admin`.
+- Standardized CLI documentation and help on `cf`.
 - Removed the legacy underscore executable alias.
 - Aligned configuration examples, package contents, and project documentation with Eliware conventions.
-- Added `cf-admin --version` output.
+- Added `cf --version` output.
 - Verification: `npm test`, `npm run lint`, and `npm pack --dry-run`.
 
 ## Initial Version (1.1.0)
@@ -27,7 +27,7 @@
 ### Highlights
 
 - Refactored the CLI runtime for dependency injection and easier testing.
-- Added a standalone `cf-admin` executable.
+- Added a standalone `cf` executable.
 - Added comprehensive Cloudflare administration handlers.
 
 ### Supported Resources
@@ -76,6 +76,6 @@
 
 ### Upgrade Notes
 
-- The package name is `@eliware/cf-admin`.
-- The primary command is now `cf-admin`.
+- The package name is `@eliware/cf`.
+- The primary command is now `cf`.
 - This release does not include the future GitOps, audit, dashboard, replay, or plugin features described in `dream_sprints.md`.
