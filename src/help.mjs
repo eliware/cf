@@ -78,7 +78,8 @@ Examples:
   cf api /zones --json
   cf api zones/<zone_id>/dns_records --json
   cf auth status
-  cf auth login --profile work
+  cf auth login --profile work                 # OAuth browser flow (default)
+  printf '%s' "$CLOUDFLARE_API_TOKEN" | cf auth login --profile ci --token-stdin
   cf auth switch --profile work
   cf auth logout --profile work
   cf ssl get --zone-id <zone_id>
@@ -203,7 +204,7 @@ export function printResourceHelp(resource, printer = console) {
   status               Verify the active Cloudflare identity
   verify               Verify the active API token
   list                 Show configured credential contexts
-  login                Save credentials as a profile (use --oauth or --token-stdin)
+  login                Save a profile (OAuth browser flow by default; --token-stdin for API tokens)
   switch               Activate a saved profile
   logout               Remove a saved profile
   verify               Verify the active API token`,
