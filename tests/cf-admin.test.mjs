@@ -164,13 +164,19 @@ test('CLI manages aliases and config through the command surface', async () => {
   const common = { homeDir: home, fsImpl, printer };
   await mod.run({ ...common, argv: ['alias', 'set', 'work', 'zone', 'list'] });
   await mod.run({ ...common, argv: ['alias', 'list'] });
+  await mod.run({ ...common, argv: ['alias', 'list', '--json'] });
   await mod.run({ ...common, argv: ['alias', 'delete', 'work'] });
+  await mod.run({ ...common, argv: ['alias', 'delete', 'missing'] });
+  await mod.run({ ...common, argv: ['alias', 'set', 'missing'] });
   await mod.run({ ...common, argv: ['config', 'set', 'pager', 'less'] });
   await mod.run({ ...common, argv: ['config', 'get', 'pager'] });
   await mod.run({ ...common, argv: ['config', 'list', '--json'] });
+  await mod.run({ ...common, argv: ['config', 'list'] });
+  await mod.run({ ...common, argv: ['config', 'get', 'missing'] });
+  await mod.run({ ...common, argv: ['config', 'set', 'missing'] });
   await mod.run({ ...common, argv: ['config', 'unset', 'pager'] });
   await mod.run({ ...common, argv: ['config', 'unknown'] });
-  expect(printer.error).not.toHaveBeenCalled();
+  expect(printer.error).toHaveBeenCalledWith('Usage: cf config set <name> <value>');
 });
 
 test('CLI prints dashboard links before dispatch', async () => {
