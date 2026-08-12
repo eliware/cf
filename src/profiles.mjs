@@ -1,7 +1,8 @@
 import os from 'node:os';
 import { fs } from '@eliware/common';
 import { configRoot } from './config.mjs';
-import { readCredential } from './credentials.mjs';
+import { readCredential, writeCredential } from './credentials.mjs';
+import { refreshOAuth } from './oauth.mjs';
 
 export function profilesPath(homeDir = os.homedir()) { return `${configRoot(homeDir)}/profiles.json`; }
 
@@ -28,7 +29,11 @@ export async function applyActiveProfile(env = process.env, homeDir = os.homedir
   const profile = activeProfile(env, homeDir, fsImpl);
   if (!profile) return null;
   const credential = await readCredential(profile.name);
-  const values = { ...credential, ...profile };
+  let activeCredential = credential;
+  if (credential?.oauthRefreshToken && credential.expiresAt && credential.expiresAt <= Date.now() + 60_000) {
+    try { activeCredential = await refreshOAuth({ refreshToken: credential.oauthRefreshToken }); await writeCredential(profile.name, { ...credential, ...activeCredential }); } catch { activeCredential = credential; }
+  }
+  const values = { ...activeCredential, ...profile };
   for (const [key, value] of Object.entries({
     CLOUDFLARE_EMAIL: values.email, CLOUDFLARE_API_KEY: values.apiKey,
     CLOUDFLARE_API_TOKEN: values.apiToken || values.oauthAccessToken, CLOUDFLARE_ACCOUNT_ID: values.accountId,

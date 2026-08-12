@@ -1,8 +1,8 @@
 import { readProfiles, writeProfiles } from '../profiles.mjs';
 import { printTable } from '../output.mjs';
-import { deleteCredential, writeCredential } from '../credentials.mjs';
+import { deleteCredential, readCredential, writeCredential } from '../credentials.mjs';
 import { fs } from '@eliware/common';
-import { DEFAULT_OAUTH_CLIENT_ID, DEFAULT_OAUTH_SCOPES, loginOAuth } from '../oauth.mjs';
+import { DEFAULT_OAUTH_CLIENT_ID, DEFAULT_OAUTH_SCOPES, loginOAuth, revokeOAuth } from '../oauth.mjs';
 
 export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles, readToken = () => fs.readFileSync(0, 'utf8').trim(), oauthLogin = loginOAuth }) {
   const data = read(profileHome, profileFs);
@@ -16,7 +16,7 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
     if (opts?.oauth) {
       const scopes = (process.env.CF_OAUTH_SCOPES || DEFAULT_OAUTH_SCOPES.join(',')).split(',').map(scope => scope.trim()).filter(Boolean);
       const oauth = await oauthLogin({ clientId: process.env.CF_OAUTH_CLIENT_ID || DEFAULT_OAUTH_CLIENT_ID, scopes, bindHost: process.env.CF_OAUTH_BIND_HOST || '0.0.0.0', redirectHost: process.env.CF_OAUTH_REDIRECT_HOST || '127.0.0.1' });
-      const storedInKeychain = await writeCredential(name, { oauthAccessToken: oauth.accessToken, oauthRefreshToken: oauth.refreshToken, expiresIn: oauth.expiresIn });
+      const storedInKeychain = await writeCredential(name, { oauthAccessToken: oauth.accessToken, oauthRefreshToken: oauth.refreshToken, expiresIn: oauth.expiresIn, expiresAt: oauth.expiresAt });
       data.profiles[name] = { authMethod: 'oauth', ...(storedInKeychain ? {} : { apiToken: oauth.accessToken }), accountId: opts?.['account-id'] || process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: opts?.['zone-id'] || process.env.CLOUDFLARE_ZONE_ID };
       data.active = name; write(data, profileHome, profileFs); return printer.log(`Saved and activated profile ${name}`);
     }
@@ -36,6 +36,7 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   if (action === 'logout') {
     const name = opts?.profile || data.active;
     if (!name || !data.profiles[name]) { fail(`Unknown profile: ${name || '(none)'}`); return; }
+    const credential = await readCredential(name); if (credential?.oauthAccessToken) await revokeOAuth({ accessToken: credential.oauthAccessToken });
     delete data.profiles[name]; await deleteCredential(name); if (data.active === name) data.active = Object.keys(data.profiles)[0] || null;
     write(data, profileHome, profileFs); return printer.log(`Removed profile ${name}`);
   }

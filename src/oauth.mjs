@@ -14,6 +14,18 @@ function openBrowser(url) {
   return spawn(command, [url], { detached: true, stdio: 'ignore', shell: process.platform === 'win32' }).unref();
 }
 
+export async function refreshOAuth({ refreshToken, clientId = DEFAULT_OAUTH_CLIENT_ID, fetchImpl = fetch }) {
+  const response = await fetchImpl(TOKEN_URL, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'refresh_token', client_id: clientId, refresh_token: refreshToken }) });
+  if (!response.ok) throw new Error(`OAuth token refresh failed (${response.status})`);
+  const tokens = await response.json(); if (!tokens.access_token) throw new Error('OAuth refresh response did not include access_token');
+  return { accessToken: tokens.access_token, refreshToken: tokens.refresh_token || refreshToken, expiresIn: tokens.expires_in, expiresAt: Date.now() + (tokens.expires_in || 3600) * 1000 };
+}
+
+export async function revokeOAuth({ accessToken, clientId = DEFAULT_OAUTH_CLIENT_ID, fetchImpl = fetch }) {
+  const response = await fetchImpl('https://dash.cloudflare.com/oauth2/revoke', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ token: accessToken, client_id: clientId }) });
+  return response.ok;
+}
+
 export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, bindHost = '127.0.0.1', redirectHost = '127.0.0.1', fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
   if (!clientId) throw new Error('Missing CF_OAUTH_CLIENT_ID');
   const verifier = base64url(crypto.randomBytes(32));
@@ -43,6 +55,6 @@ export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, port
     const code = await callback; const response = await fetchImpl(TOKEN_URL, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'authorization_code', client_id: clientId, code, redirect_uri: redirectUri, code_verifier: verifier }) });
     if (!response.ok) throw new Error(`OAuth token exchange failed (${response.status})`);
     const tokens = await response.json(); if (!tokens.access_token) throw new Error('OAuth token response did not include access_token');
-    return { accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresIn: tokens.expires_in };
+    return { accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresIn: tokens.expires_in, expiresAt: Date.now() + (tokens.expires_in || 3600) * 1000 };
   } finally { server.close(); }
 }
