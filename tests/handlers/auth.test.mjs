@@ -125,7 +125,7 @@ test('auth login accepts a token from stdin without environment credentials', as
   const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
   delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; delete process.env.CLOUDFLARE_API_TOKEN;
   const write = jest.fn(); const ctx = base();
-  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'ci', 'token-stdin': true, 'account-id': 'acct' }, read: () => ({ active: null, profiles: {} }), write, readToken: () => 'stdin-token' });
+  await handleAuth({ ...ctx, action: 'login', opts: { profile: 'ci', 'token-stdin': true, 'account-id': 'acct' }, read: () => ({ active: null, profiles: {} }), write, readToken: () => 'stdin-token', writeCredentialImpl: jest.fn().mockResolvedValue(false) });
   expect(write).toHaveBeenCalledWith({ active: 'ci', profiles: { ci: expect.objectContaining({ apiToken: 'stdin-token', accountId: 'acct' }) } }, undefined, undefined);
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });
