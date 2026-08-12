@@ -22,6 +22,9 @@ Global options:
   --data <json>          JSON body inline
   --method <method>      API method for cf api (default GET)
 
+Compatibility: singular resources (zone, dns, setting, rules, list)
+are preferred; plural resource names remain supported aliases.
+
 Resources:
   zones                  List, inspect, create, edit, delete zones
   zone-settings          Read or edit zone settings

@@ -1,0 +1,30 @@
+# From `gh` to `cf`
+
+`cf` follows the same resource/action shape as the GitHub CLI:
+
+```text
+gh <resource> <action> [flags]
+cf <resource> <action> [flags]
+```
+
+Common translations:
+
+| GitHub CLI habit | Cloudflare CLI equivalent |
+| --- | --- |
+| `gh repo list` | `cf zone list` |
+| `gh api <endpoint>` | `cf api <endpoint>` |
+| `gh auth status` | `cf auth status` |
+| `gh auth login` | `cf auth login --profile <name>` |
+| `gh auth switch` | `cf auth switch --profile <name>` |
+| `gh auth logout` | `cf auth logout --profile <name>` |
+| `--json` / field filtering | `--json --jq '.result[].name'` |
+| preview a mutation | `--dry-run` |
+
+Cloudflare-specific resources use singular names (`zone`, `dns`, `setting`,
+`rules`, and `list`). The original plural names remain compatibility aliases.
+The universal `cf api` command accepts any relative Cloudflare API path, so a
+dedicated resource command is never required before an endpoint can be used.
+
+Credentials may come from `~/.cf`, the project `.env`, CI environment variables,
+or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. API
+tokens are preferred; the email/API-key pair remains supported for compatibility.

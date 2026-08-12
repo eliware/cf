@@ -120,6 +120,8 @@ cf dns-records delete --zone-id <zone_id> --id <record_id> --force
 
 Run `<resource> --help` for action-specific help.
 
+For users coming from the GitHub CLI, see [From `gh` to `cf`](docs/gh-orientation.md).
+
 ## Security
 
 `CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` are required secrets. Credentials may be stored in `~/.cf` or the current directory's `.env` file. The account ID is an optional default; zone and account scope can also be supplied on commands. Never log or commit credentials.

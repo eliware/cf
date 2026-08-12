@@ -78,14 +78,14 @@
 - [ ] Add VyOS and certificate deployment extensions.
 - [ ] Add Bash, Zsh, Fish, and PowerShell completion.
 - [ ] Add man pages.
-- [ ] Add consistent migration notices for compatibility aliases.
-- [ ] Add end-to-end CLI tests.
-- [ ] Update README with a `gh`-to-`cf` orientation guide.
+- [x] Add consistent migration notices for compatibility aliases.
+- [x] Add end-to-end CLI tests.
+- [x] Update README with a `gh`-to-`cf` orientation guide.
 
 ## Release gates
 
-- [ ] `npm test`
-- [ ] `npm run lint`
-- [ ] `npm run test:gaps`
-- [ ] `npm run pack`
-- [ ] Verify `cf --help` and representative JSON/JQ commands.
+- [x] `npm test`
+- [x] `npm run lint`
+- [x] `npm run test:gaps`
+- [x] `npm run pack`
+- [x] Verify `cf --help` and representative JSON/JQ commands.
