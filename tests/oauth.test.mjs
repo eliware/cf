@@ -59,6 +59,55 @@ test('OAuth login serves a state-protected callback and exchanges the code', asy
   expect(fetchImpl).toHaveBeenCalledWith('https://dash.cloudflare.com/oauth2/token', expect.any(Object));
 });
 
+test('OAuth scope picker opens a local setup page and redirects with selected scopes', async () => {
+  const printed = []; const fetchImpl = jest.fn().mockImplementation(async url => url.includes('/token') ? { ok: true, json: async () => ({ access_token: 'access' }) } : { ok: false });
+  const promise = loginOAuth({ clientId: 'client', scopePicker: true, scopes: ['zone.read'], ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const landing = new URL(printed[0].split('\n')[1]);
+  await new Promise((resolve, reject) => http.get(landing, response => { let body = ''; response.on('data', chunk => { body += chunk; }); response.on('end', () => { expect(body).toContain('Set up your Cloudflare CLI'); resolve(); }); }).on('error', reject));
+  let authorization;
+  const startUrl = new URL(landing); startUrl.pathname = '/oauth/start';
+  await new Promise((resolve, reject) => { const request = http.request(startUrl, { method: 'POST' }, response => { expect(response.statusCode).toBe(302); response.resume(); response.on('end', resolve); }); request.on('error', reject); request.end(); });
+  await new Promise((resolve, reject) => { const request = http.request(startUrl, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' } }, response => { expect(response.statusCode).toBe(302); authorization = new URL(response.headers.location); expect(authorization.searchParams.get('scope')).toContain('dns.write'); response.resume(); response.on('end', resolve); }); request.on('error', reject); request.end('scope=zone.read&scope=dns.write'); });
+  const callback = new URL(landing); callback.pathname = '/oauth/callback'; callback.search = `?state=${authorization.searchParams.get('state')}&code=code`;
+  await new Promise((resolve, reject) => http.get(callback, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
+  await expect(promise).resolves.toMatchObject({ accessToken: 'access' });
+});
+
+test('OAuth success page confirms the account without exposing the token', async () => {
+  const printed = []; const responses = [];
+  const fetchImpl = jest.fn().mockImplementation(async url => url.includes('/token')
+    ? { ok: true, json: async () => ({ access_token: 'secret-access', refresh_token: 'refresh' }) }
+    : { ok: true, json: async () => ({ result: { name: `Acme & <Co> "'` } }) });
+  const promise = loginOAuth({ clientId: 'client', scopes: ['zone.read', 'dns.read'], ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].split('\n')[1]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { responses.push(response); let body = ''; response.on('data', chunk => { body += chunk; }); response.on('end', () => { expect(body).toContain('Acme &amp; &lt;Co&gt; &quot;&#39;'); expect(body).not.toContain('secret-access'); resolve(); }); }).on('error', reject));
+  await expect(promise).resolves.toMatchObject({ account: { name: `Acme & <Co> "'` }, scopes: ['zone.read', 'dns.read'] });
+});
+
+test('OAuth success page remains useful when account confirmation fails', async () => {
+  const printed = []; const fetchImpl = jest.fn().mockImplementation(async url => url.includes('/token')
+    ? { ok: true, json: async () => ({ access_token: 'access' }) }
+    : Promise.reject(new Error('account unavailable')));
+  const promise = loginOAuth({ clientId: 'client', ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].split('\n')[1]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
+  await expect(promise).resolves.toMatchObject({ account: null });
+});
+
+test('OAuth success page tolerates an unavailable account response', async () => {
+  const printed = []; const fetchImpl = jest.fn().mockImplementation(async url => url.includes('/token')
+    ? { ok: true, json: async () => ({ access_token: 'access' }) }
+    : { ok: false });
+  const promise = loginOAuth({ clientId: 'client', ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].split('\n')[1]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
+  await expect(promise).resolves.toMatchObject({ account: null });
+});
+
 test('OAuth token helpers report failed and malformed responses', async () => {
   await expect(refreshOAuth({ refreshToken: 'old', fetchImpl: jest.fn().mockResolvedValue({ ok: false, status: 401 }) })).rejects.toThrow('401');
   await expect(refreshOAuth({ refreshToken: 'old', fetchImpl: jest.fn().mockResolvedValue({ ok: true, json: async () => ({}) }) })).rejects.toThrow('access_token');
