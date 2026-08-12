@@ -163,6 +163,7 @@ test('CLI manages aliases and config through the command surface', async () => {
   const printer = { log: jest.fn(), error: jest.fn() };
   const common = { homeDir: home, fsImpl, printer };
   await mod.run({ ...common, argv: ['alias', 'set', 'work', 'zone', 'list'] });
+  await mod.run({ ...common, argv: ['work'], loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: jest.fn() }, exit: jest.fn() });
   await mod.run({ ...common, argv: ['alias', 'list'] });
   await mod.run({ ...common, argv: ['alias', 'list', '--json'] });
   await mod.run({ ...common, argv: ['alias', 'delete', 'work'] });

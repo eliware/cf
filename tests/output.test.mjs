@@ -48,6 +48,7 @@ test('renderTemplate interpolates selected fields', () => {
 });
 
 test('terminal helpers honor color, width, and safe defaults', () => {
+  const printer = { log: jest.fn(), error: jest.fn() };
   expect(terminalColorMode('never', { isTTY: true })).toBe(false);
   expect(terminalColorMode('always', { isTTY: false })).toBe(true);
   expect(terminalColorMode(undefined, { isTTY: false, noColor: false })).toBe(false);
@@ -61,10 +62,12 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(terminalColorMode(undefined, { isTTY: true, noColor: true })).toBe(false);
   expect(terminalWidth('80', 90)).toBe(80);
   expect(fitTerminal('short', 80)).toBe('short');
+  expect(fitTerminal('short')).toBe('short');
   expect(styleTerminalText('ID', { color: true, width: 80 })).toBe('ID');
   expect(terminalColorMode()).toBe(false);
   expect(terminalWidth()).toBe(120);
   expect(styleTerminalText('ID')).toBe('ID');
+  const defaults = createTerminalOutput({ printer }); defaults.log('default');
 });
 
 test('terminal output preserves JSON and can buffer human-readable output', async () => {
