@@ -1,0 +1,2462 @@
+{
+  "source": "Cloudflare OAuth client scope export supplied 2026-08-12",
+  "format": "Cloudflare GUI-style feature groups",
+  "categories": {
+    "Developer Platform": [
+      {
+        "name": "Agent Memory",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "agent-memory.write"
+          }
+        ]
+      },
+      {
+        "name": "Browser Run",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "browser-rendering.read"
+          },
+          {
+            "label": "Write",
+            "scope": "browser-rendering.write"
+          }
+        ]
+      },
+      {
+        "name": "CF Agents",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cf-agents.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cf-agents.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloud Connector",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cloud-connector.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cloud-connector.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudchamber",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cloudchamber.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cloudchamber.write"
+          }
+        ]
+      },
+      {
+        "name": "Constellation",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "constellation.read"
+          },
+          {
+            "label": "Write",
+            "scope": "constellation.write"
+          }
+        ]
+      },
+      {
+        "name": "D1",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "d1.read"
+          },
+          {
+            "label": "Write",
+            "scope": "d1.write"
+          }
+        ]
+      },
+      {
+        "name": "Flagship",
+        "scopes": [
+          {
+            "label": "Evaluate",
+            "scope": "flagship.evaluate"
+          },
+          {
+            "label": "Read",
+            "scope": "flagship.read"
+          },
+          {
+            "label": "Write",
+            "scope": "flagship.write"
+          }
+        ]
+      },
+      {
+        "name": "Hyperdrive",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "query-cache.read"
+          },
+          {
+            "label": "Write",
+            "scope": "query-cache.write"
+          }
+        ]
+      },
+      {
+        "name": "MCP Portals",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "mcp-portals.read"
+          },
+          {
+            "label": "Write",
+            "scope": "mcp-portals.write"
+          }
+        ]
+      },
+      {
+        "name": "Messaging",
+        "scopes": [
+          {
+            "label": "Edit",
+            "scope": "messaging.edit"
+          },
+          {
+            "label": "Read",
+            "scope": "messaging.read"
+          }
+        ]
+      },
+      {
+        "name": "Pages",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "page.read"
+          },
+          {
+            "label": "Write",
+            "scope": "page.write"
+          }
+        ]
+      },
+      {
+        "name": "Pipelines",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "pipelines.read"
+          },
+          {
+            "label": "Send",
+            "scope": "pipelines.send"
+          },
+          {
+            "label": "Write",
+            "scope": "pipelines.write"
+          }
+        ]
+      },
+      {
+        "name": "Pubsub Configuration",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "pubsub.read"
+          },
+          {
+            "label": "Write",
+            "scope": "pubsub.write"
+          }
+        ]
+      },
+      {
+        "name": "Queues",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "queues.read"
+          },
+          {
+            "label": "Write",
+            "scope": "queues.write"
+          }
+        ]
+      },
+      {
+        "name": "Realtime",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "realtime.write"
+          },
+          {
+            "label": "Admin",
+            "scope": "realtime.admin"
+          },
+          {
+            "label": "Read",
+            "scope": "realtime.read"
+          }
+        ]
+      },
+      {
+        "name": "Secrets Store",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "secrets-store.read"
+          },
+          {
+            "label": "Write",
+            "scope": "secrets-store.write"
+          }
+        ]
+      },
+      {
+        "name": "Vectorize",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "vectorize.read"
+          },
+          {
+            "label": "Write",
+            "scope": "vectorize.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers CI",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-ci.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-ci.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Containers",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "containers.read"
+          },
+          {
+            "label": "Write",
+            "scope": "containers.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Editor",
+        "scopes": [
+          {
+            "label": "Edit",
+            "scope": "workers-scripts.edit"
+          }
+        ]
+      },
+      {
+        "name": "Workers KV Storage",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-kv-storage.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-kv-storage.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Observability",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-observability.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-observability.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Observability Telemetry",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "workers-observability-telemetry.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers R2 Data Catalog",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "r2-catalog.read"
+          },
+          {
+            "label": "Write",
+            "scope": "r2-catalog.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers R2 SQL",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "r2-catalog-sql.read"
+          }
+        ]
+      },
+      {
+        "name": "Workers R2 Storage Bucket Item",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-r2-bucket-item.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-r2-bucket-item.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers R2 Storage",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-r2.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-r2.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Routes",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-routes.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-routes.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Scripts",
+        "scopes": [
+          {
+            "label": "Bind",
+            "scope": "workers-scripts.bind"
+          },
+          {
+            "label": "Read",
+            "scope": "workers-scripts.read"
+          },
+          {
+            "label": "Write",
+            "scope": "workers-scripts.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers Tail",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "workers-tail.read"
+          }
+        ]
+      }
+    ],
+    "AI & Machine Learning": [
+      {
+        "name": "AI Audit",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "aiaudit.read"
+          },
+          {
+            "label": "Write",
+            "scope": "aiaudit.write"
+          }
+        ]
+      },
+      {
+        "name": "AI Gateway",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "aig.read"
+          },
+          {
+            "label": "Run",
+            "scope": "aig.run"
+          },
+          {
+            "label": "Write",
+            "scope": "aig.write"
+          }
+        ]
+      },
+      {
+        "name": "AI Search Index Engine",
+        "scopes": [
+          {
+            "label": "Index",
+            "scope": "ai-search.index"
+          }
+        ]
+      },
+      {
+        "name": "AI Search",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ai-search.read"
+          },
+          {
+            "label": "Run",
+            "scope": "ai-search.run"
+          },
+          {
+            "label": "Write",
+            "scope": "ai-search.write"
+          }
+        ]
+      },
+      {
+        "name": "Agents Gateway",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "agw.read"
+          },
+          {
+            "label": "Run",
+            "scope": "agw.run"
+          },
+          {
+            "label": "Write",
+            "scope": "agw.write"
+          }
+        ]
+      },
+      {
+        "name": "Auto Rag",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "rag.read"
+          },
+          {
+            "label": "Write",
+            "scope": "rag.write"
+          }
+        ]
+      },
+      {
+        "name": "Auto Rag ",
+        "scopes": [
+          {
+            "label": "Run",
+            "scope": "rag.run"
+          }
+        ]
+      },
+      {
+        "name": "Firewall for AI",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "firewall-for-ai.read"
+          },
+          {
+            "label": "Write",
+            "scope": "firewall-for-ai.write"
+          }
+        ]
+      },
+      {
+        "name": "Websearch",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "websearch.read"
+          },
+          {
+            "label": "Run",
+            "scope": "websearch.run"
+          },
+          {
+            "label": "Write",
+            "scope": "websearch.write"
+          }
+        ]
+      },
+      {
+        "name": "Workers AI",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ai.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ai.write"
+          }
+        ]
+      }
+    ],
+    "DNS & Zones": [
+      {
+        "name": "Account DNS Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-dns-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-dns-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "DNS Firewall",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "dns-firewall.read"
+          },
+          {
+            "label": "Write",
+            "scope": "dns-firewall.write"
+          }
+        ]
+      },
+      {
+        "name": "DNS",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "dns.read"
+          },
+          {
+            "label": "Write",
+            "scope": "dns.write"
+          }
+        ]
+      },
+      {
+        "name": "DNS View",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "dns-view.read"
+          },
+          {
+            "label": "Write",
+            "scope": "dns-view.write"
+          }
+        ]
+      },
+      {
+        "name": "Registrar Domains",
+        "scopes": [
+          {
+            "label": "Admin",
+            "scope": "registrar-domains.admin"
+          },
+          {
+            "label": "Read",
+            "scope": "registrar-domains.read"
+          }
+        ]
+      },
+      {
+        "name": "Registrar Sandbox Domains",
+        "scopes": [
+          {
+            "label": "Admin",
+            "scope": "registrar-sandbox-domains.admin"
+          },
+          {
+            "label": "Read",
+            "scope": "registrar-sandbox-domains.read"
+          }
+        ]
+      },
+      {
+        "name": "Zone Custom Asset",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-custom-asset.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-custom-asset.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone DNS Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-dns-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-dns-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone Versioning",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-versioning.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-versioning.write"
+          }
+        ]
+      }
+    ],
+    "App Security": [
+      {
+        "name": "Account Abuse Protection PII",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "fraud-detection-pii.read"
+          }
+        ]
+      },
+      {
+        "name": "Account Firewall Access Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-firewall-access-rules.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-firewall-access-rules.write"
+          }
+        ]
+      },
+      {
+        "name": "Account Security Center Insights",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-security-center-insights.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-security-center-insights.write"
+          }
+        ]
+      },
+      {
+        "name": "Account WAF",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-waf.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-waf.write"
+          }
+        ]
+      },
+      {
+        "name": "Allow Request Tracer",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "request-tracer.read"
+          }
+        ]
+      },
+      {
+        "name": "Application Security Reports",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "reports-application-security-report.read"
+          }
+        ]
+      },
+      {
+        "name": "Bot Management Feedback Report",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "bot-management-feedback.read"
+          },
+          {
+            "label": "Write",
+            "scope": "bot-management-feedback.write"
+          }
+        ]
+      },
+      {
+        "name": "Bot Management",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "bot-management.read"
+          },
+          {
+            "label": "Write",
+            "scope": "bot-management.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudforce One",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cloudforce-one.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cloudforce-one.write"
+          }
+        ]
+      },
+      {
+        "name": "DDoS Botnet Feed",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ddos-botnet-feed.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ddos-botnet-feed.write"
+          }
+        ]
+      },
+      {
+        "name": "DDoS Protection",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ddos-protection.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ddos-protection.write"
+          }
+        ]
+      },
+      {
+        "name": "Domain API Gateway",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "api-gateway.write"
+          },
+          {
+            "label": "Read",
+            "scope": "api-gateway.read"
+          }
+        ]
+      },
+      {
+        "name": "Domain Page Shield",
+        "scopes": [
+          {
+            "label": "Shield",
+            "scope": "domain-page.shield"
+          },
+          {
+            "label": "Read",
+            "scope": "domain-page-shield.read"
+          }
+        ]
+      },
+      {
+        "name": "Field Extractors",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "field-extractor.read"
+          },
+          {
+            "label": "Write",
+            "scope": "field-extractor.write"
+          }
+        ]
+      },
+      {
+        "name": "Firewall Services",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "firewall-services.read"
+          },
+          {
+            "label": "Write",
+            "scope": "firewall-services.write"
+          }
+        ]
+      },
+      {
+        "name": "Fraud Detection",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "fraud-detection.read"
+          },
+          {
+            "label": "Write",
+            "scope": "fraud-detection.write"
+          }
+        ]
+      },
+      {
+        "name": "Fraud Events",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "fraud-events.write"
+          }
+        ]
+      },
+      {
+        "name": "Fraud Feedback",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "fraud-feedback.read"
+          },
+          {
+            "label": "Write",
+            "scope": "fraud-feedback.write"
+          }
+        ]
+      },
+      {
+        "name": "HTTP Applications",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "http-applications.read"
+          },
+          {
+            "label": "Write",
+            "scope": "http-applications.write"
+          }
+        ]
+      },
+      {
+        "name": "HTTP DDoS Managed Ruleset",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "http-ddos-managed-ruleset.read"
+          },
+          {
+            "label": "Write",
+            "scope": "http-ddos-managed-ruleset.write"
+          }
+        ]
+      },
+      {
+        "name": "IOT",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "iot.read"
+          },
+          {
+            "label": "Write",
+            "scope": "iot.write"
+          }
+        ]
+      },
+      {
+        "name": "L4 DDoS Managed Ruleset",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "l4-ddos-managed-ruleset.read"
+          },
+          {
+            "label": "Write",
+            "scope": "l4-ddos-managed-ruleset.write"
+          }
+        ]
+      },
+      {
+        "name": "Page Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "page-rules.read"
+          },
+          {
+            "label": "Write",
+            "scope": "page-rules.write"
+          }
+        ]
+      },
+      {
+        "name": "Page Shield",
+        "scopes": [
+          {
+            "label": "Shield",
+            "scope": "page.shield"
+          },
+          {
+            "label": "Read",
+            "scope": "page-shield.read"
+          }
+        ]
+      },
+      {
+        "name": "Precursor",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "precursor.read"
+          },
+          {
+            "label": "Write",
+            "scope": "precursor.write"
+          }
+        ]
+      },
+      {
+        "name": "Sanitize",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "sanitize.read"
+          },
+          {
+            "label": "Write",
+            "scope": "sanitize.write"
+          }
+        ]
+      },
+      {
+        "name": "Tag",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "tag.read"
+          },
+          {
+            "label": "Write",
+            "scope": "tag.write"
+          }
+        ]
+      },
+      {
+        "name": "Trust and Safety",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "trust-and-safety.read"
+          },
+          {
+            "label": "Write",
+            "scope": "trust-and-safety.write"
+          }
+        ]
+      },
+      {
+        "name": "Turnstile Sites",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "challenge-widgets.read"
+          },
+          {
+            "label": "Write",
+            "scope": "challenge-widgets.write"
+          }
+        ]
+      },
+      {
+        "name": "URL Scanner",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "url-scanner.read"
+          },
+          {
+            "label": "Write",
+            "scope": "url-scanner.write"
+          }
+        ]
+      },
+      {
+        "name": "Zaraz",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "zaraz.write"
+          },
+          {
+            "label": "Edit",
+            "scope": "zaraz.edit"
+          },
+          {
+            "label": "Read",
+            "scope": "zaraz.read"
+          }
+        ]
+      },
+      {
+        "name": "Zone Security Center Insights",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-security-center-insights.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-security-center-insights.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone WAF",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-waf.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-waf.write"
+          }
+        ]
+      }
+    ],
+    "Rules & Configuration": [
+      {
+        "name": "Account Custom Error Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-custom-error-rules.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-custom-error-rules.write"
+          }
+        ]
+      },
+      {
+        "name": "Account Custom Pages",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-custom-pages.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-custom-pages.write"
+          }
+        ]
+      },
+      {
+        "name": "Account Rule Lists",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-rule-lists.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-rule-lists.write"
+          }
+        ]
+      },
+      {
+        "name": "Account Rulesets",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-rulesets.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-rulesets.write"
+          }
+        ]
+      },
+      {
+        "name": "Config Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "config-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "config-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "Custom Errors",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "custom-errors.read"
+          },
+          {
+            "label": "Write",
+            "scope": "custom-errors.write"
+          }
+        ]
+      },
+      {
+        "name": "Custom Pages",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "custom-pages.read"
+          },
+          {
+            "label": "Write",
+            "scope": "custom-pages.write"
+          }
+        ]
+      },
+      {
+        "name": "Dynamic URL Redirects",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "dynamic-redirect.read"
+          },
+          {
+            "label": "Write",
+            "scope": "dynamic-redirect.write"
+          }
+        ]
+      },
+      {
+        "name": "Managed headers",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "managed-headers.read"
+          },
+          {
+            "label": "Write",
+            "scope": "managed-headers.write"
+          }
+        ]
+      },
+      {
+        "name": "Mass URL Redirects",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "mass-url-redirects.read"
+          },
+          {
+            "label": "Write",
+            "scope": "mass-url-redirects.write"
+          }
+        ]
+      },
+      {
+        "name": "Origin",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "origin.read"
+          },
+          {
+            "label": "Write",
+            "scope": "origin.write"
+          }
+        ]
+      },
+      {
+        "name": "Payments Gateway",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "payments-gateway.read"
+          },
+          {
+            "label": "Write",
+            "scope": "payments-gateway.write"
+          }
+        ]
+      },
+      {
+        "name": "Response Compression",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "response-compression.read"
+          },
+          {
+            "label": "Write",
+            "scope": "response-compression.write"
+          }
+        ]
+      },
+      {
+        "name": "Select Configuration",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "select-configuration.read"
+          },
+          {
+            "label": "Write",
+            "scope": "select-configuration.write"
+          }
+        ]
+      },
+      {
+        "name": "Snippets",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "snippets.read"
+          },
+          {
+            "label": "Write",
+            "scope": "snippets.write"
+          }
+        ]
+      },
+      {
+        "name": "Transform Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "transform-rules.read"
+          },
+          {
+            "label": "Write",
+            "scope": "transform-rules.write"
+          }
+        ]
+      },
+      {
+        "name": "Zone Transform Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "zone-transform-rules.read"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-transform-rules.write"
+          }
+        ]
+      }
+    ],
+    "Cloudflare One / Zero Trust": [
+      {
+        "name": "Access: Apps",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-app.read"
+          },
+          {
+            "label": "Revoke",
+            "scope": "access-app.revoke"
+          },
+          {
+            "label": "Write",
+            "scope": "access-app.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Apps and Policies",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access.read"
+          },
+          {
+            "label": "Read",
+            "scope": "zone-access.read"
+          },
+          {
+            "label": "Revoke",
+            "scope": "access.revoke"
+          },
+          {
+            "label": "Revoke",
+            "scope": "zone-access.revoke"
+          },
+          {
+            "label": "Write",
+            "scope": "access.write"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-access.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Audit Logs",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-audit-log.read"
+          }
+        ]
+      },
+      {
+        "name": "Access: Custom Pages",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-custom-page.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-custom-page.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Device Posture",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-device-posture.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-device-posture.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Groups",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-group.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-group.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Identity Providers",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-idp.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-idp.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Keys",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-key.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-key.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Mutual TLS Certificates",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-certificate.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-certificate.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Organizations",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-org.read"
+          },
+          {
+            "label": "Revoke",
+            "scope": "access-org.revoke"
+          },
+          {
+            "label": "Write",
+            "scope": "access-org.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Organizations, Identity Providers, and Groups",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-acct.read"
+          },
+          {
+            "label": "Revoke",
+            "scope": "access-acct.revoke"
+          },
+          {
+            "label": "Write",
+            "scope": "access-acct.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Policies",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-policy.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-policy.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Policy Test",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-policy-test.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-policy-test.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Population",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-population.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-population.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: SAML Certificates",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-saml-certificate.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-saml-certificate.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: SCIM Logs",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-scim-log.read"
+          }
+        ]
+      },
+      {
+        "name": "Access: SSH Auditing",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-ssh-auditing.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-ssh-auditing.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Service Tokens",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-service-token.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-service-token.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Tags",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-tag.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-tag.write"
+          }
+        ]
+      },
+      {
+        "name": "Access: Users",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "access-users.read"
+          },
+          {
+            "label": "Write",
+            "scope": "access-users.write"
+          }
+        ]
+      },
+      {
+        "name": "CASB",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "casb.read"
+          },
+          {
+            "label": "Write",
+            "scope": "casb.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare CDS Compute Account",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-cds-compute-account.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-cds-compute-account.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare DEX",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-dex.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-dex.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare One Connector Monitoring: cloudflared",
+        "scopes": [
+          {
+            "label": "Monitoring",
+            "scope": "teams-connector-cloudflared.monitoring"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare One Connector: WARP",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-connector-warp.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-connector-warp.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare One Connector: cloudflared",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-connector-cloudflared.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-connector-cloudflared.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare One Connectors",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-connectors.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-connectors.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare One Networks",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-networks.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-networks.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare Tunnel",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "argotunnel.read"
+          },
+          {
+            "label": "Write",
+            "scope": "argotunnel.write"
+          }
+        ]
+      },
+      {
+        "name": "Cloudflare Zero Trust Secure DNS Locations",
+        "scopes": [
+          {
+            "label": "Location",
+            "scope": "teams-secure.location"
+          }
+        ]
+      },
+      {
+        "name": "DLS:",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "dls.read"
+          },
+          {
+            "label": "Write",
+            "scope": "dls.write"
+          }
+        ]
+      },
+      {
+        "name": "Zero Trust",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams.write"
+          }
+        ]
+      },
+      {
+        "name": "Zero Trust Report",
+        "scopes": [
+          {
+            "label": "Report",
+            "scope": "teams.report"
+          }
+        ]
+      },
+      {
+        "name": "Zero Trust Resilience",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-resilience.read"
+          },
+          {
+            "label": "Write",
+            "scope": "teams-resilience.write"
+          }
+        ]
+      },
+      {
+        "name": "Zero Trust: PII",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "teams-pii.read"
+          }
+        ]
+      },
+      {
+        "name": "Zero Trust: Seats",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "access-seats.write"
+          }
+        ]
+      }
+    ],
+    "Analytics & Logs": [
+      {
+        "name": "Account Analytics",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-analytics.read"
+          }
+        ]
+      },
+      {
+        "name": "Analytics",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "analytics.read"
+          }
+        ]
+      },
+      {
+        "name": "Intel",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "intel.read"
+          },
+          {
+            "label": "Write",
+            "scope": "intel.write"
+          }
+        ]
+      },
+      {
+        "name": "Logs",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-logs.read"
+          },
+          {
+            "label": "Read",
+            "scope": "logs.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-logs.write"
+          },
+          {
+            "label": "Write",
+            "scope": "logs.write"
+          }
+        ]
+      },
+      {
+        "name": "Radar",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "radar.read"
+          }
+        ]
+      }
+    ],
+    "Network Services": [
+      {
+        "name": "Account Waiting Rooms",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-waiting-rooms.read"
+          }
+        ]
+      },
+      {
+        "name": "Address Maps",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "address-maps.read"
+          },
+          {
+            "label": "Write",
+            "scope": "address-maps.write"
+          }
+        ]
+      },
+      {
+        "name": "China Network Steering",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "chinanetwork-steering.read"
+          },
+          {
+            "label": "Write",
+            "scope": "chinanetwork-steering.write"
+          }
+        ]
+      },
+      {
+        "name": "Connectivity Directory",
+        "scopes": [
+          {
+            "label": "Admin",
+            "scope": "connectivity-directory.admin"
+          },
+          {
+            "label": "Bind",
+            "scope": "connectivity-directory.bind"
+          },
+          {
+            "label": "Read",
+            "scope": "connectivity-directory.read"
+          }
+        ]
+      },
+      {
+        "name": "Health Checks",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "healthcheck.read"
+          },
+          {
+            "label": "Write",
+            "scope": "healthcheck.write"
+          }
+        ]
+      },
+      {
+        "name": "IP Prefixes: BGP On Demand",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ip-prefix-bgp-on-demand.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ip-prefix-bgp-on-demand.write"
+          }
+        ]
+      },
+      {
+        "name": "IP Prefixes:",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ip-prefix.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ip-prefix.write"
+          }
+        ]
+      },
+      {
+        "name": "Load Balancers Account",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "load-balancers-account.read"
+          },
+          {
+            "label": "Write",
+            "scope": "load-balancers-account.write"
+          }
+        ]
+      },
+      {
+        "name": "Load Balancers",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "load-balancers.read"
+          },
+          {
+            "label": "Write",
+            "scope": "load-balancers.write"
+          }
+        ]
+      },
+      {
+        "name": "Load Balancing: Monitors and Pools",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "load-balancing-monitors-and-pools.read"
+          },
+          {
+            "label": "Write",
+            "scope": "load-balancing-monitors-and-pools.write"
+          }
+        ]
+      },
+      {
+        "name": "Magic Firewall Packet Captures - Read PCAPs API",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "pcaps-api.read"
+          }
+        ]
+      },
+      {
+        "name": "Magic Firewall Packet Captures - Write PCAPs API",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "pcaps-api.write"
+          }
+        ]
+      },
+      {
+        "name": "Magic Firewall",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "magic-firewall.read"
+          },
+          {
+            "label": "Write",
+            "scope": "magic-firewall.write"
+          }
+        ]
+      },
+      {
+        "name": "Magic Network Monitoring",
+        "scopes": [
+          {
+            "label": "Admin",
+            "scope": "fbm.admin"
+          }
+        ]
+      },
+      {
+        "name": "Magic Network Monitoring Config",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "fbm.read"
+          },
+          {
+            "label": "Write",
+            "scope": "fbm.write"
+          }
+        ]
+      },
+      {
+        "name": "Magic Transit",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "magic-transit.read"
+          },
+          {
+            "label": "Write",
+            "scope": "magic-transit.write"
+          }
+        ]
+      },
+      {
+        "name": "Magic WAN",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "magic-wan.read"
+          },
+          {
+            "label": "Write",
+            "scope": "magic-wan.write"
+          }
+        ]
+      },
+      {
+        "name": "Waiting Rooms",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "waiting-rooms.read"
+          },
+          {
+            "label": "Write",
+            "scope": "waiting-rooms.write"
+          }
+        ]
+      },
+      {
+        "name": "Web3 Hostnames",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "web3-hostnames.read"
+          },
+          {
+            "label": "Write",
+            "scope": "web3-hostnames.write"
+          }
+        ]
+      }
+    ],
+    "Media": [
+      {
+        "name": "Calls",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "calls.read"
+          },
+          {
+            "label": "Write",
+            "scope": "calls.write"
+          }
+        ]
+      },
+      {
+        "name": "Images",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "images.read"
+          },
+          {
+            "label": "Write",
+            "scope": "images.write"
+          }
+        ]
+      },
+      {
+        "name": "MoQ",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "moq.read"
+          },
+          {
+            "label": "Write",
+            "scope": "moq.write"
+          }
+        ]
+      },
+      {
+        "name": "Stream",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "stream.read"
+          },
+          {
+            "label": "Write",
+            "scope": "stream.write"
+          }
+        ]
+      }
+    ],
+    "Email & Messaging": [
+      {
+        "name": "Cloud Email Security:",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cloud-email-security.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cloud-email-security.write"
+          }
+        ]
+      },
+      {
+        "name": "Email Routing Account Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-routing-account-rule.read"
+          }
+        ]
+      },
+      {
+        "name": "Email Routing Addresses",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-routing-address.read"
+          },
+          {
+            "label": "Write",
+            "scope": "email-routing-address.write"
+          }
+        ]
+      },
+      {
+        "name": "Email Routing Rules",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-routing-rule.read"
+          },
+          {
+            "label": "Write",
+            "scope": "email-routing-rule.write"
+          }
+        ]
+      },
+      {
+        "name": "Email Routing Suppressions",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-routing-suppression.read"
+          },
+          {
+            "label": "Write",
+            "scope": "email-routing-suppression.write"
+          }
+        ]
+      },
+      {
+        "name": "Email Security DMARC Reports",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-security-dmarcreports.read"
+          },
+          {
+            "label": "Write",
+            "scope": "email-security-dmarcreports.write"
+          }
+        ]
+      },
+      {
+        "name": "Email Sending",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "email-sending.read"
+          },
+          {
+            "label": "Write",
+            "scope": "email-sending.write"
+          }
+        ]
+      }
+    ],
+    "Cache & Performance": [
+      {
+        "name": "Account: SSL and Certificates",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-ssl-and-certificates.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-ssl-and-certificates.write"
+          }
+        ]
+      },
+      {
+        "name": "Cache Purge",
+        "scopes": [
+          {
+            "label": "Purge",
+            "scope": "cache.purge"
+          }
+        ]
+      },
+      {
+        "name": "Cache Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "cache-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "cache-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "Disable ESC",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-disable-esc.read"
+          },
+          {
+            "label": "Read",
+            "scope": "zone-disable-esc.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-disable-esc.write"
+          },
+          {
+            "label": "Write",
+            "scope": "zone-disable-esc.write"
+          }
+        ]
+      },
+      {
+        "name": "SSL and Certificates",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "ssl-and-certificates.read"
+          },
+          {
+            "label": "Write",
+            "scope": "ssl-and-certificates.write"
+          }
+        ]
+      }
+    ],
+    "Account & Billing": [
+      {
+        "name": "Account API Gateway",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "account-api-gateway.write"
+          },
+          {
+            "label": "Read",
+            "scope": "account-api-gateway.read"
+          }
+        ]
+      },
+      {
+        "name": "Account Custom Asset",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-custom-asset.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-custom-asset.write"
+          }
+        ]
+      },
+      {
+        "name": "Account Settings",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "account-settings.read"
+          },
+          {
+            "label": "Write",
+            "scope": "account-settings.write"
+          }
+        ]
+      },
+      {
+        "name": "Apps",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "apps.write"
+          }
+        ]
+      },
+      {
+        "name": "Integration",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "integration.write"
+          }
+        ]
+      },
+      {
+        "name": "Memberships",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "memberships.read"
+          },
+          {
+            "label": "Write",
+            "scope": "memberships.write"
+          }
+        ]
+      },
+      {
+        "name": "Notifications",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "notifications.read"
+          },
+          {
+            "label": "Write",
+            "scope": "notifications.write"
+          }
+        ]
+      },
+      {
+        "name": "SCIM Provisioning",
+        "scopes": [
+          {
+            "label": "Write",
+            "scope": "scim-provisioning.write"
+          }
+        ]
+      },
+      {
+        "name": "User Details",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "user-details.read"
+          },
+          {
+            "label": "Write",
+            "scope": "user-details.write"
+          }
+        ]
+      }
+    ],
+    "Other": [
+      {
+        "name": "Artifacts",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "artifacts.read"
+          },
+          {
+            "label": "Write",
+            "scope": "artifacts.write"
+          }
+        ]
+      },
+      {
+        "name": "Resource Library",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "resource-library.read"
+          },
+          {
+            "label": "Write",
+            "scope": "resource-library.write"
+          }
+        ]
+      },
+      {
+        "name": "Resource Sharing",
+        "scopes": [
+          {
+            "label": "Read",
+            "scope": "resource-sharing.read"
+          }
+        ]
+      }
+    ]
+  }
+}
