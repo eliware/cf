@@ -91,6 +91,7 @@ cf cache purge --zone-id <zone_id> --data '{"purge_everything":true}' --force
 cf health list --zone-id <zone_id>
 cf audit list --account-id <account_id>
 cf inventory export --account-id <account_id> --json
+cf origin-ca list --json
 ```
 
 Use JSON output for automation:

@@ -42,6 +42,7 @@ Resources:
   health                 Inspect zone health checks
   audit                  Inspect account audit logs
   inventory              Export account inventory
+  origin-ca              Manage Origin CA certificates
 
 Examples:
   cf zones list
@@ -67,6 +68,7 @@ Examples:
   cf health list --zone-id <zone_id>
   cf audit list --account-id <account_id>
   cf inventory export --account-id <account_id> --json
+  cf origin-ca list --json
 `);
 }
 
@@ -132,6 +134,10 @@ export function printResourceHelp(resource, printer = console) {
   list                 List account audit logs`,
     inventory: `inventory
   export               Export zones, DNS records, and SSL settings`,
+    'origin-ca': `origin-ca
+  list                 List Origin CA certificates
+  create               Create an Origin CA certificate
+  revoke               Revoke a certificate (requires --force)`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }

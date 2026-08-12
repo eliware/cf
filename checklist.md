@@ -41,7 +41,7 @@
 - [x] Migrate rulesets to `cf rules`.
 - [x] Migrate lists to `cf list`.
 - [x] Add SSL/TLS inspection and configuration.
-- [ ] Add Origin CA certificate management.
+- [x] Add Origin CA certificate management.
 - [x] Add cache purge commands.
 - [x] Add health-check commands.
 - [ ] Add Load Balancer commands.

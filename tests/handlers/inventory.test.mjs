@@ -12,4 +12,6 @@ test('inventory export combines account zones, DNS, and SSL', async () => {
   await handleInventory(empty); expect(empty.toJsonOutput).toHaveBeenCalledWith({ accountId: 'a1', zones: [] });
   const unknown = { ...ctx, action: 'list' }; await handleInventory(unknown);
   expect(unknown.fail).toHaveBeenCalledWith('Unknown inventory action: list');
+  const scalar = { ...ctx, outputJson: true, toJsonOutput: jest.fn(), cf: { ...ctx.cf, zones: { list: jest.fn().mockResolvedValue({ result: [{ id: 'z1', name: 'example.com' }] }) }, dns: { records: { list: jest.fn().mockResolvedValue({}) } } } };
+  await handleInventory(scalar); expect(scalar.toJsonOutput).toHaveBeenCalledWith(expect.objectContaining({ zones: [expect.objectContaining({ records: [] })] }));
 });
