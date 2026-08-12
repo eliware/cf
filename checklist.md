@@ -26,12 +26,12 @@
 - [x] Add `--jq` filtering.
 - [ ] Add template output if useful.
 - [ ] Add `--web` dashboard links.
-- [ ] Handle pagination consistently.
+- [x] Handle pagination consistently.
 - [x] Add quiet and verbose modes.
 - [x] Implement `cf api` with GET/POST/PUT/PATCH/DELETE support.
 - [x] Support JSON files and inline request bodies.
 - [x] Add dry-run and mutation confirmation to API calls.
-- [ ] Add rate-limit backoff and credential redaction.
+- [x] Add rate-limit backoff and credential redaction.
 
 ## Core resources
 

@@ -16,6 +16,14 @@ test('calls a relative GET path and normalizes it', async () => {
   expect(ctx.printer.log).toHaveBeenCalledWith(expect.stringContaining('ok'));
 });
 
+test('API GET can paginate', async () => {
+  const ctx = context({ opts: { paginate: true } });
+  ctx.cf.get.mockResolvedValueOnce({ result: [{ page: 1 }], result_info: { total_pages: 2, total_count: 2 } }).mockResolvedValue({ result: [{ page: 2 }], result_info: { total_pages: 2 } });
+  await handleApi(ctx);
+  expect(ctx.cf.get).toHaveBeenCalledWith('/zones?page=2&per_page=100', undefined);
+  expect(ctx.printer.log).toHaveBeenCalledWith(expect.stringContaining('page'));
+});
+
 test('calls mutation with JSON body', async () => {
   const ctx = context({ action: '/zones', opts: { method: 'post' }, body: { name: 'x' } });
   await handleApi(ctx);

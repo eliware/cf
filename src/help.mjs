@@ -14,6 +14,7 @@ Global options:
   --jq <expression>      Select fields from JSON output (basic jq paths)
   --quiet                Suppress normal command output
   --verbose              Include verbose diagnostics where supported
+  --paginate              Fetch all pages for supported list/API requests
   --force                Confirm destructive writes
   --dry-run              Show what would change without writing
   --account-id <id>      Cloudflare account id

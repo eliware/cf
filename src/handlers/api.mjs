@@ -1,4 +1,5 @@
 import { selectJson } from '../output.mjs';
+import { getAllPages, requestWithBackoff, withPage } from '../request.mjs';
 
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
@@ -24,6 +25,8 @@ export async function handleApi({ cf, action, opts, body, printer, fail }) {
   }
   const request = cf[method.toLowerCase()];
   if (typeof request !== 'function') { fail(`Cloudflare client does not support ${method}`); return; }
-  const result = await request.call(cf, path, body === null ? undefined : { body });
+  const requestPage = page => requestWithBackoff(() => request.call(cf, withPage(path, page), undefined));
+  const first = await requestWithBackoff(() => request.call(cf, path, body === null ? undefined : { body }));
+  const result = method === 'GET' ? await getAllPages(requestPage, first, { paginate: opts.paginate }) : first;
   printer.log(JSON.stringify(selectJson(result, opts.jq), null, 2));
 }
