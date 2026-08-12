@@ -28,6 +28,8 @@ test('profile selection honors explicit profile and missing storage', async () =
   expect(activeProfile({}, home, {})).toBeNull();
   expect(await applyActiveProfile({}, home, {})).toBeNull();
   expect(await applyActiveProfile({}, home, {})).toBeNull();
+  const implicit = activeProfile();
+  expect(implicit === null || typeof implicit === 'object').toBe(true);
 });
 
 test('profile writer tolerates adapters without chmod', () => {

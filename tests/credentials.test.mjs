@@ -20,3 +20,8 @@ test('credential adapter safely handles unavailable and failing keychains', asyn
   await expect(writeCredential('work', {}, failing)).resolves.toBe(false);
   await expect(deleteCredential('work', failing)).resolves.toBe(false);
 });
+
+test('credential adapter treats an empty keychain value as absent', async () => {
+  const store = { getPassword: jest.fn().mockResolvedValue('') };
+  await expect(readCredential('work', jest.fn().mockResolvedValue(store))).resolves.toBeNull();
+});
