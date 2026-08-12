@@ -25,7 +25,7 @@ describe('Cloudflare handlers', () => {
     const cf = { zones: { list: jest.fn().mockResolvedValue({ result: [{ id: 'z1', name: 'example.com' }] }) } };
     await handleZones({ cf, action: 'list', opts: {}, outputJson: false, toJsonOutput, fail });
     expect(cf.zones.list).toHaveBeenCalledWith(undefined);
-    expect(console.log).toHaveBeenCalledWith('z1 example.com');
+    expect(console.log).toHaveBeenCalledWith('ID  NAME\n--  ----\nz1  example.com');
   });
 
   test('handleZones supports account-scoped list and JSON output', async () => {
@@ -93,7 +93,7 @@ describe('Cloudflare handlers', () => {
     await handleDnsRecords({ cf, action: 'update', opts: { 'zone-id': 'z1', id: 'r1' }, body: { content: '5.6.7.8' }, outputJson: true, toJsonOutput, fail });
     await handleDnsRecords({ cf, action: 'delete', opts: { 'zone-id': 'z1', id: 'r1', force: true }, outputJson: false, toJsonOutput, fail });
     await expect(handleDnsRecords({ cf, action: 'bogus', opts: { 'zone-id': 'z1' }, outputJson: false, toJsonOutput, fail })).rejects.toThrow('Unknown dns-records action: bogus');
-    expect(console.log).toHaveBeenCalledWith('r1 A www 1.2.3.4');
+    expect(console.log).toHaveBeenCalledWith('ID  TYPE  NAME  CONTENT\n--  ----  ----  -------\nr1  A     www   1.2.3.4');
   });
 
   test('handleDnsRecords validates missing inputs', async () => {
@@ -145,7 +145,7 @@ describe('Cloudflare handlers', () => {
     await handleListItems({ cf, action: 'delete', opts: { 'account-id': 'acct1', id: 'list1', force: true }, body: { ids: ['a', 'b'] }, outputJson: false, toJsonOutput, fail });
     await expect(handleListItems({ cf, action: 'bogus', opts: { 'account-id': 'acct1', id: 'list1' }, outputJson: false, toJsonOutput, fail })).rejects.toThrow('Unknown list-items action: bogus');
     await expect(handleListItems({ cf, action: 'delete', opts: { 'account-id': 'acct1', id: 'list1' }, body: { ids: ['a'] }, outputJson: false, toJsonOutput, fail })).rejects.toThrow('Refusing to delete without --force');
-    expect(console.log).toHaveBeenCalledWith(JSON.stringify({ id: 'i1' }));
+    expect(console.log).toHaveBeenCalledWith('ID  VALUE\n--  -----\ni1  {"id":"i1"}');
     expect(cf.rules.lists.items.create).toHaveBeenCalledWith('list1', { account_id: 'acct1', body: [{ ip: '1.2.3.4' }] });
     expect(cf.rules.lists.items.delete).toHaveBeenCalledWith('list1', { account_id: 'acct1', items: [{ id: 'a' }, { id: 'b' }] });
   });

@@ -1,4 +1,5 @@
 import { getAccountId, getZoneId, requireValue } from './common.mjs';
+import { printTable } from '../output.mjs';
 
 export async function handleZones({ cf, action, opts, body, outputJson, printer = console, toJsonOutput, fail }) {
   const accountId = getAccountId(opts);
@@ -7,7 +8,7 @@ export async function handleZones({ cf, action, opts, body, outputJson, printer 
   if (action === 'list') {
     const res = await cf.zones.list(accountId ? { account: { id: accountId } } : undefined);
     const items = Array.isArray(res?.result) ? res.result : res;
-    return outputJson ? toJsonOutput(items) : items.forEach(z => printer.log(`${z.id} ${z.name}`));
+    return outputJson ? toJsonOutput(items) : printTable(['ID', 'NAME'], items.map(z => [z.id, z.name]), printer.log);
   }
 
   if (action === 'get') {

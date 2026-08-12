@@ -20,11 +20,10 @@ test('auth lists saved profiles in JSON and text formats', async () => {
   const json = base(); await handleAuth({ ...json, action: 'list', read });
   expect(json.toJsonOutput).toHaveBeenCalledWith(expect.arrayContaining([{ name: 'work', email: 'work@example.com', active: true }]));
   const text = base(); text.outputJson = false; await handleAuth({ ...text, action: 'list', read });
-  expect(text.printer.log).toHaveBeenCalledWith('* work work@example.com');
-  expect(text.printer.log).toHaveBeenCalledWith('  other other@example.com');
+  expect(text.printer.log).toHaveBeenCalledWith('ACTIVE  NAME   EMAIL\n------  ----   -----\n*       work   work@example.com\n        other  other@example.com');
   const missingEmail = base(); missingEmail.outputJson = false;
   await handleAuth({ ...missingEmail, action: 'list', read: () => ({ active: 'blank', profiles: { blank: {} } }) });
-  expect(missingEmail.printer.log).toHaveBeenCalledWith('* blank (not configured)');
+  expect(missingEmail.printer.log).toHaveBeenCalledWith('ACTIVE  NAME   EMAIL\n------  ----   -----\n*       blank  (not configured)');
 });
 
 test('auth status supports API-token authentication', async () => {
@@ -76,7 +75,7 @@ test('auth text output and missing identity id are safe', async () => {
   expect(ctx.printer.log).toHaveBeenCalledWith('user@example.com authenticated');
   delete process.env.CLOUDFLARE_EMAIL;
   await handleAuth({ ...ctx, action: 'list' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('* environment (not configured)');
+  expect(ctx.printer.log).toHaveBeenCalledWith('ACTIVE  NAME         EMAIL\n------  ----         -----\n*       environment  (not configured)');
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
 });
 

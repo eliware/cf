@@ -1,11 +1,12 @@
 import os from 'node:os';
 import { fs } from '@eliware/common';
 import { discoverExtensions, extensionRoot } from '../extensions.mjs';
+import { printTable } from '../output.mjs';
 
 export function handleExtension({ action, opts, outputJson, printer, toJsonOutput, fail, fsImpl = fs, homeDir = os.homedir() }) {
   if (action === 'list') {
     const manifests = discoverExtensions(homeDir, fsImpl);
-    return outputJson ? toJsonOutput(manifests) : manifests.forEach(manifest => printer.log(`${manifest.name} ${manifest.version}`));
+    return outputJson ? toJsonOutput(manifests) : printTable(['NAME', 'VERSION'], manifests.map(manifest => [manifest.name, manifest.version]), printer.log);
   }
   if (action === 'install' || action === 'upgrade') {
     if (!opts.path) { fail('Missing --path to an extension directory'); return; }

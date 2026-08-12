@@ -1,4 +1,5 @@
 import { getAccountId, getId, requireValue } from './common.mjs';
+import { printTable } from '../output.mjs';
 
 export async function handleLists({ cf, action, opts, outputJson, printer = console, toJsonOutput, fail }) {
   const accountId = getAccountId(opts);
@@ -8,7 +9,7 @@ export async function handleLists({ cf, action, opts, outputJson, printer = cons
   if (action === 'list') {
     const items = [];
     for await (const list of cf.rules.lists.list({ account_id: accountId })) items.push(list);
-    return outputJson ? toJsonOutput(items) : items.forEach(l => printer.log(`${l.id} ${l.name}`));
+    return outputJson ? toJsonOutput(items) : printTable(['ID', 'NAME'], items.map(l => [l.id, l.name]), printer.log);
   }
 
   if (action === 'get') {

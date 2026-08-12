@@ -1,4 +1,5 @@
 import { getZoneId, getId, requireValue } from './common.mjs';
+import { printTable } from '../output.mjs';
 
 export async function handleDnsRecords({ cf, action, opts, body, outputJson, printer = console, toJsonOutput, fail }) {
   const zoneId = getZoneId(opts);
@@ -8,7 +9,7 @@ export async function handleDnsRecords({ cf, action, opts, body, outputJson, pri
   if (action === 'list') {
     const res = await cf.dns.records.list({ zone_id: zoneId });
     const items = Array.isArray(res?.result) ? res.result : res;
-    return outputJson ? toJsonOutput(items) : items.forEach(r => printer.log(`${r.id} ${r.type} ${r.name} ${r.content}`));
+    return outputJson ? toJsonOutput(items) : printTable(['ID', 'TYPE', 'NAME', 'CONTENT'], items.map(r => [r.id, r.type, r.name, r.content]), printer.log);
   }
 
   if (action === 'diff' || action === 'apply') {

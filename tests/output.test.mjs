@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { log } from '@eliware/common';
-import { toJsonOutput, printTextList, selectJson, renderTemplate } from '../src/output.mjs';
+import { toJsonOutput, printTextList, selectJson, renderTemplate, renderTable, printTable } from '../src/output.mjs';
 
 describe('output helpers', () => {
   test('toJsonOutput uses injected printer', () => {
@@ -13,6 +13,13 @@ describe('output helpers', () => {
     const printer = jest.fn();
     printTextList([{ id: 1 }], x => `id:${x.id}`, printer);
     expect(printer).toHaveBeenCalledWith('id:1');
+  });
+
+  test('table helpers align columns and print one human-readable table', () => {
+    const printer = jest.fn();
+    expect(renderTable(['ID', 'NAME'], [['1', 'alpha'], ['22', null]])).toBe('ID  NAME\n--  ----\n1   alpha\n22');
+    printTable(['ID'], [['1']], printer);
+    expect(printer).toHaveBeenCalledWith('ID\n--\n1');
   });
 });
 
