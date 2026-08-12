@@ -577,9 +577,26 @@ section .module-list .module {
 header .brand-lockup {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 16px;
   color: var(--muted);
   font-size: 12px;
+}
+header .brand-primary,
+header .brand-powered {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+header .brand-powered {
+  justify-content: flex-end;
+  text-align: right;
+  white-space: nowrap;
+}
+header .brand-powered img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
 }
 header .brand-lockup img {
   width: 92px;
@@ -598,6 +615,11 @@ header .brand-lockup img {
   color: #fff;
   font-size: 18px;
   font-weight: 800;
+}
+.cf-logo {
+  display: block;
+  width: 40px;
+  height: 40px;
 }
 .quick-setup > summary {
   display: flex;
