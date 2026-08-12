@@ -168,8 +168,11 @@ test('CLI manages aliases and config through the command surface', async () => {
   await mod.run({ ...common, argv: ['alias', 'list', '--json'] });
   await mod.run({ ...common, argv: ['alias', 'delete', 'work'] });
   await mod.run({ ...common, argv: ['alias', 'delete', 'missing'] });
+  await mod.run({ ...common, argv: ['alias', 'delete'] });
   await mod.run({ ...common, argv: ['alias', 'set', 'missing'] });
   await mod.run({ ...common, argv: ['alias', 'unknown'] });
+  await mod.run({ ...common, argv: ['alias', 'set', 'raw', 'unknown', 'list'] });
+  await mod.run({ ...common, argv: ['raw'], loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), exit: jest.fn() });
   await mod.run({ ...common, argv: ['config', 'set', 'pager', 'less'] });
   await mod.run({ ...common, argv: ['config', 'get', 'pager'] });
   await mod.run({ ...common, argv: ['config', 'list', '--json'] });
@@ -179,6 +182,16 @@ test('CLI manages aliases and config through the command surface', async () => {
   await mod.run({ ...common, argv: ['config', 'unset', 'pager'] });
   await mod.run({ ...common, argv: ['config', 'unknown'] });
   expect(printer.error).toHaveBeenCalledWith('Usage: cf config set <name> <value>');
+});
+
+test('CLI supports a bare pager flag with and without saved pager settings', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 17}`);
+  const home = `/tmp/cf-cli-pager-${Date.now()}`; const printer = { log: jest.fn(), error: jest.fn() };
+  const fsImpl = { existsSync: () => false, readFileSync: jest.fn(), mkdirSync: jest.fn(), writeFileSync: jest.fn(), chmodSync: jest.fn() };
+  const handler = ({ printer: injected }) => injected.log('pager output');
+  const oldPager = process.env.PAGER; process.env.PAGER = 'true';
+  try { await mod.run({ argv: ['zones', 'list', '--pager'], env: {}, homeDir: home, fsImpl, printer, loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: handler }, exit: jest.fn() }); } finally { process.env.PAGER = oldPager; }
+  expect(printer.error).not.toHaveBeenCalled();
 });
 
 test('CLI prints dashboard links before dispatch', async () => {
