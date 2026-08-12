@@ -2,9 +2,9 @@
 
 ## Foundation
 
-- [ ] Define and document command grammar and resource naming.
+- [x] Define and document command grammar and resource naming.
 - [ ] Define standard verbs, flags, exit codes, JSON schemas, and pagination behavior.
-- [ ] Add shared help conventions and examples.
+- [x] Add shared help conventions and examples.
 
 ## Authentication and context
 
@@ -21,24 +21,24 @@
 ## Output and API access
 
 - [ ] Standardize human-readable tables.
-- [ ] Add stable `--json` output.
+- [x] Add stable `--json` output.
 - [ ] Add `--jq` filtering.
 - [ ] Add template output if useful.
 - [ ] Add `--web` dashboard links.
 - [ ] Handle pagination consistently.
 - [ ] Add quiet and verbose modes.
-- [ ] Implement `cf api` with GET/POST/PATCH/DELETE support.
-- [ ] Support JSON files and inline request bodies.
-- [ ] Add dry-run and mutation confirmation to API calls.
+- [x] Implement `cf api` with GET/POST/PUT/PATCH/DELETE support.
+- [x] Support JSON files and inline request bodies.
+- [x] Add dry-run and mutation confirmation to API calls.
 - [ ] Add rate-limit backoff and credential redaction.
 
 ## Core resources
 
-- [ ] Migrate zones to `cf zone`.
-- [ ] Migrate DNS to `cf dns`.
-- [ ] Migrate zone settings to `cf setting`.
-- [ ] Migrate rulesets to `cf rules`.
-- [ ] Migrate lists to `cf list`.
+- [x] Migrate zones to `cf zone`.
+- [x] Migrate DNS to `cf dns`.
+- [x] Migrate zone settings to `cf setting`.
+- [x] Migrate rulesets to `cf rules`.
+- [x] Migrate lists to `cf list`.
 - [ ] Add SSL/TLS inspection and configuration.
 - [ ] Add Origin CA certificate management.
 - [ ] Add cache purge commands.

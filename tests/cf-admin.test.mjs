@@ -115,3 +115,11 @@ test('loadBody returns null when no input is provided', async () => {
   const { loadBody } = await import(`../src/cli.mjs?ts=${Date.now() + 7}`);
   expect(loadBody({})).toBeNull();
 });
+
+test('CLI normalizes singular aliases before dispatch', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 8}`);
+  const handler = jest.fn();
+  await mod.run({ argv: ['zone', 'list'], printer: { log: jest.fn(), error: jest.fn() },
+    loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), handlers: { zones: handler }, exit: jest.fn() });
+  expect(handler).toHaveBeenCalled();
+});

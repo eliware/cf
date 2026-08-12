@@ -11,6 +11,9 @@ import { handleDnsRecords } from './handlers/dns-records.mjs';
 import { handleRulesets } from './handlers/rulesets.mjs';
 import { handleLists } from './handlers/lists.mjs';
 import { handleListItems } from './handlers/list-items.mjs';
+import { handleApi } from './handlers/api.mjs';
+
+const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 
 export function loadBody(opts, fsImpl = fs) {
   if (opts.data) return JSON.parse(opts.data);
@@ -28,7 +31,7 @@ export async function run({
   const { args, opts } = parseArgs(argv);
   if (opts.version) return printer.log(VERSION);
   if (opts.help || args.length === 0) return printHelp(printer);
-  const resource = args[0];
+  const resource = aliases[args[0]] || args[0];
   const action = args[1];
   if (args.length === 1 || opts.help) return printResourceHelp(resource, printer);
 
@@ -46,6 +49,7 @@ export async function run({
     rulesets: handlers.rulesets || handleRulesets,
     lists: handlers.lists || handleLists,
     'list-items': handlers.listItems || handleListItems,
+    api: handlers.api || handleApi,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

@@ -19,6 +19,7 @@ Global options:
   --setting <name>       Zone setting name
   --file <path>          Read JSON body from file
   --data <json>          JSON body inline
+  --method <method>      API method for cf api (default GET)
 
 Resources:
   zones                  List, inspect, create, edit, delete zones
@@ -27,6 +28,7 @@ Resources:
   rulesets               List, inspect, create, or update rulesets
   lists                  List Cloudflare lists
   list-items             List or manage list items
+  api                    Call any relative Cloudflare API path
 
 Examples:
   cf zones list
@@ -40,38 +42,46 @@ Examples:
   cf rulesets update --zone-id <zone_id> --id <ruleset_id> --file ruleset.json
   cf lists list --account-id <account_id>
   cf list-items list --account-id <account_id> --id <list_id>
+  cf zone list
+  cf api /zones --json
+  cf api zones/<zone_id>/dns_records --json
 `);
 }
 
 export function printResourceHelp(resource, printer = console) {
   const map = {
-    zones: `zones
+    zones: `zones (alias: zone)
   list                 List zones
   get                  Get zone details
   create               Create zone
   update               Edit zone
   delete               Delete zone`,
-    'zone-settings': `zone-settings
+    'zone-settings': `zone-settings (alias: setting)
   get                  Get one zone setting
   set                  Update one zone setting`,
-    'dns-records': `dns-records
+    'dns-records': `dns-records (alias: dns)
   list                 List DNS records
   get                  Get DNS record
   create               Create DNS record
   update               Update DNS record
   delete               Delete DNS record`,
-    rulesets: `rulesets
+    rulesets: `rulesets (alias: rules)
   list                 List rulesets
   get                  Get ruleset
   create               Create ruleset
   update               Update ruleset`,
-    lists: `lists
+    lists: `lists (alias: list)
   list                 List lists
   get                  Get list`,
-    'list-items': `list-items
+    'list-items': `list-items (alias: list-item)
   list                 List items in a list
   create               Add item to a list
   delete               Delete item from a list`,
+    api: `api
+  /path                Call any relative Cloudflare API path
+
+  Options: --method GET|POST|PUT|PATCH|DELETE, --data, --file,
+  --json, --dry-run, and --force for DELETE`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
