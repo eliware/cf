@@ -62,6 +62,9 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(terminalWidth('80', 90)).toBe(80);
   expect(fitTerminal('short', 80)).toBe('short');
   expect(styleTerminalText('ID', { color: true, width: 80 })).toBe('ID');
+  expect(terminalColorMode()).toBe(false);
+  expect(terminalWidth()).toBe(120);
+  expect(styleTerminalText('ID')).toBe('ID');
 });
 
 test('terminal output preserves JSON and can buffer human-readable output', async () => {
