@@ -3,7 +3,7 @@ export function getAccountId(opts, env = process.env) {
 }
 
 export function getZoneId(opts) {
-  return opts['zone-id'];
+  return opts['zone-id'] || process.env.CLOUDFLARE_ZONE_ID;
 }
 
 export function getId(opts) {

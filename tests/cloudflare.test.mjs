@@ -10,10 +10,16 @@ describe('cloudflare helper', () => {
   });
 
   test('createCloudflareClient throws without credentials', () => {
-    expect(() => createCloudflareClient({ env: {} })).toThrow('Missing CLOUDFLARE_EMAIL or CLOUDFLARE_API_KEY');
+    expect(() => createCloudflareClient({ env: {} })).toThrow('Missing CLOUDFLARE_API_TOKEN');
+  });
+
+  test('createCloudflareClient accepts an API token', () => {
+    const ctor = jest.fn();
+    createCloudflareClient({ CloudflareClass: ctor, env: { CLOUDFLARE_API_TOKEN: 'token' } });
+    expect(ctor).toHaveBeenCalledWith({ apiToken: 'token' });
   });
 });
 
 test('createCloudflareClient handles omitted options safely', () => {
-  expect(() => createCloudflareClient()).toThrow('Missing CLOUDFLARE_EMAIL or CLOUDFLARE_API_KEY');
+  expect(() => createCloudflareClient()).toThrow('Missing CLOUDFLARE_API_TOKEN');
 });

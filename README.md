@@ -53,10 +53,12 @@ Set credentials in the environment, a `.env` file in the current directory, or `
 ```env
 CLOUDFLARE_EMAIL=you@example.com       # required secret; API email
 CLOUDFLARE_API_KEY=your_api_key        # required secret; API key
+CLOUDFLARE_API_TOKEN=your_api_token    # alternative secret; API token
 CLOUDFLARE_ACCOUNT_ID=your_account_id  # optional default for account resources
+CLOUDFLARE_ZONE_ID=your_zone_id        # optional default for zone resources
 ```
 
-`CLOUDFLARE_EMAIL` and `CLOUDFLARE_API_KEY` have no defaults and are required before API access. The account ID is an optional identifier, not a secret; command-line IDs take precedence where supported. The CLI loads `~/.cf` first, then `.env` from the current directory; existing environment variables take precedence. Both files use dotenv syntax. Keep credentials private and never commit `.env`, `.cf`, credentials, tokens, or generated state.
+Use either `CLOUDFLARE_API_TOKEN` or the legacy email/API-key pair before API access. Account and zone IDs are optional defaults; command-line IDs take precedence where supported. The CLI loads `~/.cf` first, then `.env` from the current directory; existing environment variables take precedence. Both files use dotenv syntax. Keep credentials private and never commit `.env`, `.cf`, credentials, tokens, or generated state.
 
 ## Usage
 
