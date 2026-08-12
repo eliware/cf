@@ -9,8 +9,9 @@
 ## Authentication and context
 
 - [ ] Implement `cf auth login`.
-- [ ] Implement `cf auth status`.
-- [ ] Implement `cf auth list` and `cf auth switch`.
+- [x] Implement `cf auth status`.
+- [x] Implement `cf auth list`.
+- [ ] Implement `cf auth switch`.
 - [ ] Implement `cf auth logout`.
 - [ ] Implement token verification and permission inspection.
 - [ ] Support multiple profiles and Cloudflare accounts.

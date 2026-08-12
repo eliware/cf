@@ -17,6 +17,7 @@ A dependency-injected Cloudflare administration CLI for scripting and inspecting
 - Testable dependency-injected architecture
 - Singular aliases for familiar resources (`cf zone`, `cf dns`, `cf rules`)
 - Universal `cf api` escape hatch for any Cloudflare API endpoint
+- Read-only authentication status and context inspection
 
 ## Requirements
 
@@ -70,6 +71,8 @@ cf rulesets list --zone-id <zone_id> --json
 cf zone-settings get --zone-id <zone_id> --setting development_mode
 cf api /zones --json
 cf api zones/<zone_id>/dns_records --json
+cf auth status
+cf auth list
 ```
 
 Use JSON output for automation:

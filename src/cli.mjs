@@ -12,6 +12,7 @@ import { handleRulesets } from './handlers/rulesets.mjs';
 import { handleLists } from './handlers/lists.mjs';
 import { handleListItems } from './handlers/list-items.mjs';
 import { handleApi } from './handlers/api.mjs';
+import { handleAuth } from './handlers/auth.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 
@@ -50,6 +51,7 @@ export async function run({
     lists: handlers.lists || handleLists,
     'list-items': handlers.listItems || handleListItems,
     api: handlers.api || handleApi,
+    auth: handlers.auth || handleAuth,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

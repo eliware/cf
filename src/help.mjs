@@ -30,6 +30,7 @@ Resources:
   lists                  List Cloudflare lists
   list-items             List or manage list items
   api                    Call any relative Cloudflare API path
+  auth                   Inspect Cloudflare authentication context
 
 Examples:
   cf zones list
@@ -46,6 +47,7 @@ Examples:
   cf zone list
   cf api /zones --json
   cf api zones/<zone_id>/dns_records --json
+  cf auth status
 `);
 }
 
@@ -83,6 +85,9 @@ export function printResourceHelp(resource, printer = console) {
 
   Options: --method GET|POST|PUT|PATCH|DELETE, --data, --file,
   --json, --dry-run, and --force for DELETE`,
+    auth: `auth
+  status               Verify the active Cloudflare identity
+  list                 Show configured credential contexts`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
