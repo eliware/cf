@@ -44,8 +44,8 @@
 - [x] Add Origin CA certificate management.
 - [x] Add cache purge commands.
 - [x] Add health-check commands.
-- [ ] Add Load Balancer commands.
-- [ ] Add tunnel commands.
+- [x] Add Load Balancer commands.
+- [x] Add tunnel commands.
 - [x] Add audit-log commands.
 
 ## Workflows and safety

@@ -141,3 +141,13 @@ test('CLI quiet mode suppresses normal handler output', async () => {
     handlers: { zones: ({ printer: injected }) => injected.log('hidden') }, exit: jest.fn() });
   expect(printer.log).not.toHaveBeenCalledWith('hidden');
 });
+
+test('CLI dispatches built-in load-balancer and tunnel handlers', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 11}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const cfFactory = jest.fn(() => ({ get: jest.fn().mockResolvedValue({ ok: true }) }));
+  const common = { printer, loadEnv: jest.fn(), cfFactory, env: {}, exit: jest.fn() };
+  await mod.run({ ...common, argv: ['load-balancer', 'list', '--zone-id', 'z1'] });
+  await mod.run({ ...common, argv: ['tunnel', 'list', '--account-id', 'a1'] });
+  expect(printer.log).toHaveBeenCalled();
+});

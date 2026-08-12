@@ -19,9 +19,14 @@ import { handleHealth } from './handlers/health.mjs';
 import { handleAudit } from './handlers/audit.mjs';
 import { handleInventory } from './handlers/inventory.mjs';
 import { handleOriginCa } from './handlers/origin-ca.mjs';
+import { makeSimpleResource } from './handlers/simple-resource.mjs';
 import { applyActiveProfile } from './profiles.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
+const defaultHandlers = {
+  loadBalancer: makeSimpleResource({ name: 'load-balancer', scope: 'zone', path: id => `/zones/${id}/load_balancers` }),
+  tunnel: makeSimpleResource({ name: 'tunnel', scope: 'account', path: id => `/accounts/${id}/cfd_tunnel` }),
+};
 
 export function loadBody(opts, fsImpl = fs) {
   if (opts.data) return JSON.parse(opts.data);
@@ -67,6 +72,8 @@ export async function run({
     audit: handlers.audit || handleAudit,
     inventory: handlers.inventory || handleInventory,
     'origin-ca': handlers.originCa || handleOriginCa,
+    'load-balancer': handlers.loadBalancer || defaultHandlers.loadBalancer,
+    tunnel: handlers.tunnel || defaultHandlers.tunnel,
   };
   if (dispatch[resource]) return dispatch[resource](common);
   printHelp(printer);

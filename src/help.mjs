@@ -43,6 +43,8 @@ Resources:
   audit                  Inspect account audit logs
   inventory              Export account inventory
   origin-ca              Manage Origin CA certificates
+  load-balancer           Manage zone Load Balancers
+  tunnel                  Manage account tunnels
 
 Examples:
   cf zones list
@@ -138,6 +140,10 @@ export function printResourceHelp(resource, printer = console) {
   list                 List Origin CA certificates
   create               Create an Origin CA certificate
   revoke               Revoke a certificate (requires --force)`,
+    'load-balancer': `load-balancer
+  list/get/create/update/delete  Manage zone Load Balancers`,
+    tunnel: `tunnel
+  list/get/create/update/delete  Manage account tunnels`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }
