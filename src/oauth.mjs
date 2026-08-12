@@ -496,7 +496,7 @@ export async function loginOAuth({
         );
         reject(
           new Error(
-            "OAuth callback state did not match the active login request. The login may have expired, been opened more than once, or been completed in a different browser. Run `cf auth login` again and use the newest setup URL.",
+            "OAuth login expired or was opened in another browser. Run `cf auth login` again using the newest URL.",
           ),
         );
         return;

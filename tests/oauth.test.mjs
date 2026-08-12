@@ -423,7 +423,7 @@ test("OAuth callback rejects invalid state and provider errors", async () => {
     const rejection = expect(promise).rejects.toThrow(
       providerError
         ? "Cloudflare authorization failed"
-        : "OAuth callback state did not match the active login request",
+        : "OAuth login expired or was opened in another browser",
     );
     const query = providerError
       ? `state=${authorization.searchParams.get("state")}&error=access_denied`
