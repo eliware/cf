@@ -199,10 +199,11 @@ test('CLI supports a bare pager flag with and without saved pager settings', asy
 test('CLI prints dashboard links before dispatch', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 13}`);
   const printer = { log: jest.fn(), error: jest.fn() };
-  await mod.run({ argv: ['zone', 'get', '--zone-id', 'z1', '--web'], printer, exit: jest.fn() });
+  const common = { printer, env: {}, loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})), exit: jest.fn() };
+  await mod.run({ ...common, argv: ['zone', 'get', '--zone-id', 'z1', '--web'] });
   expect(printer.log).toHaveBeenCalledWith('https://dash.cloudflare.com/zones/z1');
-  await mod.run({ argv: ['zone', 'get', '--account-id', 'a1', '--web'], printer, exit: jest.fn() });
-  await mod.run({ argv: ['zone', 'get', '--web'], printer, exit: jest.fn() });
+  await mod.run({ ...common, argv: ['zone', 'get', '--account-id', 'a1', '--web'] });
+  await mod.run({ ...common, argv: ['zone', 'get', '--web'] });
 });
 
 test('CLI renders templates through injected handlers', async () => {
