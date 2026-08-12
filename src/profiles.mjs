@@ -31,7 +31,7 @@ export async function applyActiveProfile(env = process.env, homeDir = os.homedir
   const values = { ...credential, ...profile };
   for (const [key, value] of Object.entries({
     CLOUDFLARE_EMAIL: values.email, CLOUDFLARE_API_KEY: values.apiKey,
-    CLOUDFLARE_API_TOKEN: values.apiToken, CLOUDFLARE_ACCOUNT_ID: values.accountId,
+    CLOUDFLARE_API_TOKEN: values.apiToken || values.oauthAccessToken, CLOUDFLARE_ACCOUNT_ID: values.accountId,
     CLOUDFLARE_ZONE_ID: values.zoneId,
   })) if (value && !env[key]) env[key] = value;
   return { ...profile, ...credential };

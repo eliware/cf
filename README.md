@@ -85,6 +85,7 @@ cf auth verify
 cf auth list
 cf auth login --profile work
 printf '%s' "$CLOUDFLARE_API_TOKEN" | cf auth login --profile ci --token-stdin
+CF_OAUTH_CLIENT_ID='...' cf auth login --profile work --oauth
 cf auth switch --profile work
 cf auth logout --profile work
 cf ssl get --zone-id <zone_id>

@@ -193,7 +193,7 @@ export function printResourceHelp(resource, printer = console) {
   status               Verify the active Cloudflare identity
   verify               Verify the active API token
   list                 Show configured credential contexts
-  login                Save credentials as a profile (use --token-stdin for headless setup)
+  login                Save credentials as a profile (use --oauth or --token-stdin)
   switch               Activate a saved profile
   logout               Remove a saved profile
   verify               Verify the active API token`,

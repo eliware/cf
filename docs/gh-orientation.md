@@ -33,3 +33,17 @@ OS keychain adapter is available, `cf auth login` stores secrets in the native
 credential store and leaves only profile metadata in `profiles.json`; otherwise
 it safely falls back to the 0600 file. API tokens are preferred; the
 email/API-key pair remains supported for compatibility.
+
+Interactive login uses Cloudflare Authorization Code + PKCE OAuth. Register
+these localhost callback URLs on the OAuth client so the CLI can fall back when
+one port is busy:
+
+```text
+http://127.0.0.1:8765/oauth/callback
+http://127.0.0.1:8766/oauth/callback
+http://127.0.0.1:8767/oauth/callback
+http://127.0.0.1:8768/oauth/callback
+http://127.0.0.1:8769/oauth/callback
+```
+
+Then run `CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth`.
