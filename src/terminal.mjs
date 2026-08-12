@@ -24,7 +24,7 @@ export function styleTerminalText(text, { color = false, width = 120 } = {}) {
   return `${ANSI.bold}${ANSI.cyan}${header}${ANSI.reset}${rest.length ? `\n${rest.join('\n')}` : ''}`;
 }
 
-export function createTerminalOutput({ printer = console, json = false, color = false, width = 120, pager = null } = {}) {
+export function createTerminalOutput({ printer = console, json = false, color = false, width = 120, pager = null, spawnImpl = spawn } = {}) {
   const lines = [];
   const normal = value => {
     const rendered = json ? String(value) : styleTerminalText(value, { color, width });
@@ -37,7 +37,7 @@ export function createTerminalOutput({ printer = console, json = false, color = 
     flush: async () => {
       if (!pager || lines.length === 0) return;
       await new Promise((resolve, reject) => {
-        const child = spawn(pager, [], { stdio: ['pipe', 'inherit', 'inherit'] });
+        const child = spawnImpl(pager, [], { stdio: ['pipe', 'inherit', 'inherit'] });
         child.once('error', reject);
         child.once('close', code => code === 0 || code === null ? resolve() : reject(new Error(`Pager exited with status ${code}`)));
         child.stdin.on('error', error => { if (error.code !== 'EPIPE') reject(error); });

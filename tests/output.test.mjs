@@ -84,3 +84,15 @@ test('terminal pager resolves successful exits and reports failed exits', async 
   const failed = createTerminalOutput({ printer, pager: 'false' });
   failed.log('output'); await expect(failed.flush()).rejects.toThrow('Pager exited');
 });
+
+test('terminal pager propagates non-EPIPE stdin and spawn errors', async () => {
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const spawnImpl = jest.fn(() => {
+    const child = { stdin: { on: (_event, handler) => { child.stdin.handler = handler; }, end: () => child.stdin.handler(Object.assign(new Error('broken pipe'), { code: 'EIO' })) }, once: (event, handler) => { if (event === 'close') child.close = handler; else child.spawnError = handler; } };
+    return child;
+  });
+  const output = createTerminalOutput({ printer, pager: 'pager', spawnImpl }); output.log('x');
+  await expect(output.flush()).rejects.toThrow('broken pipe');
+  const spawnFailure = createTerminalOutput({ printer, pager: 'pager', spawnImpl: () => { throw new Error('spawn failed'); } }); spawnFailure.log('x');
+  await expect(spawnFailure.flush()).rejects.toThrow('spawn failed');
+});
