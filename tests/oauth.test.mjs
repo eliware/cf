@@ -436,10 +436,12 @@ test("OAuth callback rejects invalid state and provider errors", async () => {
               body += chunk;
             });
             response.on("end", () => {
-              if (providerError) {
-                expect(body).toContain("Authorization cancelled");
-                expect(body).toContain("cf auth login");
-              }
+              expect(body).toContain(
+                providerError
+                  ? "Authorization cancelled"
+                  : "Authorization request expired",
+              );
+              expect(body).toContain("cf auth login");
               resolve();
             });
           },

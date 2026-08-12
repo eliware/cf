@@ -141,9 +141,14 @@ function successPage({ account, scopes }) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cloudflare connected · cf</title><style> :root{color-scheme:dark;--bg:#09111f;--card:#111d31;--muted:#a9b8d0;--accent:#f6821f}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0,#263a63 0,transparent 42%),var(--bg);color:#f6f8fc;font:16px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:grid;place-items:center;padding:24px}.card{max-width:680px;width:100%;background:rgba(17,29,49,.92);border:1px solid #2c4165;border-radius:28px;padding:42px;box-shadow:0 24px 80px #0006}.mark{width:54px;height:54px;border-radius:16px;background:var(--accent);display:grid;place-items:center;font-weight:800;font-size:24px}.check{color:#73e6a1;font-size:40px;margin:28px 0 4px}h1{font-size:clamp(30px,6vw,52px);line-height:1.03;margin:0 0 14px}p{color:var(--muted);line-height:1.6}.account{color:#fff;font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:28px 0}.stat{background:#192943;border-radius:16px;padding:16px}.stat strong{display:block;font-size:24px}.stat span{color:var(--muted);font-size:13px}.next{border-top:1px solid #2c4165;padding-top:22px}.next code{color:#ffd39e;background:#0b1526;padding:3px 6px;border-radius:6px}small{color:#7f91ad}@media(max-width:520px){.card{padding:28px}.grid{grid-template-columns:1fr}}</style></head><body><main class="card"><div class="mark">cf</div><div class="check">✓</div><h1>Cloudflare connected.</h1><p>You’re signed in as <span class="account">${escapeHtml(name)}</span>. Your profile is ready to use from the command line.</p><div class="grid"><div class="stat"><strong>${scopeCount}</strong><span>approved scopes</span></div><div class="stat"><strong>Ready</strong><span>OAuth profile active</span></div></div><section class="next"><h2>Get started</h2><p>Close this tab and try <code>cf zone list</code>. Use <code>cf auth status --json</code> to inspect the active profile. For additional raw API capabilities, log in again with extra scopes using <code>cf auth login --scopes scope.one,scope.two</code>.</p><small>Your access token stays in the local credential store and is never shown here.</small></section></main></body></html>`;
 }
 function failurePage({ title, detail }) {
+  const logoData = encodeURIComponent(
+    pickerAsset("oauth-web/cf-logo.svg"),
+  ).replace(/'/g, "%27");
   return pickerAsset("oauth-web/oauth-result.html")
     .replaceAll("__RESULT_TITLE__", escapeHtml(title))
-    .replaceAll("__RESULT_DETAIL__", escapeHtml(detail));
+    .replaceAll("__RESULT_DETAIL__", escapeHtml(detail))
+    .replaceAll("__RESULT_CSS__", pickerAsset("oauth-web/oauth-result.css"))
+    .replaceAll("__CF_LOGO_DATA__", logoData);
 }
 
 const SCOPE_CATALOG = {
@@ -426,8 +431,14 @@ export async function loginOAuth({
         return;
       }
       if (url.searchParams.get("state") !== state) {
-        response.writeHead(400);
-        response.end("Invalid OAuth state");
+        response.writeHead(400, { "content-type": "text/html; charset=utf-8" });
+        response.end(
+          failurePage({
+            title: "Authorization request expired",
+            detail:
+              "This callback no longer matches the login request. Start a new login from the cf command line and try again.",
+          }),
+        );
         reject(new Error("Invalid OAuth state"));
         return;
       }
@@ -518,6 +529,8 @@ export async function loginOAuth({
       throw error;
     }
   } finally {
-    server.close();
+    // Give the browser time to receive the inline result page before the
+    // one-shot callback server shuts down.
+    setTimeout(() => server.close(), 250);
   }
 }
