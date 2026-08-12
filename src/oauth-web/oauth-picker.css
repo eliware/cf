@@ -731,3 +731,13 @@ header .brand-lockup img {
   background: transparent;
   padding: 0;
 }
+header .brand-lockup .cf-logo {
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  padding: 0;
+}
+header .brand-lockup .brand-powered img {
+  width: 42px;
+  height: 42px;
+}
