@@ -16,6 +16,17 @@ export async function handleZones({ cf, action, opts, body, outputJson, printer 
     return outputJson ? toJsonOutput(zone) : printer.log(JSON.stringify(zone, null, 2));
   }
 
+  if (action === 'audit') {
+    requireValue(zoneId, 'Missing --zone-id', fail);
+    const [zone, ssl, dns] = await Promise.all([
+      cf.zones.get({ zone_id: zoneId }),
+      cf.get(`/zones/${zoneId}/settings/ssl`),
+      cf.dns.records.list({ zone_id: zoneId }),
+    ]);
+    const report = { zone, ssl, dns: Array.isArray(dns?.result) ? dns.result : dns };
+    return outputJson ? toJsonOutput(report) : printer.log(JSON.stringify(report, null, 2));
+  }
+
   if (action === 'create') {
     requireValue(body, 'Missing --data or --file', fail);
     if (opts['dry-run']) return printer.log(JSON.stringify({ action: 'create', body, dryRun: true }, null, 2));

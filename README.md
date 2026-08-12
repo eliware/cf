@@ -68,6 +68,7 @@ Use either `CLOUDFLARE_API_TOKEN` or the legacy email/API-key pair before API ac
 cf zones list
 cf zone list
 cf zones get --zone-id <zone_id>
+cf zone audit --zone-id <zone_id> --json
 cf dns-records list --zone-id <zone_id>
 cf dns-records create --zone-id <zone_id> \
   --data '{"type":"A","name":"www","content":"1.2.3.4"}'

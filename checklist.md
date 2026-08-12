@@ -50,7 +50,7 @@
 
 ## Workflows and safety
 
-- [ ] Add zone configuration audits.
+- [x] Add zone configuration audits.
 - [ ] Add security baseline checks.
 - [ ] Add DNS diff and apply workflows.
 - [ ] Add TLS certificate coverage checks.

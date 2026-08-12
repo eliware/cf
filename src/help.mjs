@@ -73,6 +73,7 @@ export function printResourceHelp(resource, printer = console) {
     zones: `zones (alias: zone)
   list                 List zones
   get                  Get zone details
+  audit                Audit zone metadata, SSL, and DNS
   create               Create zone
   update               Edit zone
   delete               Delete zone`,
