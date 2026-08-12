@@ -142,6 +142,15 @@ test('CLI quiet mode suppresses normal handler output', async () => {
   expect(printer.log).not.toHaveBeenCalledWith('hidden');
 });
 
+test('CLI accepts terminal output controls without changing JSON contracts', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 11}`);
+  const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['zones', 'list', '--pager=true', '--color=never', '--width', '80'], printer,
+    loadEnv: jest.fn(), cfFactory: jest.fn(() => ({})),
+    handlers: { zones: ({ printer: injected }) => injected.log('ID\nexample') }, exit: jest.fn() });
+  expect(printer.error).not.toHaveBeenCalled();
+});
+
 test('CLI prints dashboard links before dispatch', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 13}`);
   const printer = { log: jest.fn(), error: jest.fn() };

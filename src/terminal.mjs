@@ -40,6 +40,7 @@ export function createTerminalOutput({ printer = console, json = false, color = 
         const child = spawn(pager, [], { stdio: ['pipe', 'inherit', 'inherit'] });
         child.once('error', reject);
         child.once('close', code => code === 0 || code === null ? resolve() : reject(new Error(`Pager exited with status ${code}`)));
+        child.stdin.on('error', error => { if (error.code !== 'EPIPE') reject(error); });
         child.stdin.end(`${lines.join('\n')}\n`);
       });
     },

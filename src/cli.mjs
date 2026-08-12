@@ -100,7 +100,7 @@ export async function run({
   const outputJson = opts.json || opts.output === 'json';
   const settings = readSettings(homeDir, fsImpl);
   const color = terminalColorMode(opts.color ?? settings.color, { isTTY: Boolean(process.stdout?.isTTY) });
-  const pagerSetting = opts.pager === true ? settings.pager : (opts.pager || settings.pager);
+  const pagerSetting = opts.pager === true ? (settings.pager || process.env.PAGER || 'less') : (opts.pager || settings.pager);
   const pager = outputJson || opts['no-pager'] || opts.quiet || pagerSetting === 'never' ? null : pagerSetting || null;
   const useTerminal = Boolean(pager || opts.color !== undefined || opts.width !== undefined || settings.color || settings.width);
   const terminal = useTerminal
