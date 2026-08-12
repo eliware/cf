@@ -3,6 +3,7 @@ import http from 'node:http';
 import { spawn } from 'node:child_process';
 
 export const DEFAULT_OAUTH_PORTS = [8765, 8766, 8767, 8768, 8769];
+export const DEFAULT_OAUTH_SCOPES = ['account.read', 'zone.read'];
 const AUTH_URL = 'https://dash.cloudflare.com/oauth2/auth';
 const TOKEN_URL = 'https://dash.cloudflare.com/oauth2/token';
 
@@ -12,7 +13,7 @@ function openBrowser(url) {
   return spawn(command, [url], { detached: true, stdio: 'ignore', shell: process.platform === 'win32' }).unref();
 }
 
-export async function loginOAuth({ clientId, ports = DEFAULT_OAUTH_PORTS, fetchImpl = fetch, open = openBrowser, serverFactory = http.createServer }) {
+export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, ports = DEFAULT_OAUTH_PORTS, fetchImpl = fetch, open = openBrowser, print = console.log, serverFactory = http.createServer }) {
   if (!clientId) throw new Error('Missing CF_OAUTH_CLIENT_ID');
   const verifier = base64url(crypto.randomBytes(32));
   const challenge = base64url(crypto.createHash('sha256').update(verifier).digest());
@@ -27,7 +28,8 @@ export async function loginOAuth({ clientId, ports = DEFAULT_OAUTH_PORTS, fetchI
   }
   if (!server || !port) throw new Error('No OAuth callback port available (tried 8765-8769)');
   const redirectUri = `http://127.0.0.1:${port}/oauth/callback`;
-  const authorization = new URL(AUTH_URL); authorization.search = new URLSearchParams({ response_type: 'code', client_id: clientId, redirect_uri: redirectUri, code_challenge: challenge, code_challenge_method: 'S256', state }).toString();
+  const authorization = new URL(AUTH_URL); authorization.search = new URLSearchParams({ response_type: 'code', client_id: clientId, redirect_uri: redirectUri, scope: scopes.join(' '), code_challenge: challenge, code_challenge_method: 'S256', state }).toString();
+  print(`Open this URL to authorize cf:\n${authorization}`);
   const callback = new Promise((resolve, reject) => server.on('request', (request, response) => {
     const url = new URL(request.url, redirectUri);
     if (url.pathname !== '/oauth/callback') { response.writeHead(404); response.end(); return; }

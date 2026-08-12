@@ -2,7 +2,7 @@ import { readProfiles, writeProfiles } from '../profiles.mjs';
 import { printTable } from '../output.mjs';
 import { deleteCredential, writeCredential } from '../credentials.mjs';
 import { fs } from '@eliware/common';
-import { loginOAuth } from '../oauth.mjs';
+import { DEFAULT_OAUTH_SCOPES, loginOAuth } from '../oauth.mjs';
 
 export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles, readToken = () => fs.readFileSync(0, 'utf8').trim(), oauthLogin = loginOAuth }) {
   const data = read(profileHome, profileFs);
@@ -14,7 +14,8 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   if (action === 'login') {
     const name = opts?.profile || 'default';
     if (opts?.oauth) {
-      const oauth = await oauthLogin({ clientId: process.env.CF_OAUTH_CLIENT_ID });
+      const scopes = (process.env.CF_OAUTH_SCOPES || DEFAULT_OAUTH_SCOPES.join(',')).split(',').map(scope => scope.trim()).filter(Boolean);
+      const oauth = await oauthLogin({ clientId: process.env.CF_OAUTH_CLIENT_ID, scopes });
       const storedInKeychain = await writeCredential(name, { oauthAccessToken: oauth.accessToken, oauthRefreshToken: oauth.refreshToken, expiresIn: oauth.expiresIn });
       data.profiles[name] = { authMethod: 'oauth', ...(storedInKeychain ? {} : { apiToken: oauth.accessToken }), accountId: opts?.['account-id'] || process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: opts?.['zone-id'] || process.env.CLOUDFLARE_ZONE_ID };
       data.active = name; write(data, profileHome, profileFs); return printer.log(`Saved and activated profile ${name}`);

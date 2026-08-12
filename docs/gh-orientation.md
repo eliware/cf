@@ -46,4 +46,7 @@ http://127.0.0.1:8768/oauth/callback
 http://127.0.0.1:8769/oauth/callback
 ```
 
-Then run `CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth`.
+Then run `CF_OAUTH_CLIENT_ID=... cf auth login --profile work --oauth`. The
+default requested scopes are `account.read,zone.read`; set
+`CF_OAUTH_SCOPES=account.read,zone.read,...` to request additional scopes that
+are registered on the client.
