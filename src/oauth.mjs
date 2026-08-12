@@ -350,6 +350,15 @@ export async function loginOAuth({
       }
       if (
         scopePicker &&
+        url.pathname === "/oauth-web/cf-logo.svg" &&
+        request.method === "GET"
+      ) {
+        response.writeHead(200, { "content-type": "image/svg+xml" });
+        response.end(pickerAsset("oauth-web/cf-logo.svg"));
+        return;
+      }
+      if (
+        scopePicker &&
         url.pathname === "/oauth-web/cloudflare-115x53.png" &&
         request.method === "GET"
       ) {
