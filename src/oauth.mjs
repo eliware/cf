@@ -36,7 +36,7 @@ export async function loginOAuth({ clientId, scopes = DEFAULT_OAUTH_SCOPES, port
     try {
       server = serverFactory();
       await new Promise((resolve, reject) => { const onError = error => { server.removeListener('listening', onListen); reject(error); }; const onListen = () => { server.removeListener('error', onError); resolve(); }; server.once('error', onError); server.once('listening', onListen); server.listen(candidate, bindHost); });
-      port = candidate; break;
+      port = server.address()?.port || candidate; break;
     } catch (error) { if (server) server.close(); if (error.code !== 'EADDRINUSE') throw error; }
   }
   if (!server || !port) throw new Error('No OAuth callback port available (tried 8765-8769)');

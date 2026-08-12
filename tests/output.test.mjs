@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { log } from '@eliware/common';
 import { toJsonOutput, printTextList, selectJson, renderTemplate, renderTable, printTable } from '../src/output.mjs';
-import { fitTerminal, styleTerminalText, terminalColorMode, terminalWidth } from '../src/terminal.mjs';
+import { createTerminalOutput, fitTerminal, styleTerminalText, terminalColorMode, terminalWidth } from '../src/terminal.mjs';
 
 describe('output helpers', () => {
   test('toJsonOutput uses injected printer', () => {
@@ -56,4 +56,15 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(fitTerminal('abcdef', 5)).toBe('abcd…');
   expect(styleTerminalText('ID\n1', { color: false, width: 80 })).toBe('ID\n1');
   expect(styleTerminalText('ID\n1', { color: true, width: 80 })).toContain('\u001b[36mID');
+});
+
+test('terminal output preserves JSON and can buffer human-readable output', async () => {
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const json = createTerminalOutput({ printer, json: true });
+  json.log({ ok: true });
+  expect(printer.log).toHaveBeenCalledWith('[object Object]');
+  const human = createTerminalOutput({ printer, width: 40 });
+  human.log('ID\nexample');
+  expect(printer.log).toHaveBeenCalledWith('ID\nexample');
+  await human.flush();
 });

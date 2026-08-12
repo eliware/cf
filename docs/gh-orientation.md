@@ -25,6 +25,12 @@ Cloudflare-specific resources use singular names (`zone`, `dns`, `setting`,
 The universal `cf api` command accepts any relative Cloudflare API path, so a
 dedicated resource command is never required before an endpoint can be used.
 
+Human-readable output supports the same terminal-friendly workflow expected
+from `gh`: set `cf config set pager less`, use `--pager` for one command, or
+use `--no-pager` to override it. `--color always|never|auto` controls table
+headers, and `--width <columns>` provides a deterministic width for scripts or
+narrow terminals. JSON output is never paged or colorized.
+
 Credentials may come from `~/.cf`, the project `.env`, CI environment variables,
 or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. Like
 `gh`, `CF_CONFIG_DIR` overrides the configuration directory and
