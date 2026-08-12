@@ -189,11 +189,11 @@ export function printResourceHelp(resource, printer = console) {
 
   Options: --method GET|POST|PUT|PATCH|DELETE, --data, --file,
   --json, --dry-run, and --force for DELETE`,
-    auth: `auth
+  auth: `auth
   status               Verify the active Cloudflare identity
   verify               Verify the active API token
   list                 Show configured credential contexts
-  login                Save current environment credentials as a profile
+  login                Save credentials as a profile (use --token-stdin for headless setup)
   switch               Activate a saved profile
   logout               Remove a saved profile
   verify               Verify the active API token`,
