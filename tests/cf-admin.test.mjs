@@ -191,6 +191,14 @@ test('CLI passes output and failure helpers to extensions', async () => {
   expect(printer.error).toHaveBeenCalledWith('extension failure');
 });
 
+test('CLI manages extensions without Cloudflare credentials', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 18}`);
+  const { fs } = await import('@eliware/common'); const os = await import('node:os'); const path = await import('node:path');
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-cli-extension-command-')); const printer = { log: jest.fn(), error: jest.fn() };
+  await mod.run({ argv: ['extension', 'list'], printer, fsImpl: fs, homeDir: home });
+  expect(printer.log).toHaveBeenCalledWith(expect.stringContaining('NAME'));
+});
+
 test('CLI dispatches built-in load-balancer and tunnel handlers', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 11}`);
   const printer = { log: jest.fn(), error: jest.fn() };

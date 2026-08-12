@@ -72,11 +72,19 @@ test('auth text output and missing identity id are safe', async () => {
   process.env.CLOUDFLARE_EMAIL = 'user@example.com'; process.env.CLOUDFLARE_API_KEY = 'secret';
   const ctx = base(); ctx.outputJson = false; ctx.cf.get.mockResolvedValue({ result: {} });
   await handleAuth({ ...ctx, action: 'status' });
-  expect(ctx.printer.log).toHaveBeenCalledWith('user@example.com authenticated');
+  expect(ctx.printer.log).toHaveBeenCalledWith('environment authenticated as user@example.com');
   delete process.env.CLOUDFLARE_EMAIL;
   await handleAuth({ ...ctx, action: 'list' });
   expect(ctx.printer.log).toHaveBeenCalledWith('ACTIVE  NAME         EMAIL\n------  ----         -----\n*       environment  (not configured)');
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
+});
+
+test('auth status text omits identity email when token auth has no email', async () => {
+  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
+  delete process.env.CLOUDFLARE_EMAIL; delete process.env.CLOUDFLARE_API_KEY; process.env.CLOUDFLARE_API_TOKEN = 'token';
+  const ctx = base(); ctx.outputJson = false; await handleAuth({ ...ctx, action: 'status' });
+  expect(ctx.printer.log).toHaveBeenCalledWith('environment authenticated');
+  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
 });
 
 test('auth login, switch, logout, and profile errors use injected storage', async () => {

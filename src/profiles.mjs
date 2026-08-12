@@ -1,7 +1,8 @@
 import os from 'node:os';
 import { fs } from '@eliware/common';
+import { configRoot } from './config.mjs';
 
-export function profilesPath(homeDir = os.homedir()) { return `${homeDir}/.config/cf/profiles.json`; }
+export function profilesPath(homeDir = os.homedir()) { return `${configRoot(homeDir)}/profiles.json`; }
 
 export function readProfiles(homeDir = os.homedir(), fsImpl = fs) {
   const path = profilesPath(homeDir);

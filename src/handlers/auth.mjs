@@ -10,7 +10,7 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   }
   if (action === 'login') {
     const name = opts?.profile || 'default';
-    if (!process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) { fail('Set credentials in the environment before cf auth login'); return; }
+    if (!process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) { fail('To log in, set CLOUDFLARE_API_TOKEN or CLOUDFLARE_EMAIL and CLOUDFLARE_API_KEY, then run: cf auth login'); return; }
     data.profiles[name] = { email: process.env.CLOUDFLARE_EMAIL, apiKey: process.env.CLOUDFLARE_API_KEY, apiToken: process.env.CLOUDFLARE_API_TOKEN, accountId: process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: process.env.CLOUDFLARE_ZONE_ID };
     data.active = name; write(data, profileHome, profileFs); return printer.log(`Saved and activated profile ${name}`);
   }
@@ -27,11 +27,11 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   }
   if (action === 'status') {
     if (!process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) {
-      fail('Missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_EMAIL and CLOUDFLARE_API_KEY'); return;
+      fail('You are not logged into Cloudflare. To log in, set credentials and run: cf auth login'); return;
     }
     const identity = await cf.get('/user');
-    const status = { authenticated: true, profile: data.active || 'environment', method: process.env.CLOUDFLARE_API_TOKEN ? 'api-token' : 'api-key', email: process.env.CLOUDFLARE_EMAIL || null, id: identity?.result?.id || null };
-    return outputJson ? toJsonOutput(status) : printer.log(`${status.email} authenticated`);
+    const status = { authenticated: true, profile: process.env.CLOUDFLARE_PROFILE || data.active || 'environment', method: process.env.CLOUDFLARE_API_TOKEN ? 'api-token' : 'api-key', email: process.env.CLOUDFLARE_EMAIL || null, id: identity?.result?.id || null };
+    return outputJson ? toJsonOutput(status) : printer.log(`${status.profile} authenticated${status.email ? ` as ${status.email}` : ''}`);
   }
   if (action === 'verify') {
     if (!process.env.CLOUDFLARE_API_TOKEN) { fail('cf auth verify requires CLOUDFLARE_API_TOKEN'); return; }

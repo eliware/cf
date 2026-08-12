@@ -26,5 +26,7 @@ The universal `cf api` command accepts any relative Cloudflare API path, so a
 dedicated resource command is never required before an endpoint can be used.
 
 Credentials may come from `~/.cf`, the project `.env`, CI environment variables,
-or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. API
+or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. Like
+`gh`, `CF_CONFIG_DIR` overrides the configuration directory and
+`XDG_CONFIG_HOME/cf` is used when `XDG_CONFIG_HOME` is set. API
 tokens are preferred; the email/API-key pair remains supported for compatibility.

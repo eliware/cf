@@ -2,8 +2,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fs } from '@eliware/common';
+import { configRoot } from './config.mjs';
 
-export function extensionRoot(homeDir = os.homedir()) { return `${homeDir}/.config/cf/extensions`; }
+export function extensionRoot(homeDir = os.homedir()) { return `${configRoot(homeDir)}/extensions`; }
 
 function manifestPath(root, name) { return path.join(root, name, 'cf-extension.json'); }
 
