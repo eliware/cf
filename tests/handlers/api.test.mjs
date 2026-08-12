@@ -29,6 +29,11 @@ test('API supports template output', async () => {
   await handleApi(ctx); expect(ctx.printer.log).toHaveBeenCalledWith('example.com');
 });
 
+test('API errors propagate to the caller for diagnostics', async () => {
+  const ctx = context(); const error = new Error('rate limited'); ctx.cf.get.mockRejectedValue(error);
+  await expect(handleApi(ctx)).rejects.toBe(error);
+});
+
 test('calls mutation with JSON body', async () => {
   const ctx = context({ action: '/zones', opts: { method: 'post' }, body: { name: 'x' } });
   await handleApi(ctx);

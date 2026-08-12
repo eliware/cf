@@ -14,3 +14,9 @@ test('extension list supports text, missing directory, and unknown action', () =
   handleExtension({ action: 'add', outputJson: true, printer, toJsonOutput: jest.fn(), fail, fsImpl: {}, homeDir: '/tmp' });
   expect(printer.log).toHaveBeenCalledWith('x'); expect(fail).toHaveBeenCalledWith('Unknown extension action: add');
 });
+
+test('extension list uses default local context safely', () => {
+  const toJsonOutput = jest.fn();
+  handleExtension({ action: 'list', outputJson: true, toJsonOutput, printer: { log: jest.fn() }, fail: jest.fn() });
+  expect(toJsonOutput).toHaveBeenCalled();
+});
