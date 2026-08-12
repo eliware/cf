@@ -3,7 +3,7 @@ import { configRoot } from './config.mjs';
 
 function aliasesPath(homeDir) { return `${configRoot(homeDir)}/aliases.json`; }
 export function readAliases(homeDir, fsImpl = fs) {
-  const path = aliasesPath(homeDir); if (!fsImpl.existsSync(path)) return {};
+  const path = aliasesPath(homeDir); if (typeof fsImpl.existsSync !== 'function' || !fsImpl.existsSync(path)) return {};
   return JSON.parse(fsImpl.readFileSync(path, 'utf8'));
 }
 export function writeAliases(aliases, homeDir, fsImpl = fs) {
