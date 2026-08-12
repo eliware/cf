@@ -151,6 +151,28 @@ test('CLI accepts terminal output controls without changing JSON contracts', asy
   expect(printer.error).not.toHaveBeenCalled();
 });
 
+test('CLI manages aliases and config through the command surface', async () => {
+  const mod = await import(`../src/cli.mjs?ts=${Date.now() + 12}`);
+  const home = `/tmp/cf-cli-settings-${Date.now()}`;
+  const files = new Map();
+  const fsImpl = {
+    existsSync: path => files.has(path),
+    readFileSync: path => files.get(path),
+    mkdirSync: jest.fn(), writeFileSync: (path, value) => files.set(path, value), chmodSync: jest.fn(),
+  };
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const common = { homeDir: home, fsImpl, printer };
+  await mod.run({ ...common, argv: ['alias', 'set', 'work', 'zone', 'list'] });
+  await mod.run({ ...common, argv: ['alias', 'list'] });
+  await mod.run({ ...common, argv: ['alias', 'delete', 'work'] });
+  await mod.run({ ...common, argv: ['config', 'set', 'pager', 'less'] });
+  await mod.run({ ...common, argv: ['config', 'get', 'pager'] });
+  await mod.run({ ...common, argv: ['config', 'list', '--json'] });
+  await mod.run({ ...common, argv: ['config', 'unset', 'pager'] });
+  await mod.run({ ...common, argv: ['config', 'unknown'] });
+  expect(printer.error).not.toHaveBeenCalled();
+});
+
 test('CLI prints dashboard links before dispatch', async () => {
   const mod = await import(`../src/cli.mjs?ts=${Date.now() + 13}`);
   const printer = { log: jest.fn(), error: jest.fn() };
