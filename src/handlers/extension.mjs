@@ -1,9 +1,26 @@
 import os from 'node:os';
 import { fs } from '@eliware/common';
+import { discoverExtensions, extensionRoot } from '../extensions.mjs';
 
-export function handleExtension({ action, outputJson, printer, toJsonOutput, fail, fsImpl = fs, homeDir = os.homedir() }) {
-  if (action !== 'list') { fail(`Unknown extension action: ${action}`); return; }
-  const path = `${homeDir}/.config/cf/extensions`;
-  const names = typeof fsImpl.existsSync === 'function' && fsImpl.existsSync(path) ? fsImpl.readdirSync(path) : [];
-  return outputJson ? toJsonOutput(names.map(name => ({ name }))) : names.forEach(name => printer.log(name));
+export function handleExtension({ action, opts, outputJson, printer, toJsonOutput, fail, fsImpl = fs, homeDir = os.homedir() }) {
+  if (action === 'list') {
+    const manifests = discoverExtensions(homeDir, fsImpl);
+    return outputJson ? toJsonOutput(manifests) : manifests.forEach(manifest => printer.log(`${manifest.name} ${manifest.version}`));
+  }
+  if (action === 'install' || action === 'upgrade') {
+    if (!opts.path) { fail('Missing --path to an extension directory'); return; }
+    const source = opts.path; const manifest = JSON.parse(fsImpl.readFileSync(`${source}/cf-extension.json`, 'utf8'));
+    if (!manifest.name || !manifest.version || !manifest.commands) { fail('Invalid cf extension manifest'); return; }
+    const destination = `${extensionRoot(homeDir)}/${manifest.name}`;
+    fsImpl.mkdirSync(extensionRoot(homeDir), { recursive: true });
+    fsImpl.rmSync(destination, { recursive: true, force: true }); fsImpl.cpSync(source, destination, { recursive: true });
+    return printer.log(`${action === 'install' ? 'Installed' : 'Upgraded'} extension ${manifest.name}`);
+  }
+  if (action === 'remove') {
+    if (!opts.name) { fail('Missing --name'); return; }
+    if (!opts.force) { fail('Refusing extension removal without --force'); return; }
+    fsImpl.rmSync(`${extensionRoot(homeDir)}/${opts.name}`, { recursive: true, force: true });
+    return printer.log(`Removed extension ${opts.name}`);
+  }
+  fail(`Unknown extension action: ${action}`);
 }

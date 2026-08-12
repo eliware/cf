@@ -68,7 +68,8 @@
         "README.md",
         "RELEASE_NOTES.md",
         "LICENSE",
-        "docs"
-        ,"completions"
+        "docs",
+        "completions",
+        "examples"
     ]
 }

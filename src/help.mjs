@@ -156,8 +156,11 @@ export function printResourceHelp(resource, printer = console) {
   list/get/create/update/delete  Manage zone Load Balancers`,
     tunnel: `tunnel
   list/get/create/update/delete  Manage account tunnels`,
-    extension: `extension
-  list                 List installed extensions`,
+  extension: `extension
+  list                 List installed extensions
+  install              Install from a local extension directory
+  upgrade              Replace an installed extension from a local directory
+  remove               Remove an extension (requires --force)`,
   };
   printer.log(map[resource] || `Unknown resource: ${resource}`);
 }

@@ -1,4 +1,5 @@
 import { fs } from '@eliware/common';
+import os from 'node:os';
 import { parseArgs } from './args.mjs';
 import { loadProjectEnv } from './env.mjs';
 import { createCloudflareClient } from './cloudflare.mjs';
@@ -22,6 +23,7 @@ import { handleOriginCa } from './handlers/origin-ca.mjs';
 import { makeSimpleResource } from './handlers/simple-resource.mjs';
 import { handleExtension } from './handlers/extension.mjs';
 import { applyActiveProfile } from './profiles.mjs';
+import { discoverExtensions, loadExtensionCommand } from './extensions.mjs';
 
 const aliases = { zone: 'zones', setting: 'zone-settings', dns: 'dns-records', rules: 'rulesets', list: 'lists', 'list-item': 'list-items' };
 const defaultHandlers = {
@@ -49,6 +51,7 @@ export async function run({
   cfFactory = createCloudflareClient, loadEnv = loadProjectEnv,
   printer = console, fsImpl = fs, handlers = {},
   projectRoot = process.cwd(),
+  homeDir = os.homedir(),
   exit = code => process.exit(code),
 } = {}) {
   const { args, opts } = parseArgs(argv);
@@ -56,10 +59,19 @@ export async function run({
   if (opts.help || args.length === 0) return printHelp(printer);
   const resource = aliases[args[0]] || args[0];
   const action = args[1];
-  if (args.length === 1 || opts.help) return printResourceHelp(resource, printer);
+  const extensionManifest = discoverExtensions(homeDir, fsImpl).find(manifest => manifest.commands[resource]);
+  if ((args.length === 1 && !extensionManifest) || opts.help) return printResourceHelp(resource, printer);
+
+  if (extensionManifest) {
+    const extensionHandler = await loadExtensionCommand(extensionManifest, resource, homeDir);
+    if (!extensionHandler) return printer.error(`Extension command is not loadable: ${resource}`);
+    const extensionBody = loadBody(opts, fsImpl);
+    const extensionFail = message => printer.error(message);
+    return extensionHandler({ cf: null, action, opts, body: extensionBody, outputJson: opts.json || opts.output === 'json', printer, toJsonOutput: value => toJsonOutput(value, printer.log), fail: extensionFail });
+  }
 
   loadEnv(projectRoot, env, fsImpl);
-  applyActiveProfile(env, undefined, fsImpl);
+  applyActiveProfile(env, homeDir, fsImpl);
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
   const commandPrinter = opts.quiet ? { ...printer, log: () => {} } : printer;

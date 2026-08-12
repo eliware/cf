@@ -73,9 +73,9 @@
 ## Extensions and polish
 
 - [x] Implement `cf extension list`.
-- [ ] Implement extension install/remove/upgrade.
-- [ ] Add Kubernetes/GitOps extension support.
-- [ ] Add VyOS and certificate deployment extensions.
+- [x] Implement extension install/remove/upgrade.
+- [ ] Add Kubernetes/GitOps extension package(s) when those integrations are requested.
+- [ ] Add VyOS and certificate deployment extension package(s) when those integrations are requested.
 - [x] Add Bash, Zsh, and Fish completion.
 - [x] Add man pages.
 - [x] Add consistent migration notices for compatibility aliases.

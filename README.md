@@ -98,6 +98,8 @@ cf workers list --account-id <account_id> --json
 cf pages list --account-id <account_id> --json
 cf r2 list --account-id <account_id> --json
 cf extension list
+cf extension install --path examples/extensions/hello
+cf hello --name Eli
 ```
 
 Use JSON output for automation:
@@ -137,6 +139,7 @@ cf dns-records delete --zone-id <zone_id> --id <record_id> --force
 Run `<resource> --help` for action-specific help.
 
 For users coming from the GitHub CLI, see [From `gh` to `cf`](docs/gh-orientation.md).
+See [Extension support](docs/extensions.md) for the plugin contract and example.
 
 ## Security
 
