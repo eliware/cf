@@ -66,5 +66,15 @@ test('terminal output preserves JSON and can buffer human-readable output', asyn
   const human = createTerminalOutput({ printer, width: 40 });
   human.log('ID\nexample');
   expect(printer.log).toHaveBeenCalledWith('ID\nexample');
+  human.error('diagnostic');
+  expect(printer.error).toHaveBeenCalledWith('diagnostic');
   await human.flush();
+});
+
+test('terminal pager resolves successful exits and reports failed exits', async () => {
+  const printer = { log: jest.fn(), error: jest.fn() };
+  const successful = createTerminalOutput({ printer, pager: 'true' });
+  successful.log('output'); await expect(successful.flush()).resolves.toBeUndefined();
+  const failed = createTerminalOutput({ printer, pager: 'false' });
+  failed.log('output'); await expect(failed.flush()).rejects.toThrow('Pager exited');
 });
