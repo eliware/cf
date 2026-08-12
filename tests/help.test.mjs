@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { printHelp, printResourceHelp } from '../src/help.mjs';
+import { printHelp, printLegacyHelp, printResourceHelp } from '../src/help.mjs';
 
 describe('help output', () => {
   test('prints general help', () => {
@@ -8,7 +8,8 @@ describe('help output', () => {
     printHelp();
 
     expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][0]).toContain('cf - Cloudflare admin utility');
+    expect(spy.mock.calls[0][0]).toContain('Manage Cloudflare from the command line.');
+    printLegacyHelp();
     spy.mockRestore();
   });
 

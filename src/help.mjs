@@ -1,4 +1,4 @@
-export function printHelp(printer = console) {
+export function printLegacyHelp(printer = console) {
   printer.log(`cf - Cloudflare admin utility
 
 Usage:
@@ -84,6 +84,71 @@ Examples:
   cf inventory export --account-id <account_id> --json
   cf origin-ca list --json
 `);
+}
+
+export function printHelp(printer = console) {
+  printer.log(`Manage Cloudflare from the command line.
+
+USAGE
+  cf <command> <subcommand> [flags]
+
+CORE COMMANDS
+  auth:          Authenticate and manage Cloudflare profiles
+  zone:          Manage zones
+  dns:           Manage DNS records
+  setting:       Manage zone settings
+  rules:         Manage rulesets
+  list:          Manage account lists and list items
+  ssl:           Inspect and configure SSL/TLS
+  api:           Make an authenticated Cloudflare API request
+
+ACCOUNT COMMANDS
+  audit:         View account audit logs
+  inventory:     Export account inventory
+  origin-ca:     Manage Origin CA certificates
+  load-balancer: Manage zone Load Balancers
+  tunnel:        Manage account tunnels
+
+PLATFORM COMMANDS
+  workers:       Manage Workers
+  pages:         Manage Pages projects
+  r2:            Manage R2 buckets
+  d1:            Manage D1 databases
+  queues:        Manage Queues
+  stream:        Manage Stream
+  images:        Manage Images
+  ai:            Manage AI and Vectorize
+  access:        Manage Access and Zero Trust
+  extension:     Manage local cf extensions
+
+FLAGS
+  --help         Show help for command
+  --version      Show version
+  --json         Output JSON
+  --output       json|text (default text)
+  --jq           Select fields from JSON output
+  --template     Render JSON values with {{.field}} placeholders
+  --quiet        Suppress normal output
+  --verbose      Include diagnostic details
+  --paginate     Fetch all supported pages
+  --web          Open a Cloudflare dashboard link
+  --force        Confirm destructive actions
+  --dry-run      Show changes without writing
+  --account-id   Cloudflare account id
+  --zone-id      Cloudflare zone id
+  --file         Read a JSON request body
+  --data         Use an inline JSON request body
+
+EXAMPLES
+  $ cf zone list
+  $ cf dns list --zone-id <zone_id>
+  $ cf api /zones --json
+  $ cf auth status
+  $ cf extension list
+
+LEARN MORE
+  Use 'cf <command> <subcommand> --help' for more information.
+  Singular commands are preferred; plural resource names remain compatible aliases.`);
 }
 
 export function printResourceHelp(resource, printer = console) {

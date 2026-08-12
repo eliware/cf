@@ -27,7 +27,8 @@ test('output helpers support default console printers', () => {
   const spy = jest.spyOn(log, 'info').mockImplementation(() => {});
   toJsonOutput({ ok: true });
   printTextList([{ id: 2 }], x => `id:${x.id}`);
-  expect(spy).toHaveBeenCalledTimes(2);
+  printTable(['ID'], [['2']]);
+  expect(spy).toHaveBeenCalledTimes(3);
   spy.mockRestore();
 });
 
