@@ -215,11 +215,11 @@ test("auth status and verify support text output and inactive tokens", async () 
   if (oldProfile === undefined) delete process.env.CLOUDFLARE_PROFILE; else process.env.CLOUDFLARE_PROFILE = oldProfile;
 });
 
-test("auth uses the default stdin reader when environment credentials are absent", async () => {
+test("auth handles an empty token when environment credentials are absent", async () => {
   const oldToken = process.env.CLOUDFLARE_API_TOKEN;
   delete process.env.CLOUDFLARE_API_TOKEN;
   const ctx = base();
-  await handleAuth({ ...ctx, action: "login", opts: { "token-stdin": true } });
+  await handleAuth({ ...ctx, action: "login", opts: { "token-stdin": true }, readToken: () => "" });
   expect(ctx.fail).toHaveBeenCalledWith("You are not logged into Cloudflare. Run: cf auth login");
   if (oldToken === undefined) delete process.env.CLOUDFLARE_API_TOKEN;
   else process.env.CLOUDFLARE_API_TOKEN = oldToken;
