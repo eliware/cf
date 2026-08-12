@@ -1,5 +1,11 @@
 # Release Notes
 
+## Unreleased
+
+- Made the test suite credential-free and cross-platform on Windows and POSIX systems.
+- Added Windows CI coverage and fixed `test:gaps` to launch npm correctly on Windows.
+- Added pager `EPIPE` coverage to maintain 100% statements, branches, functions, and lines.
+
 ## 1.1.3 - 2026-08-08
 
 - Load credentials from `~/.cf` and the current directory `.env`.
