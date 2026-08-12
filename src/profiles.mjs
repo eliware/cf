@@ -25,13 +25,21 @@ export function activeProfile(env = process.env, homeDir = os.homedir(), fsImpl 
   return name && data.profiles[name] ? { name, ...data.profiles[name] } : null;
 }
 
-export async function applyActiveProfile(env = process.env, homeDir = os.homedir(), fsImpl = fs) {
+export async function applyActiveProfile(env = process.env, homeDir = os.homedir(), fsImpl = fs, effects = {}) {
+  const credentialReader = effects.readCredential || readCredential;
+  const credentialWriter = effects.writeCredential || writeCredential;
+  const refresh = effects.refreshOAuth || refreshOAuth;
+  const now = effects.now || Date.now;
   const profile = activeProfile(env, homeDir, fsImpl);
   if (!profile) return null;
-  const credential = await readCredential(profile.name);
+  const credential = await credentialReader(profile.name);
   let activeCredential = credential;
-  if (credential?.oauthRefreshToken && credential.expiresAt && credential.expiresAt <= Date.now() + 60_000) {
-    try { activeCredential = await refreshOAuth({ refreshToken: credential.oauthRefreshToken }); await writeCredential(profile.name, { ...credential, ...activeCredential }); } catch { activeCredential = credential; }
+  if (credential?.oauthRefreshToken && credential.expiresAt && credential.expiresAt <= now() + 60_000) {
+    try {
+      const refreshed = await refresh({ refreshToken: credential.oauthRefreshToken });
+      activeCredential = { ...refreshed, oauthAccessToken: refreshed.accessToken, oauthRefreshToken: refreshed.refreshToken };
+      await credentialWriter(profile.name, { ...credential, ...activeCredential });
+    } catch { activeCredential = credential; }
   }
   const values = { ...activeCredential, ...profile };
   for (const [key, value] of Object.entries({
