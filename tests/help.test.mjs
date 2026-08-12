@@ -1,12 +1,13 @@
 import { jest } from "@jest/globals";
 import {
   printCommandHelp,
+  printDetailedHelp,
   printHelp,
   printResourceHelp,
 } from "../src/help.mjs";
 
 describe("help output", () => {
-  test("prints general help", () => {
+test("prints general help", () => {
     const spy = jest.spyOn(console, "log").mockImplementation(() => {});
 
     printHelp();
@@ -28,6 +29,20 @@ describe("help output", () => {
   });
 });
 
+test("uses default printers for detailed and command help", () => {
+  const spy = jest.spyOn(console, "log").mockImplementation(() => {});
+  printDetailedHelp();
+  printCommandHelp("unknown", "action");
+  expect(spy).toHaveBeenCalled();
+  spy.mockRestore();
+});
+
+test("prints detailed help", () => {
+  const printer = { log: jest.fn() };
+  printDetailedHelp(printer);
+  expect(printer.log).toHaveBeenCalledWith(expect.stringContaining("Global options:"));
+});
+
 test("prints unknown resource help", () => {
   const printer = { log: jest.fn() };
   printResourceHelp("unknown", printer);
@@ -41,4 +56,6 @@ test("prints command-specific help with gh-style sections", () => {
   expect(printer.log.mock.calls[0][0]).toContain("browser-based OAuth flow");
   printCommandHelp("unknown", "action", printer);
   expect(printer.log.mock.calls[1][0]).toContain("Use 'cf unknown --help'");
+  printCommandHelp("unknown", undefined, printer);
+  expect(printer.log.mock.calls[2][0]).toContain("<subcommand>");
 });

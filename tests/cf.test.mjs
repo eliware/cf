@@ -68,6 +68,52 @@ describe("cf run()", () => {
     );
     expect(exit).toHaveBeenCalledWith(1);
   });
+
+  test("formats authorization errors from a handler", async () => {
+    const mod = await import(`../bin/cf.mjs?ts=${Date.now() + 300}`);
+    const printer = { log: jest.fn(), error: jest.fn() };
+    const exit = jest.fn();
+    await mod.run({
+      argv: ["zones", "list"], env: {}, loadEnv: jest.fn(),
+      cfFactory: jest.fn(() => ({})),
+      handlers: { zones: jest.fn().mockRejectedValue({ status: 403, errors: [{ code: 9109, message: "denied" }] }) },
+      printer, exit,
+    });
+    expect(printer.error).toHaveBeenCalledWith(expect.stringContaining("Cloudflare denied"));
+    expect(exit).toHaveBeenCalledWith(1);
+  });
+
+  test("handles resource help, unknown actions, missing scopes, and raw errors", async () => {
+    const mod = await import(`../src/cli.mjs?ts=${Date.now() + 400}`);
+    const printer = { log: jest.fn(), error: jest.fn() };
+    const exit = jest.fn();
+    await mod.run({ argv: ["zones", "--help"], printer, exit, loadEnv: jest.fn(), fsImpl: { readFileSync: jest.fn(() => "") } });
+    await mod.run({ argv: ["zones", "far-away"], printer, exit, loadEnv: jest.fn(), fsImpl: { readFileSync: jest.fn(() => "") }, cfFactory: jest.fn() });
+    await mod.run({ argv: ["zones", "list"], env: { CF_OAUTH_SCOPES: "dns.read" }, printer, exit, loadEnv: jest.fn(), fsImpl: { readFileSync: jest.fn(() => "") }, cfFactory: jest.fn() });
+    await mod.run({ argv: ["inventory", "export"], env: { CF_OAUTH_SCOPES: "" }, printer, exit, loadEnv: jest.fn(), fsImpl: { readFileSync: jest.fn(() => "") }, cfFactory: jest.fn() });
+    await expect(mod.run({ argv: ["audit", "list"], env: { CF_OAUTH_SCOPES: "account-settings.read,zone.read,dns.read,ssl-and-certificates.read" }, printer, exit, loadEnv: jest.fn(), fsImpl: { readFileSync: jest.fn(() => "") }, handlers: { audit: jest.fn().mockRejectedValue(new Error("raw failure")) }, cfFactory: jest.fn(() => ({})) })).rejects.toThrow("raw failure");
+  });
+
+  test("run uses safe defaults when called with only an empty argv", async () => {
+    const spy = jest.spyOn(console, "log").mockImplementation(() => {});
+    const mod = await import(`../src/cli.mjs?ts=${Date.now() + 500}`);
+    await mod.run({ argv: [] });
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  test("run can use every default dependency when invoked as the entrypoint", async () => {
+    const originalArgv = process.argv;
+    const spy = jest.spyOn(console, "log").mockImplementation(() => {});
+    process.argv = [process.execPath, "cf"];
+    try {
+      const mod = await import(`../src/cli.mjs?ts=${Date.now() + 600}`);
+      await mod.run();
+    } finally {
+      process.argv = originalArgv;
+      spy.mockRestore();
+    }
+  });
 });
 
 test("CLI loads file bodies and supports injected output/failure dependencies", async () => {

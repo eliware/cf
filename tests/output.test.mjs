@@ -52,6 +52,7 @@ test('terminal helpers honor color, width, and safe defaults', () => {
   expect(terminalColorMode('never', { isTTY: true })).toBe(false);
   expect(terminalColorMode('always', { isTTY: false })).toBe(true);
   expect(terminalColorMode(undefined, { isTTY: false, noColor: false })).toBe(false);
+  expect(terminalColorMode()).toBe(Boolean(process.stdout?.isTTY) && !process.env.NO_COLOR);
   expect(terminalWidth('80')).toBe(80);
   expect(terminalWidth('20')).toBe(120);
   expect(fitTerminal('abcdef', 5)).toBe('abcd…');

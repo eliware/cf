@@ -1,5 +1,7 @@
 import { jest } from "@jest/globals";
 import {
+  collectOAuthSummary,
+  copyrightYear,
   openBrowser,
   refreshOAuth,
   revokeOAuth,
@@ -7,6 +9,30 @@ import {
 } from "../src/oauth.mjs";
 import http from "node:http";
 import { EventEmitter } from "node:events";
+
+test("OAuth summary and copyright helpers cover populated results", async () => {
+  expect(copyrightYear(2026)).toBe("2026");
+  expect(copyrightYear(2027)).toBe("2026-2027");
+  const summary = await collectOAuthSummary({
+    accessToken: "access",
+    account: { name: "account" },
+    scopes: ["zone.read", "zone.write", "dns.read", "dns.write"],
+    fetchImpl: jest.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ result: [{ id: "zone-1" }] }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ result: [{ id: "record-1" }] }) }),
+  });
+  expect(summary.zones).toEqual([{ id: "zone-1" }]);
+  expect(summary.dns).toEqual([{ id: "record-1" }]);
+  const unavailable = await collectOAuthSummary({
+    accessToken: "access",
+    account: null,
+    scopes: ["zone.read", "zone.write", "dns.read", "dns.write"],
+    fetchImpl: jest.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ result: [{ id: "zone-1" }] }) })
+      .mockResolvedValueOnce({ ok: false }),
+  });
+  expect(unavailable.dns).toEqual([]);
+});
 
 test("OAuth refresh and revoke use Cloudflare token endpoints", async () => {
   const fetchImpl = jest
@@ -105,6 +131,39 @@ test("OAuth login validates client configuration before opening a browser", asyn
   );
 });
 
+test("OAuth login reports a browser launcher that throws", async () => {
+  const printed = [];
+  const promise = loginOAuth({ clientId: "client", ports: [0], open: () => { throw new Error("launcher unavailable"); }, print: (value) => printed.push(value), fetchImpl: jest.fn().mockResolvedValue({ ok: true, json: async () => ({ access_token: "access" }) }) });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get("redirect_uri")}?state=${authorization.searchParams.get("state")}&code=code`, (response) => { response.resume(); response.on("end", resolve); }).on("error", reject));
+  await expect(promise).resolves.toMatchObject({ accessToken: "access" });
+  expect(printed).toEqual(expect.arrayContaining([expect.stringContaining("Could not open a browser automatically") ]));
+});
+
+test("OAuth callback handles missing descriptions and browser error messages", async () => {
+  const printed = [];
+  const browser = new EventEmitter();
+  const promise = loginOAuth({ clientId: "client", ports: [0], open: () => browser, print: (value) => printed.push(value) });
+  const failure = promise.catch((error) => error);
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  browser.emit("error", { message: "no opener" });
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get("redirect_uri")}?state=${authorization.searchParams.get("state")}&error=access_denied`, (response) => { response.resume(); response.on("end", resolve); }).on("error", reject));
+  await expect(failure).resolves.toMatchObject({ message: "Cloudflare authorization failed: access_denied" });
+  expect(printed).toEqual(expect.arrayContaining([expect.stringContaining("no opener")]));
+});
+
+test("OAuth callback renders a generic provider failure", async () => {
+  const printed = [];
+  const promise = loginOAuth({ clientId: "client", ports: [0], open: jest.fn(), print: (value) => printed.push(value) });
+  const failure = promise.catch((error) => error);
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  const authorization = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get("redirect_uri")}?state=${authorization.searchParams.get("state")}&error=server_error`, (response) => { response.resume(); response.on("end", resolve); }).on("error", reject));
+  await expect(failure).resolves.toMatchObject({ message: "Cloudflare authorization failed: server_error" });
+});
+
 test("OAuth login serves a state-protected callback and exchanges the code", async () => {
   const printed = [];
   const fetchImpl = jest.fn().mockResolvedValue({
@@ -158,6 +217,7 @@ test("OAuth login serves a state-protected callback and exchanges the code", asy
 });
 
 test("OAuth scope picker opens a local setup page and redirects with selected scopes", async () => {
+  const yearSpy = jest.spyOn(Date.prototype, "getUTCFullYear").mockReturnValue(2027);
   const printed = [];
   const fetchImpl = jest
     .fn()
@@ -187,6 +247,7 @@ test("OAuth scope picker opens a local setup page and redirects with selected sc
         response.on("end", () => {
           expect(body).toContain("Set up cf");
           expect(body).toContain("scope-search");
+          expect(body).toContain("2026-2027");
           resolve();
         });
       })
@@ -234,9 +295,40 @@ test("OAuth scope picker opens a local setup page and redirects with selected sc
       .on("error", reject),
   );
   await expect(promise).resolves.toMatchObject({ accessToken: "access" });
+  yearSpy.mockRestore();
+});
+
+test("OAuth picker serves its browser assets and summarizes zones and DNS", async () => {
+  const printed = [];
+  const browser = new EventEmitter();
+  const open = jest.fn(() => browser);
+  const fetchImpl = jest.fn().mockImplementation(async (url) => {
+    if (url.includes("/token")) return { ok: true, json: async () => ({ access_token: "access" }) };
+    if (url.endsWith("/user")) return { ok: true, json: async () => ({ result: { name: "Test account" } }) };
+    if (url.includes("/zones?")) return { ok: true, json: async () => ({ result: [{ id: "zone-1", name: "example.com" }] }) };
+    return { ok: true, json: async () => ({ result: [{ id: "record-1", name: "www.example.com" }] }) };
+  });
+  const promise = loginOAuth({ clientId: "client", scopePicker: true, scopes: ["zone.read", "zone.write", "dns.read", "dns.write"], ports: [0], open, print: (value) => printed.push(value), fetchImpl });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  const landing = new URL(printed[0].match(/https?:\/\/\S+/)[0]);
+  for (const path of ["/oauth-picker.css", "/oauth-picker.mjs", "/oauth-web/cf-logo.svg", "/oauth-web/cloudflare-115x53.png", "/oauth-web/eliware-115x115.png", "/oauth-result.css"]) {
+    const response = await fetch(`http://127.0.0.1:${landing.port}${path}`);
+    expect(response.status).toBe(200);
+  }
+  browser.emit("error", { code: "ENOENT" });
+  const startResponse = await fetch(new URL("/oauth/start", landing), { method: "POST", redirect: "manual" });
+  const authorization = new URL(startResponse.headers.get("location"));
+  const state = authorization.searchParams.get("state");
+  authorization.protocol = "http:";
+  authorization.host = landing.host;
+  authorization.pathname = "/oauth/callback";
+  authorization.search = new URLSearchParams({ state, code: "code" }).toString();
+  await new Promise((resolve, reject) => http.get(authorization, (response) => { response.resume(); response.on("end", resolve); }).on("error", reject));
+  await expect(promise).resolves.toMatchObject({ account: { name: "Test account" } });
 });
 
 test("OAuth success page confirms the account without exposing the token", async () => {
+  const yearSpy = jest.spyOn(Date.prototype, "getUTCFullYear").mockReturnValue(2027);
   const printed = [];
   const responses = [];
   const fetchImpl = jest.fn().mockImplementation(async (url) =>
@@ -248,14 +340,15 @@ test("OAuth success page confirms the account without exposing the token", async
             refresh_token: "refresh",
           }),
         }
-      : {
-          ok: true,
-          json: async () => ({ result: { name: `Acme & <Co> "'` } }),
-        },
+      : url.includes("/zones?")
+        ? { ok: true, json: async () => ({ result: [{ id: "zone-1", name: "example.com" }] }) }
+        : url.includes("/dns_records?")
+          ? { ok: true, json: async () => ({ result: [{ id: "record-1" }] }) }
+          : { ok: true, json: async () => ({ result: { name: `Acme & <Co> "'` } }) },
   );
   const promise = loginOAuth({
     clientId: "client",
-    scopes: ["user-details.read", "zone.read", "dns.read"],
+    scopes: ["user-details.read", "zone.read", "zone.write", "dns.read", "dns.write"],
     ports: [0],
     open: jest.fn(),
     print: (value) => printed.push(value),
@@ -276,6 +369,7 @@ test("OAuth success page confirms the account without exposing the token", async
           response.on("end", () => {
             expect(body).toContain("Acme &amp; &lt;Co&gt; &quot;&#39;");
             expect(body).not.toContain("secret-access");
+            expect(body).toContain("2026-2027");
             resolve();
           });
         },
@@ -284,8 +378,9 @@ test("OAuth success page confirms the account without exposing the token", async
   );
   await expect(promise).resolves.toMatchObject({
     account: { name: `Acme & <Co> "'` },
-    scopes: ["user-details.read", "zone.read", "dns.read"],
+    scopes: ["user-details.read", "zone.read", "zone.write", "dns.read", "dns.write"],
   });
+  yearSpy.mockRestore();
 });
 
 test("OAuth success page remains useful when account confirmation fails", async () => {

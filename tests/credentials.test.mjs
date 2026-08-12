@@ -25,3 +25,7 @@ test('credential adapter treats an empty keychain value as absent', async () => 
   const store = { getPassword: jest.fn().mockResolvedValue('') };
   await expect(readCredential('work', jest.fn().mockResolvedValue(store))).resolves.toBeNull();
 });
+
+test('credential adapter uses its default keychain loader safely', async () => {
+  await expect(deleteCredential('missing-profile')).resolves.toBe(false);
+});

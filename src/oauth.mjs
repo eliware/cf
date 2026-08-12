@@ -136,10 +136,12 @@ function escapeHtml(value) {
   );
 }
 function currentCopyright() {
-  const year = new Date().getUTCFullYear();
+  return copyrightYear();
+}
+export function copyrightYear(year = new Date().getUTCFullYear()) {
   return year > 2026 ? `2026-${year}` : "2026";
 }
-async function collectOAuthSummary({ accessToken, account, scopes, fetchImpl }) {
+export async function collectOAuthSummary({ accessToken, account, scopes, fetchImpl }) {
   const enabled = MODULE_CATALOG.filter((module) =>
     module.scopes.every((scope) => scopes.includes(scope)),
   );
@@ -206,53 +208,6 @@ function failurePage({ title, detail }) {
     .replaceAll("__VERSION__", VERSION);
 }
 
-const SCOPE_CATALOG = {
-  "Built-in commands": DEFAULT_OAUTH_SCOPES,
-  "DNS & zones": [
-    "zone.write",
-    "zone-settings.read",
-    "zone-settings.write",
-    "dns.read",
-    "dns.write",
-  ],
-  "Rules & security": [
-    "account-rulesets.read",
-    "account-rulesets.write",
-    "account-rule-lists.write",
-    "zone-waf.read",
-    "zone-waf.write",
-  ],
-  "SSL & performance": [
-    "ssl-and-certificates.read",
-    "ssl-and-certificates.write",
-    "cache.purge",
-    "healthcheck.read",
-    "healthcheck.write",
-  ],
-  "Platform services": [
-    "workers-scripts.read",
-    "workers-scripts.write",
-    "workers-scripts.bind",
-    "page.read",
-    "page.write",
-    "workers-r2.read",
-    "workers-r2.write",
-    "d1.read",
-    "d1.write",
-    "queues.read",
-    "queues.write",
-    "stream.read",
-    "stream.write",
-    "images.read",
-    "images.write",
-    "ai.read",
-    "ai.write",
-    "argotunnel.read",
-    "argotunnel.write",
-    "access.read",
-    "access.write",
-  ],
-};
 const SCOPE_CATALOG_DATA = scopeCatalog.categories;
 const MODULE_CATALOG = moduleCatalog.modules;
 const ALLOWED_OAUTH_SCOPES = new Set(
@@ -274,41 +229,9 @@ const pickerHtml = () =>
     )
     .replaceAll(
       "__COPYRIGHT_YEAR__",
-      `2026${new Date().getUTCFullYear() > 2026 ? `-${new Date().getUTCFullYear()}` : ""}`,
+      copyrightYear(),
     )
     .replaceAll("__APP_VERSION__", VERSION);
-/* istanbul ignore next */
-function scopePickerPage(scopes) {
-  const groups = Object.entries(SCOPE_CATALOG)
-    .map(
-      ([name, values]) =>
-        `<fieldset><legend>${escapeHtml(name)}</legend>${values.map((scope) => `<label><input type="checkbox" name="scope" value="${escapeHtml(scope)}" ${scopes.includes(scope) ? "checked" : ""}> ${escapeHtml(scope)}</label>`).join("")}</fieldset>`,
-    )
-    .join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Set up cf</title><style>:root{color-scheme:dark;--bg:#09111f;--card:#111d31;--muted:#a9b8d0;--accent:#f6821f}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0,#263a63,transparent 42%),var(--bg);color:#f6f8fc;font:15px system-ui,sans-serif;padding:24px}main{max-width:820px;margin:0 auto;background:#111d31ef;border:1px solid #2c4165;border-radius:28px;padding:clamp(24px,5vw,48px);box-shadow:0 24px 80px #0006}h1{font-size:clamp(32px,6vw,52px);margin:12px 0}p{color:var(--muted);line-height:1.6}.mark{color:#fff;background:var(--accent);display:inline-grid;place-items:center;width:54px;height:54px;border-radius:16px;font-weight:800;font-size:23px}fieldset{border:1px solid #2c4165;border-radius:15px;margin:16px 0;padding:14px}legend{color:#ffd39e;font-weight:700;padding:0 8px}label{display:inline-block;background:#192943;border-radius:8px;padding:9px;margin:4px;color:#dce6f6}input{accent-color:var(--accent)}button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:16px;padding:14px 20px;cursor:pointer}#count{color:#73e6a1;font-weight:700}</style></head><body><main><div class="mark">cf</div><h1>Set up your Cloudflare CLI</h1><p>Choose the capabilities you want to grant. Built-in command scopes are selected for you. Add advanced scopes when you plan to use <code>cf api</code>.</p><form method="post" action="/oauth/start">${groups}<p><span id="count"></span> selected</p><button type="submit">Continue to Cloudflare</button></form><script>const boxes=[...document.querySelectorAll('input')];const count=()=>document.querySelector('#count').textContent=boxes.filter(x=>x.checked).length;boxes.forEach(x=>x.addEventListener('change',count));count();</script></main></body></html>`;
-}
-void scopePickerPage;
-function groupedScopePickerPage() {
-  const moduleButtons = (tier) =>
-    MODULE_CATALOG.filter((module) => module.tier === tier)
-      .map(
-        (module) =>
-          `<button type="button" class="module" data-module="${escapeHtml(module.id)}"><span class="check">✓</span><strong>${escapeHtml(module.name)}</strong><small>${escapeHtml(module.description)}</small></button>`,
-      )
-      .join("");
-  const categories = Object.entries(SCOPE_CATALOG_DATA)
-    .map(
-      ([name, features]) =>
-        `<details class="category"><summary>${escapeHtml(name)} <b data-count="${escapeHtml(name)}">0</b></summary><div class="category-actions"><button type="button" data-category-enable="${escapeHtml(name)}">Enable all</button><button type="button" data-category-disable="${escapeHtml(name)}">Disable all</button></div>${features.map((feature) => `<div class="feature"><strong>${escapeHtml(feature.name)}</strong><span>${feature.scopes.map((scope) => `<label><input type="checkbox" data-scope value="${escapeHtml(scope.scope)}"> ${escapeHtml(scope.label)}</label>`).join("")}</span></div>`).join("")}</details>`,
-    )
-    .join("");
-  const model = JSON.stringify({
-    categories: SCOPE_CATALOG_DATA,
-    modules: MODULE_CATALOG,
-  }).replace(/</g, "\\u003c");
-  return `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Set up cf</title><style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:16px;background:#09111f;color:#f6f8fc;font:15px system-ui}main{max-width:980px;margin:auto;padding:clamp(20px,4vw,44px);background:#111d31;border:1px solid #2c4165;border-radius:24px}h1{font-size:clamp(32px,6vw,56px)}p{color:#a9b8d0;line-height:1.5}.hero,.tools,.category-actions{display:flex;flex-wrap:wrap;gap:10px}.hero button,.tools button,.category-actions button,.login{padding:11px 14px;border:1px solid #2c4165;border-radius:12px;background:#192943;color:inherit;font-weight:700;cursor:pointer}.module{min-width:190px;min-height:74px;text-align:left;display:grid;grid-template-columns:28px 1fr;gap:4px}.module small{grid-column:2;color:#a9b8d0;font-weight:400}.module.active{border-color:#f6821f;background:#3b2b1d}.check{color:#647895}.active .check{color:#fff}.login{width:100%;margin:20px 0;background:#2878ee}.login:disabled{opacity:.45;cursor:not-allowed}.count{color:#73e6a1;font-weight:700}.category{border-top:1px dashed #2c4165;padding:14px 0}.category summary{cursor:pointer;font-weight:700}.category summary b{float:right;color:#a9b8d0}.feature{padding:12px 0;border-top:1px dashed #233653}.feature span{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.feature label{padding:7px 9px;border-radius:8px;background:#192943;color:#dce6f6;font-size:13px}@media(max-width:600px){.module{min-width:calc(50% - 5px)}.feature strong{display:block}}button:focus-visible{outline:2px solid #f6821f}</style><main><h1>Choose what cf can do</h1><p>Choose a ready-to-use module or fine-tune individual Cloudflare permissions. Nothing is selected by default.</p><h2>Basic modules</h2><div class="hero"><button type="button" data-tier="basic" data-enable>Enable all basic</button><button type="button" data-tier="basic" data-disable>Disable all basic</button>${moduleButtons("basic")}</div><h2>Advanced modules</h2><div class="hero"><button type="button" data-tier="advanced" data-enable>Enable all advanced</button><button type="button" data-tier="advanced" data-disable>Disable all advanced</button>${moduleButtons("advanced")}</div><form method="post" action="/oauth/start"><button class="login" type="submit" disabled>Log in with Cloudflare</button><p class="count"><span id="selected">0</span> scopes selected</p><div class="tools"><button type="button" data-all-enable>Enable all scopes</button><button type="button" data-all-disable>Disable all scopes</button><button type="button" data-expand>Expand all</button><button type="button" data-collapse>Collapse all</button></div>${categories}<button class="login" type="submit" disabled>Log in with Cloudflare</button></form></main><script>const model=${model},boxes=[...document.querySelectorAll('[data-scope]')],selected=new Set(),enabled=new Set(),owners=new Map();model.modules.forEach(m=>m.scopes.forEach(s=>{if(!owners.has(s))owners.set(s,[]);owners.get(s).push(m.id)}));const byId=new Map(model.modules.map(m=>[m.id,m]));const render=()=>{boxes.forEach(b=>b.checked=selected.has(b.value));document.querySelector('#selected').textContent=selected.size;document.querySelectorAll('.login').forEach(b=>b.disabled=!selected.size);document.querySelectorAll('[data-module]').forEach(b=>b.classList.toggle('active',enabled.has(b.dataset.module)))};const enable=id=>{const m=byId.get(id);if(!m)return;enabled.add(id);m.scopes.forEach(s=>selected.add(s))};const disable=id=>{const m=byId.get(id);if(!m)return;enabled.delete(id);m.scopes.forEach(s=>{if(!(owners.get(s)||[]).some(id=>enabled.has(id)))selected.delete(s)})};document.querySelectorAll('[data-module]').forEach(b=>b.onclick=()=>{enabled.has(b.dataset.module)?disable(b.dataset.module):enable(b.dataset.module);render()});document.querySelectorAll('[data-tier]').forEach(b=>b.onclick=()=>{model.modules.filter(m=>m.tier===b.dataset.tier).forEach(m=>b.hasAttribute('data-enable')?enable(m.id):disable(m.id));render()});document.querySelectorAll('[data-scope]').forEach(b=>b.onchange=()=>{b.checked?selected.add(b.value):selected.delete(b.value);if(!b.checked)(owners.get(b.value)||[]).forEach(id=>enabled.delete(id));render()});document.querySelector('[data-all-enable]').onclick=()=>{boxes.forEach(b=>selected.add(b.value));render()};document.querySelector('[data-all-disable]').onclick=()=>{selected.clear();enabled.clear();render()};document.querySelector('[data-expand]').onclick=()=>document.querySelectorAll('.category').forEach(c=>c.open=true);document.querySelector('[data-collapse]').onclick=()=>document.querySelectorAll('.category').forEach(c=>c.open=false);render()</script>`;
-}
-void groupedScopePickerPage;
 function readRequestBody(request) {
   return new Promise((resolve) => {
     let body = "";

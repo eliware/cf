@@ -18,9 +18,9 @@ export async function handleAuth({
   action,
   opts,
   outputJson,
-  printer,
+  printer = console,
   toJsonOutput,
-  fail,
+  fail = () => {},
   profileHome,
   profileFs,
   read = readProfiles,
@@ -156,6 +156,7 @@ export async function handleAuth({
       profile: process.env.CLOUDFLARE_PROFILE || data.active || "environment",
       method: "oauth",
       id: identity?.result?.id || null,
+      email: identity?.result?.email || null,
     };
     return outputJson
       ? toJsonOutput(status)
