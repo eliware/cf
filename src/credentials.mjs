@@ -1,7 +1,7 @@
 const SERVICE = 'cf';
 
 async function keychain() {
-  try { return (await import('keytar')).default; } catch { return null; }
+  try { return (await import('keytar')).default; } /* istanbul ignore next */ catch { return null; }
 }
 
 export async function readCredential(profile, load = keychain) {
