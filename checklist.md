@@ -51,9 +51,9 @@
 ## Workflows and safety
 
 - [x] Add zone configuration audits.
-- [ ] Add security baseline checks.
+- [x] Add security baseline checks.
 - [x] Add DNS diff and apply workflows.
-- [ ] Add TLS certificate coverage checks.
+- [x] Add TLS certificate coverage checks.
 - [ ] Add inventory export.
 - [x] Make workflows plan-first by default.
 - [x] Require explicit confirmation for destructive actions.

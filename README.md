@@ -69,6 +69,8 @@ cf zones list
 cf zone list
 cf zones get --zone-id <zone_id>
 cf zone audit --zone-id <zone_id> --json
+cf zone security --zone-id <zone_id> --json
+cf ssl coverage --zone-id <zone_id> --json
 cf dns-records list --zone-id <zone_id>
 cf dns-records create --zone-id <zone_id> \
   --data '{"type":"A","name":"www","content":"1.2.3.4"}'

@@ -27,6 +27,16 @@ export async function handleZones({ cf, action, opts, body, outputJson, printer 
     return outputJson ? toJsonOutput(report) : printer.log(JSON.stringify(report, null, 2));
   }
 
+  if (action === 'security') {
+    requireValue(zoneId, 'Missing --zone-id', fail);
+    const result = await cf.get(`/zones/${zoneId}/settings`);
+    const settings = Array.isArray(result?.result) ? result.result : [];
+    const names = new Set(['ssl', 'min_tls_version', 'always_use_https', 'tls_1_3']);
+    const baseline = settings.filter(setting => names.has(setting.id));
+    const report = { zoneId, settings: baseline, missing: [...names].filter(name => !baseline.some(setting => setting.id === name)) };
+    return outputJson ? toJsonOutput(report) : printer.log(JSON.stringify(report, null, 2));
+  }
+
   if (action === 'create') {
     requireValue(body, 'Missing --data or --file', fail);
     if (opts['dry-run']) return printer.log(JSON.stringify({ action: 'create', body, dryRun: true }, null, 2));

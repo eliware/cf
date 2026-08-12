@@ -18,3 +18,13 @@ test('zone audit combines metadata, SSL, and DNS', async () => {
   await handleZones(text);
   expect(text.printer.log).toHaveBeenCalledWith(JSON.stringify({ zone: { id: 'z1' }, ssl: { value: 'full' }, dns: { count: 0 } }, null, 2));
 });
+
+test('zone security reports baseline settings', async () => {
+  const toJsonOutput = jest.fn();
+  const ctx = { cf: { get: jest.fn().mockResolvedValue({ result: [{ id: 'ssl', value: 'full' }, { id: 'tls_1_3', value: 'on' }] }) }, action: 'security', opts: { 'zone-id': 'z1' }, outputJson: true, toJsonOutput, printer: { log: jest.fn() }, fail: jest.fn() };
+  await handleZones(ctx);
+  expect(toJsonOutput).toHaveBeenCalledWith(expect.objectContaining({ zoneId: 'z1', missing: expect.arrayContaining(['min_tls_version']) }));
+  const text = { ...ctx, outputJson: false, printer: { log: jest.fn() }, cf: { get: jest.fn().mockResolvedValue({}) } };
+  await handleZones(text);
+  expect(text.printer.log).toHaveBeenCalledWith(expect.stringContaining('missing'));
+});

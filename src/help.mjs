@@ -74,6 +74,7 @@ export function printResourceHelp(resource, printer = console) {
   list                 List zones
   get                  Get zone details
   audit                Audit zone metadata, SSL, and DNS
+  security             Check zone security baseline
   create               Create zone
   update               Edit zone
   delete               Delete zone`,
@@ -113,9 +114,11 @@ export function printResourceHelp(resource, printer = console) {
   switch               Activate a saved profile
   logout               Remove a saved profile
   verify               Verify the active API token`,
-    ssl: `ssl
+  ssl: `ssl
   get                  Read a zone SSL/TLS setting
-  set                  Update a zone SSL/TLS setting`,
+  set                  Update a zone SSL/TLS setting
+  certificates         List certificate packs
+  coverage             Summarize certificate host coverage`,
     cache: `cache
   purge                Purge zone cache (requires --force)`,
     health: `health
