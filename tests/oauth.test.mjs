@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import { openBrowser, refreshOAuth, revokeOAuth, loginOAuth } from '../src/oauth.mjs';
 import http from 'node:http';
+import { EventEmitter } from 'node:events';
 
 test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
   const fetchImpl = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ access_token: 'new', refresh_token: 'next', expires_in: 120 }) }).mockResolvedValueOnce({ ok: true });
@@ -28,6 +29,7 @@ test('OAuth login serves a state-protected callback and exchanges the code', asy
   const resultPromise = loginOAuth({ clientId: 'client', ports: [0], open: jest.fn(), print: value => printed.push(value), fetchImpl });
   await new Promise(resolve => setTimeout(resolve, 10));
   const authorization = new URL(printed[0].split('\n')[1]);
+  await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri').replace('/oauth/callback', '/wrong')}?state=${authorization.searchParams.get('state')}`, response => { expect(response.statusCode).toBe(404); response.resume(); response.on('end', resolve); }).on('error', reject));
   await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
   await expect(resultPromise).resolves.toMatchObject({ accessToken: 'access', refreshToken: 'refresh' });
   expect(fetchImpl).toHaveBeenCalledWith('https://dash.cloudflare.com/oauth2/token', expect.any(Object));
@@ -80,4 +82,14 @@ test('OAuth callback reports token exchange and response errors', async () => {
     await new Promise((resolve, reject) => http.get(`${authorization.searchParams.get('redirect_uri')}?state=${authorization.searchParams.get('state')}&code=code`, response => { response.resume(); response.on('end', resolve); }).on('error', reject));
     await rejection;
   }
+});
+
+test('OAuth login reports exhausted and non-retryable callback listeners', async () => {
+  class FailingServer extends EventEmitter {
+    constructor(code) { super(); this.code = code; }
+    listen() { process.nextTick(() => this.emit('error', Object.assign(new Error(this.code), { code: this.code }))); }
+    close() {}
+  }
+  await expect(loginOAuth({ clientId: 'client', ports: [1, 2], serverFactory: () => new FailingServer('EADDRINUSE'), open: jest.fn() })).rejects.toThrow('No OAuth callback port available');
+  await expect(loginOAuth({ clientId: 'client', ports: [1], serverFactory: () => new FailingServer('EACCES'), open: jest.fn() })).rejects.toThrow('EACCES');
 });
