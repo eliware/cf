@@ -1,6 +1,7 @@
 import os from 'node:os';
 import { fs } from '@eliware/common';
 import { configRoot } from './config.mjs';
+import { readCredential } from './credentials.mjs';
 
 export function profilesPath(homeDir = os.homedir()) { return `${configRoot(homeDir)}/profiles.json`; }
 
@@ -23,13 +24,15 @@ export function activeProfile(env = process.env, homeDir = os.homedir(), fsImpl 
   return name && data.profiles[name] ? { name, ...data.profiles[name] } : null;
 }
 
-export function applyActiveProfile(env = process.env, homeDir = os.homedir(), fsImpl = fs) {
+export async function applyActiveProfile(env = process.env, homeDir = os.homedir(), fsImpl = fs) {
   const profile = activeProfile(env, homeDir, fsImpl);
   if (!profile) return null;
+  const credential = await readCredential(profile.name);
+  const values = { ...credential, ...profile };
   for (const [key, value] of Object.entries({
-    CLOUDFLARE_EMAIL: profile.email, CLOUDFLARE_API_KEY: profile.apiKey,
-    CLOUDFLARE_API_TOKEN: profile.apiToken, CLOUDFLARE_ACCOUNT_ID: profile.accountId,
-    CLOUDFLARE_ZONE_ID: profile.zoneId,
+    CLOUDFLARE_EMAIL: values.email, CLOUDFLARE_API_KEY: values.apiKey,
+    CLOUDFLARE_API_TOKEN: values.apiToken, CLOUDFLARE_ACCOUNT_ID: values.accountId,
+    CLOUDFLARE_ZONE_ID: values.zoneId,
   })) if (value && !env[key]) env[key] = value;
-  return profile;
+  return { ...profile, ...credential };
 }

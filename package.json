@@ -71,5 +71,8 @@
         "docs",
         "completions",
         "examples"
-    ]
+    ],
+    "optionalDependencies": {
+        "keytar": "^7.9.0"
+    }
 }

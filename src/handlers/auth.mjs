@@ -1,5 +1,6 @@
 import { readProfiles, writeProfiles } from '../profiles.mjs';
 import { printTable } from '../output.mjs';
+import { deleteCredential, writeCredential } from '../credentials.mjs';
 
 export async function handleAuth({ cf, action, opts, outputJson, printer, toJsonOutput, fail, profileHome, profileFs, read = readProfiles, write = writeProfiles }) {
   const data = read(profileHome, profileFs);
@@ -11,7 +12,9 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   if (action === 'login') {
     const name = opts?.profile || 'default';
     if (!process.env.CLOUDFLARE_API_TOKEN && (!process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_API_KEY)) { fail('To log in, set CLOUDFLARE_API_TOKEN or CLOUDFLARE_EMAIL and CLOUDFLARE_API_KEY, then run: cf auth login'); return; }
-    data.profiles[name] = { email: process.env.CLOUDFLARE_EMAIL, apiKey: process.env.CLOUDFLARE_API_KEY, apiToken: process.env.CLOUDFLARE_API_TOKEN, accountId: process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: process.env.CLOUDFLARE_ZONE_ID };
+    const credential = { email: process.env.CLOUDFLARE_EMAIL, apiKey: process.env.CLOUDFLARE_API_KEY, apiToken: process.env.CLOUDFLARE_API_TOKEN };
+    const storedInKeychain = await writeCredential(name, credential);
+    data.profiles[name] = { accountId: process.env.CLOUDFLARE_ACCOUNT_ID, zoneId: process.env.CLOUDFLARE_ZONE_ID, ...(storedInKeychain ? {} : credential) };
     data.active = name; write(data, profileHome, profileFs); return printer.log(`Saved and activated profile ${name}`);
   }
   if (action === 'switch') {
@@ -22,7 +25,7 @@ export async function handleAuth({ cf, action, opts, outputJson, printer, toJson
   if (action === 'logout') {
     const name = opts?.profile || data.active;
     if (!name || !data.profiles[name]) { fail(`Unknown profile: ${name || '(none)'}`); return; }
-    delete data.profiles[name]; if (data.active === name) data.active = Object.keys(data.profiles)[0] || null;
+    delete data.profiles[name]; await deleteCredential(name); if (data.active === name) data.active = Object.keys(data.profiles)[0] || null;
     write(data, profileHome, profileFs); return printer.log(`Removed profile ${name}`);
   }
   if (action === 'status') {

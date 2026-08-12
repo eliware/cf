@@ -28,5 +28,8 @@ dedicated resource command is never required before an endpoint can be used.
 Credentials may come from `~/.cf`, the project `.env`, CI environment variables,
 or named profiles stored in `~/.config/cf/profiles.json` with mode 0600. Like
 `gh`, `CF_CONFIG_DIR` overrides the configuration directory and
-`XDG_CONFIG_HOME/cf` is used when `XDG_CONFIG_HOME` is set. API
-tokens are preferred; the email/API-key pair remains supported for compatibility.
+`XDG_CONFIG_HOME/cf` is used when `XDG_CONFIG_HOME` is set. When the optional
+OS keychain adapter is available, `cf auth login` stores secrets in the native
+credential store and leaves only profile metadata in `profiles.json`; otherwise
+it safely falls back to the 0600 file. API tokens are preferred; the
+email/API-key pair remains supported for compatibility.

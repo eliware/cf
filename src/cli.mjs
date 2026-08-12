@@ -75,7 +75,7 @@ export async function run({
   }
 
   loadEnv(projectRoot, env, fsImpl);
-  applyActiveProfile(env, homeDir, fsImpl);
+  await applyActiveProfile(env, homeDir, fsImpl);
   const cf = cfFactory({ env });
   const outputJson = opts.json || opts.output === 'json';
   const commandPrinter = opts.quiet ? { ...printer, log: () => {} } : printer;
