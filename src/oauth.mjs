@@ -494,7 +494,11 @@ export async function loginOAuth({
               "This callback no longer matches the login request. Start a new login from the cf command line and try again.",
           }),
         );
-        reject(new Error("Invalid OAuth state"));
+        reject(
+          new Error(
+            "OAuth callback state did not match the active login request. The login may have expired, been opened more than once, or been completed in a different browser. Run `cf auth login` again and use the newest setup URL.",
+          ),
+        );
         return;
       }
       const error = url.searchParams.get("error");
