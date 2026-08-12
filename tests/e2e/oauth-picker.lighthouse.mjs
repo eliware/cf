@@ -4,11 +4,12 @@ import { join, resolve } from "node:path";
 import { launch } from "chrome-launcher";
 import lighthouse, { generateReport } from "lighthouse";
 import { loginOAuth } from "../../src/oauth.mjs";
+import { findBrowser } from "../../src/browser.mjs";
 
 const outputDir = resolve(
   process.env.CF_LIGHTHOUSE_DIR ?? "artifacts/oauth-lighthouse",
 );
-const executablePath = process.env.CHROME_PATH ?? "/usr/bin/chromium-browser";
+const executablePath = await findBrowser();
 const printed = [];
 const fetchImpl = async () => ({
   ok: true,

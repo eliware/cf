@@ -3,11 +3,12 @@ import { mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import puppeteer from "puppeteer";
 import { loginOAuth } from "../../src/oauth.mjs";
+import { findBrowser } from "../../src/browser.mjs";
 
 const outputDir = resolve(
   process.env.CF_SCREENSHOT_DIR ?? "artifacts/oauth-screenshots",
 );
-const executablePath = process.env.CHROME_PATH ?? "/usr/bin/chromium-browser";
+const executablePath = await findBrowser({ puppeteerPath: puppeteer.executablePath() });
 const printed = [];
 const fetchImpl = async () => ({
   ok: true,
