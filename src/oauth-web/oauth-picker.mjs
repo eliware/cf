@@ -3,6 +3,7 @@
   const required = new Set(requiredScopes);
   const selected = new Set(requiredScopes);
   const enabledModules = new Set();
+  let synchronizeModules = true;
   const boxes = [];
   const owners = new Map();
   modules.forEach((module) =>
@@ -18,6 +19,13 @@
   const quickSetup = document.querySelector(".quick-setup");
   if (window.matchMedia("(max-width: 600px)").matches) quickSetup.open = false;
   const render = () => {
+    if (synchronizeModules) {
+      modules.forEach((module) => {
+        const satisfied = module.scopes.every((scope) => selected.has(scope));
+        if (satisfied) enabledModules.add(module.id);
+        else enabledModules.delete(module.id);
+      });
+    }
     boxes.forEach((box) => {
       box.checked = selected.has(box.value);
       box.disabled = required.has(box.value);
@@ -152,7 +160,9 @@
     selected.clear();
     required.forEach((scope) => selected.add(scope));
     enabledModules.clear();
+    synchronizeModules = false;
     render();
+    synchronizeModules = true;
   });
   document.querySelector("[data-expand]").addEventListener("click", () =>
     document.querySelectorAll(".category").forEach((category) => {

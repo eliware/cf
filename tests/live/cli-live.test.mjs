@@ -1,11 +1,13 @@
 import { execFile } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { jest } from "@jest/globals";
 import { activeProfile } from "../../src/profiles.mjs";
 import { requiredScopes } from "../../src/scopes.mjs";
 
 const execFileAsync = promisify(execFile);
-const cli = process.env.CF_BIN || "cf";
+const cli =
+  process.env.CF_BIN || fileURLToPath(new URL("../../bin/cf.mjs", import.meta.url));
 const liveEnabled = process.env.CF_LIVE_TESTS === "1";
 const wetEnabled = process.env.CF_LIVE_MUTATIONS === "1";
 let zoneId = process.env.CF_LIVE_ZONE_ID;
@@ -347,7 +349,12 @@ liveDescribe("authenticated live CLI smoke tests", () => {
   test("wet list CRUD follows list and item lifecycle", async () => {
     if (!wetEnabled || !canRun("lists", "create")) return;
     expect(accountId).toEqual(expect.any(String));
-    const listName = `cf-live-${Date.now()}`;
+    const existingLists = await run(["lists", "list", "--account-id", accountId, "--json"]);
+    expect(existingLists.code).toBe(0);
+    // Cloudflare accounts have a finite list quota; do not turn a quota-full
+    // account into a failing release test or delete an existing list.
+    if (parseJson(existingLists).length >= 1) return;
+    const listName = `cflive${Date.now()}`;
     const createList = await run([
       "lists", "create", "--account-id", accountId, "--data",
       JSON.stringify({ name: listName, description: "Temporary cf live test list", kind: "ip" }), "--json",

@@ -6,7 +6,7 @@ const commandNames = {
   "dns-records": ["list", "get", "create", "update", "delete", "diff", "apply"],
   "zone-settings": ["get", "set"],
   rulesets: ["list", "get", "create", "update"],
-  lists: ["list", "get"],
+  lists: ["list", "get", "create", "update", "delete"],
   "list-items": ["list", "create", "delete"],
   api: ["request"],
   ssl: ["get", "certificates", "coverage", "set"],

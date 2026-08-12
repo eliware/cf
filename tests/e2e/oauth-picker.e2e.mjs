@@ -179,7 +179,10 @@ try {
     console.log(`Captured ${name} OAuth invalid-state screenshot`);
   }
   const invalidStateError = await invalidStateFailure;
-  assert.equal(invalidStateError.message, "Invalid OAuth state");
+  assert.match(
+    invalidStateError.message,
+    /OAuth login expired or was opened in another browser/,
+  );
 } finally {
   await browser.close();
 }
