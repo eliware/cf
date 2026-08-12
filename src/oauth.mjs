@@ -9,9 +9,9 @@ const AUTH_URL = 'https://dash.cloudflare.com/oauth2/auth';
 const TOKEN_URL = 'https://dash.cloudflare.com/oauth2/token';
 
 function base64url(value) { return value.toString('base64url'); }
-function openBrowser(url) {
-  const command = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-  return spawn(command, [url], { detached: true, stdio: 'ignore', shell: process.platform === 'win32' }).unref();
+export function openBrowser(url, { platform = process.platform, spawnImpl = spawn } = {}) {
+  const command = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
+  return spawnImpl(command, [url], { detached: true, stdio: 'ignore', shell: platform === 'win32' }).unref();
 }
 
 export async function refreshOAuth({ refreshToken, clientId = DEFAULT_OAUTH_CLIENT_ID, fetchImpl = fetch }) {

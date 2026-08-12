@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { refreshOAuth, revokeOAuth, loginOAuth } from '../src/oauth.mjs';
+import { openBrowser, refreshOAuth, revokeOAuth, loginOAuth } from '../src/oauth.mjs';
 import http from 'node:http';
 
 test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
@@ -7,6 +7,15 @@ test('OAuth refresh and revoke use Cloudflare token endpoints', async () => {
   const refreshed = await refreshOAuth({ refreshToken: 'old', clientId: 'client', fetchImpl });
   expect(refreshed.accessToken).toBe('new'); await revokeOAuth({ accessToken: 'new', clientId: 'client', fetchImpl });
   expect(fetchImpl).toHaveBeenCalledTimes(2); expect(fetchImpl.mock.calls[0][1].body.get('grant_type')).toBe('refresh_token');
+});
+
+test('browser launcher selects the native command for each platform', () => {
+  for (const platform of ['darwin', 'win32', 'linux']) {
+    const unref = jest.fn(); const spawnImpl = jest.fn(() => ({ unref }));
+    openBrowser('https://example.test', { platform, spawnImpl });
+    expect(spawnImpl).toHaveBeenCalledWith(platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open', ['https://example.test'], expect.objectContaining({ shell: platform === 'win32' }));
+    expect(unref).toHaveBeenCalled();
+  }
 });
 
 test('OAuth login validates client configuration before opening a browser', async () => {
