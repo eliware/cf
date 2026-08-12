@@ -67,6 +67,16 @@ test('auth status rejects missing credentials and unknown actions', async () => 
   process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key;
 });
 
+test('auth login rejects incomplete legacy credential pairs', async () => {
+  const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY, token: process.env.CLOUDFLARE_API_TOKEN };
+  delete process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_EMAIL = 'only@example.com'; delete process.env.CLOUDFLARE_API_KEY;
+  const emailOnly = base(); await handleAuth({ ...emailOnly, action: 'login', opts: {}, read: () => ({ active: null, profiles: {} }) });
+  delete process.env.CLOUDFLARE_EMAIL; process.env.CLOUDFLARE_API_KEY = 'only-key';
+  const keyOnly = base(); await handleAuth({ ...keyOnly, action: 'login', opts: {}, read: () => ({ active: null, profiles: {} }) });
+  process.env.CLOUDFLARE_EMAIL = old.email; process.env.CLOUDFLARE_API_KEY = old.key; process.env.CLOUDFLARE_API_TOKEN = old.token;
+  expect(emailOnly.fail).toHaveBeenCalled(); expect(keyOnly.fail).toHaveBeenCalled();
+});
+
 test('auth text output and missing identity id are safe', async () => {
   const old = { email: process.env.CLOUDFLARE_EMAIL, key: process.env.CLOUDFLARE_API_KEY };
   process.env.CLOUDFLARE_EMAIL = 'user@example.com'; process.env.CLOUDFLARE_API_KEY = 'secret';
@@ -130,6 +140,15 @@ test('auth stores keychain credentials without duplicating secrets in profile me
   const write = jest.fn(); const writeCredentialImpl = jest.fn().mockResolvedValue(true); const ctx = base();
   await handleAuth({ ...ctx, action: 'login', opts: { profile: 'oauth', oauth: true }, read: () => ({ active: null, profiles: {} }), write, writeCredentialImpl, oauthLogin: jest.fn().mockResolvedValue({ accessToken: 'oauth-token', refreshToken: 'refresh' }) });
   expect(write).toHaveBeenCalledWith(expect.objectContaining({ profiles: { oauth: expect.not.objectContaining({ apiToken: 'oauth-token' }) } }), undefined, undefined);
+});
+
+test('auth token login supports the default stdin reader and keychain storage', async () => {
+  const old = process.env.CLOUDFLARE_API_TOKEN; process.env.CLOUDFLARE_API_TOKEN = 'environment-token';
+  const write = jest.fn(); const ctx = base();
+  try {
+    await handleAuth({ ...ctx, action: 'login', opts: { profile: 'default-reader', 'token-stdin': true }, read: () => ({ active: null, profiles: {} }), write, writeCredentialImpl: jest.fn().mockResolvedValue(true) });
+  } finally { process.env.CLOUDFLARE_API_TOKEN = old; }
+  expect(write).toHaveBeenCalled();
 });
 
 test('auth logout revokes stored OAuth credentials before deletion', async () => {
