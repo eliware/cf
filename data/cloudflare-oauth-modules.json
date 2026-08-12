@@ -1,0 +1,223 @@
+{
+  "source": "cf built-in command modules",
+  "version": 1,
+  "modules": [
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "description": "Verify the signed-in Cloudflare identity.",
+      "scopes": [
+        "user-details.read"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "zones",
+      "name": "Zones",
+      "description": "List, inspect, create, update, and delete zones.",
+      "scopes": [
+        "zone.read",
+        "zone.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "dns",
+      "name": "DNS",
+      "description": "Inspect and manage DNS records and desired-state diffs.",
+      "scopes": [
+        "dns.read",
+        "dns.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "zone-settings",
+      "name": "Zone settings",
+      "description": "Read and update zone configuration settings.",
+      "scopes": [
+        "zone-settings.read",
+        "zone-settings.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "ssl",
+      "name": "SSL & certificates",
+      "description": "Inspect SSL settings and certificate packs and update SSL configuration.",
+      "scopes": [
+        "zone-settings.read",
+        "zone-settings.write",
+        "ssl-and-certificates.read",
+        "ssl-and-certificates.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "rules-security",
+      "name": "Rules & security",
+      "description": "Inspect and manage rulesets and zone security baselines.",
+      "scopes": [
+        "account-rulesets.read",
+        "account-rulesets.write",
+        "zone-waf.read",
+        "zone-waf.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "lists",
+      "name": "Account lists",
+      "description": "Manage Cloudflare lists and list items.",
+      "scopes": [
+        "account-rule-lists.read",
+        "account-rule-lists.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "cache-health",
+      "name": "Cache & health",
+      "description": "Purge cache and manage zone health checks.",
+      "scopes": [
+        "cache.purge",
+        "healthcheck.read",
+        "healthcheck.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "audit-inventory",
+      "name": "Account & audit",
+      "description": "Read account audit logs and export account inventory.",
+      "scopes": [
+        "account-settings.read",
+        "zone.read",
+        "dns.read",
+        "ssl-and-certificates.read"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "origin-ca",
+      "name": "Origin CA",
+      "description": "List, create, and revoke Origin CA certificates.",
+      "scopes": [
+        "ssl-and-certificates.read",
+        "ssl-and-certificates.write"
+      ],
+      "tier": "basic"
+    },
+    {
+      "id": "load-balancer",
+      "name": "Load balancing",
+      "description": "Manage zone load balancers and their pools and monitors.",
+      "scopes": [
+        "load-balancing-monitors-and-pools.read",
+        "load-balancing-monitors-and-pools.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "tunnel",
+      "name": "Tunnels",
+      "description": "Manage account Cloudflare Tunnels.",
+      "scopes": [
+        "argotunnel.read",
+        "argotunnel.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "workers",
+      "name": "Workers",
+      "description": "Manage Worker scripts and bindings.",
+      "scopes": [
+        "workers-scripts.read",
+        "workers-scripts.write",
+        "workers-scripts.bind"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "pages",
+      "name": "Pages",
+      "description": "Manage Pages projects.",
+      "scopes": [
+        "page.read",
+        "page.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "r2",
+      "name": "R2",
+      "description": "Manage R2 storage buckets.",
+      "scopes": [
+        "workers-r2.read",
+        "workers-r2.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "d1",
+      "name": "D1",
+      "description": "Manage D1 databases.",
+      "scopes": [
+        "d1.read",
+        "d1.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "queues",
+      "name": "Queues",
+      "description": "Manage account queues.",
+      "scopes": [
+        "queues.read",
+        "queues.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "stream",
+      "name": "Stream",
+      "description": "Manage Stream resources.",
+      "scopes": [
+        "stream.read",
+        "stream.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "images",
+      "name": "Images",
+      "description": "Manage Cloudflare Images.",
+      "scopes": [
+        "images.read",
+        "images.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "ai",
+      "name": "Workers AI",
+      "description": "Manage Workers AI resources.",
+      "scopes": [
+        "ai.read",
+        "ai.write"
+      ],
+      "tier": "advanced"
+    },
+    {
+      "id": "access",
+      "name": "Access",
+      "description": "Manage Cloudflare Access applications.",
+      "scopes": [
+        "access.read",
+        "access.write"
+      ],
+      "tier": "advanced"
+    }
+  ]
+}
