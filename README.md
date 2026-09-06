@@ -2,6 +2,8 @@
 
 ## @eliware/cf [![npm version](https://img.shields.io/npm/v/@eliware/cf.svg)](https://www.npmjs.com/package/@eliware/cf) [![license](https://img.shields.io/github/license/eliware/cf.svg)](LICENSE) [![build status](https://github.com/eliware/cf/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eliware/cf/actions)
 
+Documentation: [docs](docs/README.md) · [specifications](specs/README.md) · [examples](examples/README.md)
+
 An OAuth-first Cloudflare administration CLI for inspecting and managing zones, DNS, rules, settings, lists, and account services. `cf` is designed to feel familiar to anyone who uses the GitHub CLI: commands are composable, automation-friendly, and safe by default.
 
 ## Features
